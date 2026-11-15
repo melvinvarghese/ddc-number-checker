@@ -119,7 +119,7 @@ function extractValidDdcValues(value) {
     .map(item => String(item).trim())
     // Dewey numbers have a three-digit main class, optionally followed by a decimal.
     // Reject collection labels such as FIC, REF, JUV and other non-numeric codes.
-    .filter(item => /^\\d{3}(?:\\.\\d+)?$/.test(item)))];
+    .filter(item => /^\d{3}(?:\.\d+)?$/.test(item)))];
 }
 
 function isValidIsbn(value) {
