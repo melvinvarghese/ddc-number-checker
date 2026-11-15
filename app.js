@@ -369,7 +369,7 @@ function renderCatalogueRecords(container, records, statuses, message) {
     return '<li><div><strong>' + escapeHtml(number) + '</strong><span>' + escapeHtml(details || "Catalogue record") + '</span><small>' +
       escapeHtml(record.library || "Library catalogue") + ' · MARC ' + escapeHtml(record.marcField || "082") +
       (record.match ? ' · ' + escapeHtml(record.match) : '') + '</small></div><a href="' +
-      escapeHtml(record.searchUrl || record.sourceUrl || "#") + '" target="_blank" rel="noopener noreferrer">Open source</a></li>';
+      escapeHtml(record.searchUrl || record.sourceUrl || "#") + '" target="_blank" rel="noopener noreferrer">Open catalogue</a></li>';
   }).join("");
   const statusText = statuses.map(item => item.name + ": " + (item.status === "ok" ? item.records + " matching records" : item.message || "unavailable")).join(" · ");
   container.innerHTML =
