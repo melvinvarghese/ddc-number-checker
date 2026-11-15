@@ -8,12 +8,10 @@ The DDC Finder website is static GitHub Pages. Browsers cannot reliably call eve
 
 ## Deploy
 
-1. Create a free Cloudflare account and open **Workers & Pages**.
-2. Create a Worker named `ddc-finder-catalogue`.
-3. Paste the contents of `worker.js`, deploy it.
-4. In Worker Settings → Variables, add:
-   - `ALLOWED_ORIGINS` = `https://melvinvarghese.github.io`
-   - `CATALOGUE_SOURCES` = JSON array of reviewed catalogue sources (see below).
+1. Install Node.js on your computer if it is not already installed.
+2. From the repository folder, run `npx wrangler login` and complete Cloudflare's browser sign-in.
+3. Run `npx wrangler deploy`. The included [wrangler.toml](../wrangler.toml) deploys `catalogue/worker.js` as `ddc-finder-catalogue`.
+4. In Cloudflare → Workers & Pages → ddc-finder-catalogue → Settings → Variables, replace `CATALOGUE_SOURCES` with a JSON array of reviewed sources (see below). Keep `ALLOWED_ORIGINS` set to `https://melvinvarghese.github.io`.
 5. Copy the Worker URL, e.g. `https://ddc-finder-catalogue.<your-subdomain>.workers.dev/search`.
 6. Set `window.DDC_CATALOGUE_API` in `catalogue-config.js` to that URL and commit the change.
 
