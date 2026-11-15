@@ -163,7 +163,7 @@ function renderResults(book, ranked, sourceNote = "") {
   const subject = book.subject ? '<span class="meta-chip">Subject details supplied</span>' : '<span class="meta-chip">Title-based match</span>';
   const isbn = book.isbn ? '<span class="meta-chip">ISBN: ' + escapeHtml(book.isbn) + '</span>' : "";
   const language = book.language ? '<span class="meta-chip">Language: ' + escapeHtml(book.language) + '</span>' : "";
-  const confidenceLabel = sourceNote ? "ISBN metadata match" : best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
+  const confidenceLabel = sourceNote ? "Third-party metadata" : best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
   const alternativeHtml = alternatives.length
     ? '<div class="result-divider"></div><h3 class="result-subtitle">Other possible subject areas</h3><ul class="alternatives">' +
       alternatives.map(item => '<li><span>' + escapeHtml(item.heading) + '</span><strong>' + escapeHtml(item.number) + '</strong></li>').join("") + '</ul>'
@@ -175,7 +175,9 @@ function renderResults(book, ranked, sourceNote = "") {
     '<p class="result-description">' + escapeHtml(best.description) + '</p>' + (sourceNote ? '<p class="result-reason">' + escapeHtml(sourceNote) + '</p>' : "") +
     '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + language + subject + isbn + '</div>' +
     '<div class="result-divider"></div><h3 class="result-subtitle">Why this was suggested</h3>' +
-    '<p class="result-reason">The following term(s) matched the preliminary subject guide: ' + escapeHtml(best.matched.join(", ")) + '. This is a keyword-based match, not a full subject analysis of the book.</p>' +
+    '<p class="result-reason">Matched guide terms: <strong>' + escapeHtml(best.matched.join(", ")) + '</strong>. The local guide matched these terms in the title, author or subject details you supplied. This is a keyword match, not a full analysis of the book.</p>' +
+    '<p class="result-reason"><strong>Classification context:</strong> DDC classification depends on the work’s subject, disciplinary focus and, where relevant, its approach or form. A title alone is not enough to settle the number.</p>' +
+    '<div id="catalogue-evidence" class="catalogue-evidence" hidden></div>' +
     alternativeHtml +
     '<div class="result-actions"><button class="copy-button" type="button" id="copy-number">Copy DDC number</button><button class="copy-button" type="button" id="copy-summary">Copy result summary</button></div>' +
     '<p class="result-caveat">Please verify this suggestion using an authorised DDC schedule and the actual content of the book. The tool may miss context, genre, audience and special classification instructions.</p>' +
@@ -187,7 +189,42 @@ function renderResults(book, ranked, sourceNote = "") {
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
+  appendCatalogueEvidence(book);
   results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+let catalogueDatasetPromise;
+function loadCatalogueDataset() {
+  if (!catalogueDatasetPromise) {
+    catalogueDatasetPromise = fetch("./tests/real-book-cases.json", { cache: "no-store" })
+      .then(response => response.ok ? response.json() : null)
+      .catch(() => null);
+  }
+  return catalogueDatasetPromise;
+}
+
+async function appendCatalogueEvidence(book) {
+  const panel = document.querySelector("#catalogue-evidence");
+  if (!panel) return;
+  const dataset = await loadCatalogueDataset();
+  if (!dataset || !Array.isArray(dataset.cases)) return;
+  const title = normalise(book.title);
+  const author = normalise(book.author);
+  const matches = dataset.cases.filter(item => {
+    if (normalise(item.input?.title || item.title) !== title) return false;
+    return !author || !item.input?.author || normalise(item.input.author) === author;
+  });
+  if (!matches.length) return;
+  const records = matches.flatMap(item => item.catalogue_records || []);
+  if (!records.length) return;
+  const unique = [...new Map(records.map(record => [record.library + "|" + record.ddc + "|" + record.url, record])).values()];
+  const numbers = [...new Set(unique.map(record => record.ddc))];
+  panel.innerHTML = '<h3 class="result-subtitle">What library catalogues show</h3>' +
+    '<p class="result-reason">For this exact title, the project has recorded ' + unique.length + ' public catalogue record(s). ' +
+    (numbers.length > 1 ? 'The records show different DDC numbers, so local practice is not uniform.' : 'The records currently found show the same DDC number; this is still a sample, not proof of a universal rule.') +
+    '</p><ul class="catalogue-records">' + unique.map(record => '<li><span>' + escapeHtml(record.library) + '</span><strong>' + escapeHtml(record.ddc) + '</strong><a href="' + escapeHtml(record.url) + '" target="_blank" rel="noopener noreferrer">View record</a></li>').join("") + '</ul>' +
+    '<p class="result-reason">These are observed catalogue choices, not a vote or an official ruling. Check the edition and your library’s policy before adopting one.</p>';
+  panel.hidden = false;
 }
 
 async function copyText(text, button, successMessage) {
