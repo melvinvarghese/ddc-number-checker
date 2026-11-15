@@ -64,6 +64,12 @@ Adjust the height after testing on desktop and mobile. Keep explanatory text, in
 
 Dewey Decimal Classification is maintained by OCLC and is protected by copyright and licensing terms. This project must not copy or redistribute proprietary DDC schedules, tables, captions or database content without permission. The initial subject guide is a limited, independently authored set of broad suggestions and must not be presented as an official or complete DDC database.
 
+## Kerala catalogue discovery
+
+The search result now includes direct search links to selected Kerala library catalogues: SCERT Kerala, Kerala State Central Library, KALNET and KILA. These are discovery links, not claims that automated retrieval is already active.
+
+A controlled Koha SRU connector is provided in [catalogue/worker.js](catalogue/worker.js). Deployment and endpoint configuration are documented in [catalogue/README.md](catalogue/README.md). The frontend calls it only after `catalogue-config.js` has been configured with a deployed Worker URL. No SRU endpoint is assumed: each library's Explain response and MARCXML output must be verified first. Only MARC 082 values are treated as DDC evidence.
+
 ## Library catalogue integrations
 
 DDC Finder is moving towards a Kerala-first, globally expandable catalogue-evidence search. The initial source registry is in [catalogue-sources.json](catalogue-sources.json), and the technical rollout, MARC field policy, access safeguards and expansion phases are documented in [docs/catalogue-integration-plan.md](docs/catalogue-integration-plan.md).
