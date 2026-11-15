@@ -64,6 +64,12 @@ Adjust the height after testing on desktop and mobile. Keep explanatory text, in
 
 Dewey Decimal Classification is maintained by OCLC and is protected by copyright and licensing terms. This project must not copy or redistribute proprietary DDC schedules, tables, captions or database content without permission. The initial subject guide is a limited, independently authored set of broad suggestions and must not be presented as an official or complete DDC database.
 
+## Library catalogue integrations
+
+DDC Finder is moving towards a Kerala-first, globally expandable catalogue-evidence search. The initial source registry is in [catalogue-sources.json](catalogue-sources.json), and the technical rollout, MARC field policy, access safeguards and expansion phases are documented in [docs/catalogue-integration-plan.md](docs/catalogue-integration-plan.md).
+
+Kerala pilot candidates include SCERT Kerala, KALNET, KILA, Kerala University Libraries, Kerala State Central Library and the CMD Knowledge Management Centre. These are **candidate sources**, not all active automated connectors. A source will only be enabled for automated retrieval after its endpoint, public access conditions and DDC evidence have been verified. In particular, a generic OPAC call number is not automatically treated as DDC; MARC 082 or explicit classification-source metadata is required.
+
 ## Roadmap
 
 - Continue improving subject coverage with documented, appropriately licensed sources.
