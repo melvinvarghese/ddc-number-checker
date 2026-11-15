@@ -32,3 +32,6 @@ The test form supplies the edition language where known and deliberately leaves 
 Add a new object to the `cases` array in `real-book-cases.json`. Include the edition and language, the exact form input to reproduce, every catalogue number you can verify, and direct URLs to the catalogue records. Do not invent a number or treat one library's record as universally authoritative.
 
 Prefer records that show ISBN, language/edition, and the DDC field together. Keep translated editions as separate cases when their language or literary classification differs. Broad literary-language rules should be added only after finding catalogue records for that language.
+
+
+The main app also reads this fixture file to show catalogue comparisons on exact-title result pages. It displays the linked library, observed DDC number and a direct record link; differences are presented as local catalogue practice, not as a consensus or correctness score.
