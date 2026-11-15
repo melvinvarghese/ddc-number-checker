@@ -156,7 +156,7 @@ function escapeHtml(value) {
 function renderEmpty(message, detail, shouldScroll = true) {
   results.hidden = false;
   results.innerHTML = '<div class="empty-state"><h2>' + escapeHtml(message) + '</h2><p>' + escapeHtml(detail) + '</p></div>';
-  if (shouldScroll) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (shouldScroll && !window.ddcBatchMode) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function renderResults(book, ranked, sourceNote = "", options = {}) {
@@ -196,8 +196,8 @@ function renderResults(book, ranked, sourceNote = "", options = {}) {
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
-  if (options.includeEvidence !== false) appendCatalogueEvidence(book);
-  if (options.scroll !== false) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (options.includeEvidence !== false && !window.ddcBatchMode) appendCatalogueEvidence(book);
+  if (options.scroll !== false && !window.ddcBatchMode) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 let catalogueDatasetPromise;
@@ -420,6 +420,7 @@ async function processBatch() {
   }
   button.disabled = true;
   button.textContent = "Processing…";
+  window.ddcBatchMode = true;
   const original = {
     title: titleInput.value, author: authorInput.value, subject: subjectInput.value,
     language: languageInput.value, workType: workTypeInput.value,
@@ -460,6 +461,7 @@ async function processBatch() {
     isbnInput.value = original.isbn;
     button.disabled = false;
     button.textContent = "Process book list";
+    window.ddcBatchMode = false;
   }
   window.ddcBatchResults = resultsList;
   output.innerHTML = '<div class="batch-summary"><strong>' + resultsList.filter(item => item.number).length + ' of ' + resultsList.length + ' books received preliminary suggestions.</strong><button class="copy-button" type="button" id="export-batch">Export results CSV</button></div>' +
