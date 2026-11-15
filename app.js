@@ -72,7 +72,6 @@ const SUBJECT_RULES = [
   { number: "378", heading: "Higher education", keywords: ["higher education", "university education", "college education", "higher educational institutions"], description: "The terms suggest colleges, universities or higher education." },
   { number: "410", heading: "Linguistics", keywords: ["linguistics", "historical linguistics", "sociolinguistics", "applied linguistics"], description: "The terms suggest the scientific study of language." },
   { number: "420", heading: "English language", keywords: ["english grammar", "english language", "english vocabulary", "english linguistics"], description: "The terms suggest the English language. Literature in English belongs to a different area." },
-  { number: "491.4", heading: "Indo-Iranian languages", keywords: ["malayalam language", "malayalam grammar", "hindi language", "sanskrit language"], description: "The terms suggest one of the Indo-Iranian languages; verify the exact language subdivision." },
   { number: "519.5", heading: "Statistical mathematics", keywords: ["statistics", "statistical analysis", "probability theory", "regression analysis"], description: "The terms suggest statistical methods or probability." },
   { number: "550", heading: "Earth sciences", keywords: ["geology", "earth science", "geophysics", "mineralogy"], description: "The terms suggest geology or the study of the Earth." },
   { number: "560", heading: "Paleontology", keywords: ["paleontology", "palaeontology", "fossils", "prehistoric life"], description: "The terms suggest fossils and prehistoric life." },
@@ -90,8 +89,7 @@ const SUBJECT_RULES = [
   { number: "891.4", heading: "Indic literatures", keywords: ["malayalam literature", "hindi literature", "sanskrit literature"], description: "The terms suggest literature in an Indic language; verify the exact language and literary form." },
   { number: "940", heading: "History of Europe", keywords: ["european history", "history of europe", "world war one", "world war two", "second world war"], description: "The terms suggest European history or major events in European history." },
   { number: "950", heading: "History of Asia", keywords: ["asian history", "history of asia", "east asian history"], description: "The terms suggest the history of Asia; use a more specific regional class when possible." },
-  { number: "954", heading: "History of India", keywords: ["indian history", "history of india", "india history", "modern india"], description: "The terms suggest the history of India." },
-  { number: "995.4", heading: "History of Kerala", keywords: ["kerala history", "history of kerala", "travancore history", "cochin history"], description: "The terms suggest the history of Kerala or its historical regions." }
+  { number: "954.83", heading: "History of Kerala", keywords: ["kerala history", "history of kerala", "travancore history", "cochin history"], description: "The terms suggest the history of Kerala or its historical regions; verify the subdivision used by your library." }
 ];
 
 const form = document.querySelector("#search-form");
