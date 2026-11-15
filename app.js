@@ -328,7 +328,7 @@ async function copyText(text, button, successMessage) {
 }
 
 async function lookupIsbn(isbn) {
-  const url = "https://openlibrary.org/search.json?isbn=" + encodeURIComponent(isbn) + "&fields=title,author_name,subject,dewey_decimal_class,isbn&limit=1";
+  const url = "https://openlibrary.org/search.json?isbn=" + encodeURIComponent(isbn) + "&fields=title,author_name,subject,dewey_decimal_class,ddc,isbn&limit=1";
   const response = await fetch(url, { headers: { "Accept": "application/json" } });
   if (!response.ok) throw new Error("ISBN lookup unavailable");
   const data = await response.json();
@@ -629,7 +629,7 @@ form.addEventListener("submit", async event => {
     try {
       let record = await lookupTitle(book);
       if (record) {
-        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : [];
+        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : Array.isArray(record.ddc) ? record.ddc : [];
         if (classes.length) {
           const candidates = classes.slice(0, 4).map((number, index) => ({
             number: String(number),
