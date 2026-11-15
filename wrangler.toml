@@ -1,0 +1,7 @@
+name = "ddc-finder-catalogue"
+main = "catalogue/worker.js"
+compatibility_date = "2026-11-15"
+
+[vars]
+ALLOWED_ORIGINS = "https://melvinvarghese.github.io"
+CATALOGUE_SOURCES = "[]"
