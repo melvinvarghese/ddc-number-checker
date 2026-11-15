@@ -4,7 +4,7 @@ A lightweight, browser-based preliminary Dewey Decimal Classification discovery 
 
 ## Current version
 
-The application accepts a book title, author, edition language, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through Open Library; Google Books is used as a secondary source for bibliographic categories when Open Library has no useful subject terms. If an Open Library ISBN record includes a Dewey value, the tool displays it as third-party metadata. Otherwise, returned subject terms are combined with the local preliminary subject guide. The guide currently contains around 90 independently written subject rules, including library science, education, computing, psychology, social sciences, health, arts, literature and history. Edition language is used when interpreting Malayalam literary subjects, and a curated rule recognises the Malayalam edition *Agnichirakukal* separately from the English *Wings of Fire* edition.
+The application accepts a book title, author, edition language, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through Open Library; Google Books is used as a secondary source for bibliographic categories when Open Library has no useful subject terms. If an Open Library ISBN record includes a Dewey value, the tool displays it as third-party metadata. Otherwise, returned subject terms are combined with the local preliminary subject guide. The guide currently contains around 90 independently written subject rules, including library science, education, computing, psychology, social sciences, health, arts, literature and history. Edition language is used when interpreting Malayalam, Tamil, Hindi and Bengali literary subjects, and a curated rule recognises the Malayalam edition *Agnichirakukal* separately from the English *Wings of Fire* edition.
 
 **This is not an authoritative DDC classifier.** It does not analyse the full text of a book, consult an official DDC schedule, or guarantee a correct class number. Users must verify suggestions against an authorised DDC source and their library's cataloguing policy.
 
@@ -72,3 +72,8 @@ Dewey Decimal Classification is maintained by OCLC and is protected by copyright
 - Improve alternative suggestions and explain the evidence behind each match.
 - Add tests for subject rules and edge cases.
 - Add bulk workflows only after validating demand with librarians.
+
+
+### Additional Indian-language literature coverage
+
+The preliminary guide includes broad language-literature suggestions for Tamil (894.811), Hindi (891.43) and Bengali (891.44). These are supported by individual public university-library catalogue records and are not universal rules for every genre or work. Sanskrit has deliberately not been added yet: the catalogue evidence reviewed so far showed differing treatment for language and literature collections, so more specific records are needed before adding a rule.
