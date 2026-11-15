@@ -4,7 +4,7 @@ A lightweight, browser-based preliminary Dewey Decimal Classification discovery 
 
 ## Current version
 
-The first version uses a small, curated keyword-to-subject guide. A visitor can enter a book title and optionally add an author and subject description. The application returns a possible DDC number, a short explanation, and other matching subject areas.
+The application accepts a book title, author, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through the Open Library Search API. If an ISBN record includes Dewey data, the tool displays it as third-party metadata; otherwise, it uses available subject terms and its local preliminary subject guide. A curated title-and-author rule also recognises *Wings of Fire* by A. P. J. Abdul Kalam.
 
 **This is not an authoritative DDC classifier.** It does not analyse the full text of a book, consult an official DDC schedule, or guarantee a correct class number. Users must verify suggestions against an authorised DDC source and their library's cataloguing policy.
 
