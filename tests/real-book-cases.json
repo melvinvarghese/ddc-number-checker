@@ -180,7 +180,7 @@
         "subject": "Malayalam literature Malayalam autobiography",
         "isbn": ""
       },
-      "observed_app_number": "891.4",
+      "observed_app_number": "894.81296",
       "observed_catalogue_numbers": [
         "894.81296"
       ],
@@ -191,7 +191,63 @@
           "url": "https://opac.kila.ac.in/bib/20652"
         }
       ],
-      "note": "The current guide only offers a broad Indic-literature suggestion here. This is a known precision gap: Malayalam literature needs a language-specific and form-sensitive rule."
+      "note": "The app now recognises this exact Malayalam edition and reports the KILA catalogue number as a catalogue-specific example, not a universal rule."
+    },
+    {
+      "id": "aadujeevitham-malayalam-fiction",
+      "title": "Aadujeevitham",
+      "author": "Benyamin",
+      "language": "Malayalam",
+      "isbn": "9788184231172",
+      "input": {
+        "title": "Aadujeevitham",
+        "author": "Benyamin",
+        "subject": "Malayalam fiction novel",
+        "isbn": ""
+      },
+      "observed_app_number": "894.8123",
+      "observed_catalogue_numbers": [
+        "894.8123",
+        "894.81237"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Kerala University Library",
+          "ddc": "894.8123",
+          "url": "https://campuslib.keralauniversity.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=367490"
+        },
+        {
+          "library": "KILA Headquarters Library",
+          "ddc": "894.81237",
+          "url": "https://opac.kila.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=23881"
+        }
+      ],
+      "note": "Two Kerala library records place this Malayalam novel at 894.8123 and the more specific 894.81237."
+    },
+    {
+      "id": "ente-katha-malayalam-autobiography",
+      "title": "Ente Katha",
+      "author": "Madhavikutty (Kamala Das)",
+      "language": "Malayalam",
+      "isbn": "9788171300594",
+      "input": {
+        "title": "Ente Katha",
+        "author": "Madhavikutty",
+        "subject": "Malayalam autobiography",
+        "isbn": ""
+      },
+      "observed_app_number": "894.812092",
+      "observed_catalogue_numbers": [
+        "894.812092"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Sree Sankaracharya University of Sanskrit Library",
+          "ddc": "894.812 092",
+          "url": "https://opac.ssus.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=13498"
+        }
+      ],
+      "note": "The catalogue uses 894.812 092 for this Malayalam autobiography; punctuation/spacing in the call number is normalised here for comparison."
     }
   ]
 }
