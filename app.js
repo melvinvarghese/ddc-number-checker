@@ -369,7 +369,7 @@ const BOOKSTORE_ISBN_SOURCES = [
 ];
 
 function bookstoreSearchUrl(source, book) {
-  const terms = [book.isbn, book.title, book.author].filter(Boolean).join(" ");
+  const terms = book.isbn || [book.title, book.author].filter(Boolean).join(" ");
   return "https://www.google.com/search?q=" + encodeURIComponent("site:" + source.domain + " " + terms);
 }
 
