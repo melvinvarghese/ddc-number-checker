@@ -165,3 +165,24 @@ input:focus, select:focus { border-color: #729482; box-shadow: 0 0 0 3px rgba(40
 .decision-number strong { color: var(--green); }
 .decision-entry p { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 @media (max-width: 600px) { .history-heading { align-items: flex-start; flex-direction: column; } .decision-entry { grid-template-columns: 1fr; } .decision-entry p { grid-column: auto; } }
+
+
+/* Batch cataloguing workspace */
+.batch-card { margin: 24px 0 20px; padding: 23px; border: 1px solid #e2e6dd; border-radius: 14px; background: rgba(255,255,255,.68); }
+.batch-intro { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 17px; }
+.batch-intro h2 { margin: 7px 0 5px; font: 700 22px "Manrope",sans-serif; letter-spacing: -.5px; }
+.batch-intro p { max-width: 550px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.batch-intro a { color: var(--green); font-size: 12px; font-weight: 700; white-space: nowrap; text-underline-offset: 3px; }
+.batch-card > label { display: block; margin-bottom: 7px; color: var(--ink); font-size: 12px; font-weight: 700; }
+.batch-card textarea { display: block; width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #dce2d8; border-radius: 8px; background: #fff; color: var(--ink); font: 12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; resize: vertical; }
+.batch-controls { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+.batch-controls .submit-button { width: auto; margin: 0; }
+.batch-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 20px 0 12px; font-size: 13px; }
+.batch-table-wrap { overflow-x: auto; border: 1px solid #e3e8df; border-radius: 8px; background: #fff; }
+.batch-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+.batch-table th, .batch-table td { padding: 11px 12px; border-bottom: 1px solid #edf0ea; vertical-align: top; }
+.batch-table th { background: #f5f7f2; color: var(--muted); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.batch-table td strong, .batch-table td span { display: block; }
+.batch-table td span { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.batch-table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 620px) { .batch-card { padding: 18px 15px; } .batch-intro { flex-direction: column; } .batch-summary { align-items: flex-start; flex-direction: column; } }
