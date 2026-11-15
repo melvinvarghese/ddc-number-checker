@@ -1,6 +1,6 @@
 # Real-book regression checks
 
-This folder contains a small benchmark built from publicly visible library catalogue records.
+This folder contains a small benchmark built from publicly visible library catalogue records, including original Malayalam works and a translated Malayalam edition.
 
 ## Run it
 
