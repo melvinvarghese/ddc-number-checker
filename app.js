@@ -199,6 +199,20 @@ async function lookupIsbn(isbn) {
   return data.docs && data.docs.length ? data.docs[0] : null;
 }
 
+async function lookupGoogleBooks(isbn) {
+  const url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + encodeURIComponent(isbn) + "&maxResults=1";
+  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!response.ok) throw new Error("Google Books lookup unavailable");
+  const data = await response.json();
+  const info = data.items && data.items.length ? data.items[0].volumeInfo : null;
+  if (!info) return null;
+  return {
+    title: info.title || "",
+    author_name: Array.isArray(info.authors) ? info.authors : [],
+    subject: Array.isArray(info.categories) ? info.categories : []
+  };
+}
+
 form.addEventListener("submit", async event => {
   event.preventDefault();
   const book = {
@@ -220,7 +234,22 @@ form.addEventListener("submit", async event => {
     submitButton.disabled = true;
     submitButton.innerHTML = "<span>Checking ISBN…</span>";
     try {
-      const record = await lookupIsbn(cleanIsbn);
+      let record = await lookupIsbn(cleanIsbn);
+      if (!record || !(Array.isArray(record.subject) && record.subject.length)) {
+        try {
+          const googleRecord = await lookupGoogleBooks(cleanIsbn);
+          if (googleRecord) {
+            record = {
+              ...(record || {}),
+              title: (record && record.title) || googleRecord.title,
+              author_name: (record && record.author_name) || googleRecord.author_name,
+              subject: [...((record && record.subject) || []), ...googleRecord.subject]
+            };
+          }
+        } catch (googleError) {
+          console.warn("Google Books metadata lookup unavailable.", googleError);
+        }
+      }
       if (record) {
         const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : [];
         if (classes.length) {
