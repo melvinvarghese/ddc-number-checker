@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDC Finder — Real-book regression checks</title>
+<style>
+:root{color-scheme:light;--ink:#26372d;--muted:#69766c;--line:#e2e7df;--paper:#f7f7f2;--green:#365b45}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+main{width:min(100% - 32px,1040px);margin:42px auto 70px}h1{font-size:clamp(28px,5vw,42px);line-height:1.12;margin:0 0 12px}p{color:var(--muted)}
+.intro{max-width:760px;margin-bottom:24px}.summary{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.pill{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px}
+table{width:100%;border-collapse:collapse;background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:#f0f2ec}td strong{font-variant-numeric:tabular-nums}a{color:var(--green)}.status{font-weight:700;font-size:12px;white-space:nowrap}.match{color:#236b45}.mismatch{color:#9b5520}.none{color:#9b5520}.details{font-size:13px;color:var(--muted);margin-top:5px}.note{font-size:13px;color:var(--muted);max-width:500px}.toolbar{display:flex;gap:12px;align-items:center;margin:22px 0}.button{border:0;background:var(--green);color:white;padding:11px 16px;border-radius:8px;font:inherit;cursor:pointer}.button:disabled{opacity:.5;cursor:wait}#run-status{font-size:13px;color:var(--muted)}footer{margin-top:24px;font-size:13px;color:var(--muted)}iframe{position:absolute;width:1px;height:1px;left:-10000px;border:0}
+@media(max-width:680px){main{margin-top:25px}table,tbody,tr,td{display:block;width:100%}thead{display:none}tr{padding:12px;border-bottom:1px solid var(--line)}td{padding:5px 2px;border:0}td:first-child{font-weight:700;font-size:16px}.note{max-width:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <p>DDC FINDER / QUALITY CHECKS</p>
+    <h1>Real-book test collection</h1>
+    <p>These checks compare DDC Finder's local suggestions with numbers visible in real library catalogues. A match means the suggestion appears in at least one cited catalogue; it does not mean that number is the only correct choice.</p>
+  </div>
+  <div class="summary" id="summary"><span class="pill">Loading test collection…</span></div>
+  <div class="toolbar"><button class="button" id="run-tests" type="button">Run checks again</button><span id="run-status" role="status">Preparing tests…</span></div>
+  <table>
+    <thead><tr><th>Book / edition</th><th>DDC Finder</th><th>Catalogue evidence</th><th>Result</th></tr></thead>
+    <tbody id="test-results"><tr><td colspan="4">Loading…</td></tr></tbody>
+  </table>
+  <footer>Source records are linked individually. This is a small, manually curated benchmark, not a representative or authoritative DDC dataset. ISBN lookup is intentionally bypassed in these repeatable local-rule tests.</footer>
+</main>
+<iframe id="app-frame" title="DDC Finder test instance" src="../index.html"></iframe>
+<script src="runner.js" defer></script>
+</body></html>
