@@ -94,6 +94,44 @@
       "sources": []
     }
   ],
+  "isbnDiscoverySources": [
+    {
+      "id": "dc-books",
+      "name": "DC Books",
+      "url": "https://dcbookstore.com/",
+      "searchUrl": "https://dcbookstore.com/books/",
+      "region": "Kerala, India",
+      "purpose": "ISBN discovery for exact book editions",
+      "evidence": "The public books listing displays ISBN values and includes an ISBN search field.",
+      "accessMode": "user-initiated-search",
+      "automationStatus": "manual-link-only",
+      "notes": "Use the product listing to verify the ISBN and edition. No automated scraping or API access is enabled."
+    },
+    {
+      "id": "mathrubhumi-books",
+      "name": "Mathrubhumi Books",
+      "url": "https://www.mbibooks.com/",
+      "searchUrl": "https://www.mbibooks.com/",
+      "region": "Kerala, India",
+      "purpose": "ISBN discovery for exact book editions",
+      "evidence": "Public product catalogue exposes book listings and genre metadata; ISBN must be checked on the individual product record.",
+      "accessMode": "user-initiated-search",
+      "automationStatus": "manual-link-only",
+      "notes": "No automated ISBN extraction is enabled until a supported public API or permitted feed is verified."
+    },
+    {
+      "id": "atlantic-books",
+      "name": "Atlantic Books",
+      "url": "https://atlanticbooks.com/",
+      "searchUrl": "https://atlanticbooks.com/",
+      "region": "India",
+      "purpose": "ISBN discovery for exact book editions",
+      "evidence": "Public catalogue exposes product and publisher/subject metadata; ISBN must be checked on the individual product record.",
+      "accessMode": "user-initiated-search",
+      "automationStatus": "manual-link-only",
+      "notes": "No automated ISBN extraction is enabled until a supported public API or permitted feed is verified."
+    }
+  ],
   "fieldPolicy": {
     "preferredDdcField": "MARC 082",
     "requiredEvidence": [
