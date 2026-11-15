@@ -103,6 +103,7 @@ const titleInput = document.querySelector("#book-title");
 const authorInput = document.querySelector("#book-author");
 const subjectInput = document.querySelector("#book-subject");
 const isbnInput = document.querySelector("#book-isbn");
+const languageInput = document.querySelector("#book-language");
 
 
 function isValidIsbn(value) {
@@ -158,6 +159,7 @@ function renderResults(book, ranked, sourceNote = "") {
   const author = book.author ? '<span class="meta-chip">Author: ' + escapeHtml(book.author) + '</span>' : "";
   const subject = book.subject ? '<span class="meta-chip">Subject details supplied</span>' : '<span class="meta-chip">Title-based match</span>';
   const isbn = book.isbn ? '<span class="meta-chip">ISBN: ' + escapeHtml(book.isbn) + '</span>' : "";
+  const language = book.language ? '<span class="meta-chip">Language: ' + escapeHtml(book.language) + '</span>' : "";
   const confidenceLabel = sourceNote ? "ISBN metadata match" : best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
   const alternativeHtml = alternatives.length
     ? '<div class="result-divider"></div><h3 class="result-subtitle">Other possible subject areas</h3><ul class="alternatives">' +
@@ -168,7 +170,7 @@ function renderResults(book, ranked, sourceNote = "") {
     '<div class="ddc-number">' + escapeHtml(best.number) + '</div>' +
     '<h2 class="ddc-heading">' + escapeHtml(best.heading) + '</h2>' +
     '<p class="result-description">' + escapeHtml(best.description) + '</p>' + (sourceNote ? '<p class="result-reason">' + escapeHtml(sourceNote) + '</p>' : "") +
-    '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + subject + isbn + '</div>' +
+    '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + language + subject + isbn + '</div>' +
     '<div class="result-divider"></div><h3 class="result-subtitle">Why this was suggested</h3>' +
     '<p class="result-reason">The following term(s) matched the preliminary subject guide: ' + escapeHtml(best.matched.join(", ")) + '. This is a keyword-based match, not a full subject analysis of the book.</p>' +
     alternativeHtml +
@@ -224,6 +226,7 @@ form.addEventListener("submit", async event => {
     title: titleInput.value.trim(),
     author: authorInput.value.trim(),
     subject: subjectInput.value.trim(),
+    language: languageInput.value,
     isbn: isbnInput.value.trim()
   };
   const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
@@ -281,7 +284,17 @@ form.addEventListener("submit", async event => {
       submitButton.innerHTML = originalButtonText;
     }
   }
-  const searchable = normalise([book.title, book.author, book.subject].filter(Boolean).join(" "));
+  const subjectText = normalise(book.subject);
+  const languageHints = [];
+  if (book.language === "Malayalam") {
+    if (/\\b(autobiography|biography|memoir)\\b|ആത്മകഥ|ജീവചരിത്രം/u.test(subjectText)) languageHints.push("malayalam autobiography");
+    else if (/\\b(novel|fiction|short stor(y|ies))\\b|നോവൽ|കഥകൾ/u.test(subjectText)) languageHints.push("malayalam fiction");
+    else if (/\\b(poetry|poem|poems)\\b|കവിത/u.test(subjectText)) languageHints.push("malayalam poetry");
+    else if (/\\b(drama|play|plays)\\b|നാടകം/u.test(subjectText)) languageHints.push("malayalam drama");
+    else if (/\\b(essay|essays)\\b|ലേഖന/u.test(subjectText)) languageHints.push("malayalam essays");
+    else if (/\\bliterature\\b|സാഹിത്യം/u.test(subjectText)) languageHints.push("malayalam literature");
+  }
+  const searchable = normalise([book.title, book.author, book.subject, ...languageHints].filter(Boolean).join(" "));
   if (!book.title) {
     titleInput.focus();
     return;
