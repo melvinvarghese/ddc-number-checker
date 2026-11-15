@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "purpose": "Regression fixtures built from publicly visible library catalogue records. Catalogue DDC values are observations, not a universal gold standard.",
+  "test_mode": "Local subject-guide path; ISBN is deliberately omitted from form input so external metadata lookups do not affect repeatability.",
+  "cases": [
+    {
+      "id": "wings-of-fire-en",
+      "title": "Wings of Fire: An Autobiography",
+      "author": "A. P. J. Abdul Kalam; Arun Tiwari",
+      "language": "English",
+      "isbn": "9788173711466",
+      "input": {
+        "title": "Wings of Fire",
+        "author": "A. P. J. Abdul Kalam",
+        "subject": "",
+        "isbn": ""
+      },
+      "observed_app_number": "509.2",
+      "observed_catalogue_numbers": [
+        "509.2",
+        "925",
+        "954.0531092"
+      ],
+      "catalogue_records": [
+        {
+          "library": "NLU Odisha",
+          "ddc": "509.2",
+          "url": "https://opac.nluo.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=2036"
+        },
+        {
+          "library": "IIT Dharwad",
+          "ddc": "509.2",
+          "url": "https://opac.iitdh.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=4251"
+        },
+        {
+          "library": "IIIT Kottayam",
+          "ddc": "925",
+          "url": "https://opac.iiitkottayam.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=1121"
+        },
+        {
+          "library": "Kerala State Central Library",
+          "ddc": "954.0531092",
+          "url": "https://catalogue.statelibrary.kerala.gov.in/cgi-bin/koha/opac-detail.pl?biblionumber=253503"
+        }
+      ],
+      "note": "The current special-case suggestion matches several records, but the other catalogue choices remain valid evidence of local practice."
+    },
+    {
+      "id": "discovery-of-india",
+      "title": "The Discovery of India",
+      "author": "Jawaharlal Nehru",
+      "language": "English",
+      "isbn": "9780143031031",
+      "input": {
+        "title": "The Discovery of India",
+        "author": "Jawaharlal Nehru",
+        "subject": "Indian history",
+        "isbn": ""
+      },
+      "observed_app_number": "954",
+      "observed_catalogue_numbers": [
+        "954"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Indian Institute of Petroleum and Energy",
+          "ddc": "954",
+          "url": "https://opac.iipe.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=432"
+        },
+        {
+          "library": "Cotton University",
+          "ddc": "954",
+          "url": "https://opac.cottonuniversity.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=38032"
+        }
+      ],
+      "note": "The subject description is supplied deliberately; a title-only search is not expected to infer the historical subject reliably."
+    },
+    {
+      "id": "psychology-of-money",
+      "title": "The Psychology of Money",
+      "author": "Morgan Housel",
+      "language": "English",
+      "isbn": "9789390166268",
+      "input": {
+        "title": "The Psychology of Money",
+        "author": "Morgan Housel",
+        "subject": "wealth, greed, happiness and personal finance",
+        "isbn": ""
+      },
+      "observed_app_number": "150",
+      "observed_catalogue_numbers": [
+        "150",
+        "332.4019"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Caritas CDI Library",
+          "ddc": "150",
+          "url": "https://library.caritascdi.org/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=336"
+        },
+        {
+          "library": "SRM University Andhra Pradesh",
+          "ddc": "332.4019",
+          "url": "https://koha.srmap.edu.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=14404"
+        }
+      ],
+      "note": "This is a useful ambiguity test: the title triggers psychology, while the book's financial subject can support an economics-oriented classification."
+    },
+    {
+      "id": "god-of-small-things",
+      "title": "The God of Small Things",
+      "author": "Arundhati Roy",
+      "language": "English",
+      "isbn": "9780143028574",
+      "input": {
+        "title": "The God of Small Things",
+        "author": "Arundhati Roy",
+        "subject": "English fiction",
+        "isbn": ""
+      },
+      "observed_app_number": "823",
+      "observed_catalogue_numbers": [
+        "820-31",
+        "823",
+        "823.914"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Kumaraguru College of Technology",
+          "ddc": "820-31",
+          "url": "https://library.kct.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=130564"
+        },
+        {
+          "library": "VAST Central Library",
+          "ddc": "823",
+          "url": "https://library.vidyaacademy.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=22785"
+        },
+        {
+          "library": "IIT Dharwad",
+          "ddc": "823.914",
+          "url": "https://opac.iitdh.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=749"
+        }
+      ],
+      "note": "The catalogue records use different levels of specificity and notation for the same English novel."
+    },
+    {
+      "id": "alchemist-english",
+      "title": "The Alchemist",
+      "author": "Paulo Coelho",
+      "language": "English",
+      "isbn": "9788172234980",
+      "input": {
+        "title": "The Alchemist",
+        "author": "Paulo Coelho",
+        "subject": "English fiction",
+        "isbn": ""
+      },
+      "observed_app_number": "823",
+      "observed_catalogue_numbers": [
+        "823"
+      ],
+      "catalogue_records": [
+        {
+          "library": "College of Natural Resources Library",
+          "ddc": "823",
+          "url": "https://library.cnr.edu.bt/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=6482"
+        }
+      ],
+      "note": "The English-language fiction subject is supplied to test the English fiction rule."
+    },
+    {
+      "id": "agnichirakukal-malayalam",
+      "title": "Agnichirakukal (Wings of Fire)",
+      "author": "A. P. J. Abdul Kalam",
+      "language": "Malayalam translation",
+      "isbn": "8171309909",
+      "input": {
+        "title": "Agnichirakukal",
+        "author": "A. P. J. Abdul Kalam",
+        "subject": "Malayalam literature Malayalam autobiography",
+        "isbn": ""
+      },
+      "observed_app_number": "891.4",
+      "observed_catalogue_numbers": [
+        "894.81296"
+      ],
+      "catalogue_records": [
+        {
+          "library": "KILA Headquarters Library",
+          "ddc": "894.81296",
+          "url": "https://opac.kila.ac.in/bib/20652"
+        }
+      ],
+      "note": "The current guide only offers a broad Indic-literature suggestion here. This is a known precision gap: Malayalam literature needs a language-specific and form-sensitive rule."
+    }
+  ]
+}
