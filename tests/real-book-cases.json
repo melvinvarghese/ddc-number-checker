@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Regression fixtures built from publicly visible library catalogue records. Catalogue DDC values are observations, not a universal gold standard.",
-  "test_mode": "Local subject-guide path; ISBN is deliberately omitted from form input so external metadata lookups do not affect repeatability.",
+  "test_mode": "Local subject-guide path; ISBN is deliberately omitted from form input so external metadata lookups do not affect repeatability. Language is supplied explicitly where known.",
   "cases": [
     {
       "id": "wings-of-fire-en",
@@ -13,7 +13,8 @@
         "title": "Wings of Fire",
         "author": "A. P. J. Abdul Kalam",
         "subject": "",
-        "isbn": ""
+        "isbn": "",
+        "language": "English"
       },
       "observed_app_number": "509.2",
       "observed_catalogue_numbers": [
@@ -55,7 +56,8 @@
         "title": "The Discovery of India",
         "author": "Jawaharlal Nehru",
         "subject": "Indian history",
-        "isbn": ""
+        "isbn": "",
+        "language": "English"
       },
       "observed_app_number": "954",
       "observed_catalogue_numbers": [
@@ -85,7 +87,8 @@
         "title": "The Psychology of Money",
         "author": "Morgan Housel",
         "subject": "wealth, greed, happiness and personal finance",
-        "isbn": ""
+        "isbn": "",
+        "language": "English"
       },
       "observed_app_number": "150",
       "observed_catalogue_numbers": [
@@ -116,7 +119,8 @@
         "title": "The God of Small Things",
         "author": "Arundhati Roy",
         "subject": "English fiction",
-        "isbn": ""
+        "isbn": "",
+        "language": "English"
       },
       "observed_app_number": "823",
       "observed_catalogue_numbers": [
@@ -153,7 +157,8 @@
         "title": "The Alchemist",
         "author": "Paulo Coelho",
         "subject": "English fiction",
-        "isbn": ""
+        "isbn": "",
+        "language": "English"
       },
       "observed_app_number": "823",
       "observed_catalogue_numbers": [
@@ -178,7 +183,8 @@
         "title": "Agnichirakukal",
         "author": "A. P. J. Abdul Kalam",
         "subject": "Malayalam literature Malayalam autobiography",
-        "isbn": ""
+        "isbn": "",
+        "language": "Malayalam"
       },
       "observed_app_number": "894.81296",
       "observed_catalogue_numbers": [
@@ -203,7 +209,8 @@
         "title": "Aadujeevitham",
         "author": "Benyamin",
         "subject": "Malayalam fiction novel",
-        "isbn": ""
+        "isbn": "",
+        "language": "Malayalam"
       },
       "observed_app_number": "894.8123",
       "observed_catalogue_numbers": [
@@ -234,7 +241,8 @@
         "title": "Ente Katha",
         "author": "Madhavikutty",
         "subject": "Malayalam autobiography",
-        "isbn": ""
+        "isbn": "",
+        "language": "Malayalam"
       },
       "observed_app_number": "894.812092",
       "observed_catalogue_numbers": [
