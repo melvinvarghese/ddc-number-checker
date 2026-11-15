@@ -282,6 +282,84 @@
         }
       ],
       "note": "KILA catalogues this Malayalam translation of Great Expectations under the broad Malayalam literature number. The fixture tests that the app does not assume the author's original language determines the edition's classification."
+    },
+    {
+      "id": "tamil-literature-history",
+      "title": "தமிழ் இலக்கிய வரலாறு",
+      "author": "சி. சேதுராமன்",
+      "language": "Tamil",
+      "isbn": "9788123433264",
+      "input": {
+        "title": "தமிழ் இலக்கிய வரலாறு",
+        "author": "சி. சேதுராமன்",
+        "subject": "Tamil literature history",
+        "isbn": "",
+        "language": "Tamil"
+      },
+      "observed_app_number": "894.811",
+      "observed_catalogue_numbers": [
+        "894.811"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Central University of Tamil Nadu",
+          "ddc": "894.811",
+          "url": "https://library.cutn.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=40143"
+        }
+      ],
+      "note": "The catalogue record identifies the work as Tamil literary history and assigns 894.811."
+    },
+    {
+      "id": "hindi-literature-history",
+      "title": "आधुनिक हिंदी साहित्य का इतिहास",
+      "author": "Bachchan Singh",
+      "language": "Hindi",
+      "isbn": "9788180318979",
+      "input": {
+        "title": "आधुनिक हिंदी साहित्य का इतिहास",
+        "author": "Bachchan Singh",
+        "subject": "Hindi literature history",
+        "isbn": "",
+        "language": "Hindi"
+      },
+      "observed_app_number": "891.43",
+      "observed_catalogue_numbers": [
+        "891.43"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Central University of Tamil Nadu",
+          "ddc": "891.43",
+          "url": "https://library.cutn.ac.in/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=16232"
+        }
+      ],
+      "note": "The CUTN catalogue classifies this Hindi literary history at 891.43."
+    },
+    {
+      "id": "bengali-literature-history",
+      "title": "Chaaritra Puja",
+      "author": "Rabindranath Thakur",
+      "language": "Bengali",
+      "isbn": "",
+      "input": {
+        "title": "Chaaritra Puja",
+        "author": "Rabindranath Thakur",
+        "subject": "Bengali literature",
+        "isbn": "",
+        "language": "Bengali"
+      },
+      "observed_app_number": "891.44",
+      "observed_catalogue_numbers": [
+        "891.44"
+      ],
+      "catalogue_records": [
+        {
+          "library": "Dr. Suryya Kumar Bhuyan Library, Cotton University",
+          "ddc": "891.44",
+          "url": "https://opac.cottonuniversity.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=12538"
+        }
+      ],
+      "note": "The Cotton University catalogue record lists Bengali Literature as a subject and 891.44 as its DDC class."
     }
   ]
 }
