@@ -27,6 +27,16 @@ Open `index.html` in a modern browser. No build step or package installation is 
 
 Expected URL: `https://melvinvarghese.github.io/ddc-number-checker/`
 
+## Real-book regression checks
+
+A small benchmark based on linked library catalogue records is available at:
+
+`https://melvinvarghese.github.io/ddc-number-checker/tests/`
+
+It runs repeatable local-rule searches and flags whether each suggestion appears in at least one cited catalogue. Multiple DDC numbers are preserved when catalogues differ. The benchmark is evidence for review, not a universal gold standard. See [tests/README.md](tests/README.md) for how to add records and interpret results.
+
+GitHub Actions also checks JavaScript syntax and validates the benchmark data on pushes and pull requests.
+
 ## Embed in WordPress
 
 After GitHub Pages is live, add a Custom HTML block to the relevant post or page on **melvinvarghese.in**:
