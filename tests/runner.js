@@ -15,6 +15,8 @@ async function runCase(test, doc) {
   doc.querySelector("#book-title").value = input.title;
   doc.querySelector("#book-author").value = input.author;
   doc.querySelector("#book-subject").value = input.subject;
+  const languageField = doc.querySelector("#book-language");
+  if (languageField) languageField.value = input.language || "";
   doc.querySelector("#book-isbn").value = "";
   form.requestSubmit();
   await wait(80);
