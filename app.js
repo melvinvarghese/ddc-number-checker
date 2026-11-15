@@ -362,6 +362,17 @@ function catalogueSearchUrl(source, book) {
   return source.searchUrl + encodeURIComponent(query);
 }
 
+const BOOKSTORE_ISBN_SOURCES = [
+  { name: "DC Books", domain: "dcbookstore.com", note: "Publisher and bookseller catalogue; its books listing exposes ISBN and includes an ISBN search field." },
+  { name: "Mathrubhumi Books", domain: "mbibooks.com", note: "Publisher and bookseller catalogue; check the exact product edition for ISBN." },
+  { name: "Atlantic Books", domain: "atlanticbooks.com", note: "Bookseller catalogue; check the exact product edition for ISBN." }
+];
+
+function bookstoreSearchUrl(source, book) {
+  const terms = [book.isbn, book.title, book.author].filter(Boolean).join(" ");
+  return "https://www.google.com/search?q=" + encodeURIComponent("site:" + source.domain + " " + terms);
+}
+
 function renderCatalogueRecords(container, records, statuses, message) {
   const rows = records.map(record => {
     const number = Array.isArray(record.ddc) ? record.ddc.join(", ") : "";
@@ -381,7 +392,13 @@ function renderCatalogueRecords(container, records, statuses, message) {
       '<a href="' + escapeHtml(catalogueSearchUrl(source, window.ddcCurrentBook || {})) + '" target="_blank" rel="noopener noreferrer">' +
       '<span><strong>' + escapeHtml(source.name) + '</strong><small>' + escapeHtml(source.platform) + '</small></span><span>Search ↗</span></a>'
     ).join("") + '</div>' +
-    '<p class="field-hint">Only records with a DDC value explicitly supplied in MARC 082 are shown as DDC evidence. A catalogue&#39;s generic call number is not assumed to be Dewey.</p>';
+    '<p class="field-hint">Only records with a DDC value explicitly supplied in MARC 082 are shown as DDC evidence. A catalogue&#39;s generic call number is not assumed to be Dewey.</p>' +
+    '<div class="catalogue-discovery-heading bookstore-heading"><div><span class="section-kicker">ISBN DISCOVERY</span><h3 class="result-subtitle">Search Indian book catalogues</h3></div></div>' +
+    '<p class="field-hint">These searches help locate the ISBN for the exact edition. They open external search results; DDC Finder does not scrape or import bookstore pages automatically. Confirm the ISBN on the product page before using it.</p>' +
+    '<div class="catalogue-link-list bookstore-link-list">' + BOOKSTORE_ISBN_SOURCES.map(source =>
+      '<a href="' + escapeHtml(bookstoreSearchUrl(source, window.ddcCurrentBook || {})) + '" target="_blank" rel="noopener noreferrer">' +
+      '<span><strong>' + escapeHtml(source.name) + '</strong><small>' + escapeHtml(source.note) + '</small></span><span>Find ISBN ↗</span></a>'
+    ).join("") + '</div>';
 }
 
 async function appendCatalogueSearch(book) {
