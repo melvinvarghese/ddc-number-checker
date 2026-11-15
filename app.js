@@ -183,6 +183,7 @@ function renderResults(book, ranked, sourceNote = "", options = {}) {
     '<p class="result-reason">Matched guide terms: <strong>' + escapeHtml(best.matched.join(", ")) + '</strong>. The local guide matched these terms in the title, author or subject details you supplied. This is a keyword match, not a full analysis of the book.</p>' +
     '<p class="result-reason"><strong>Classification context:</strong> DDC classification depends on the work’s subject, disciplinary focus and, where relevant, its approach or form. A title alone is not enough to settle the number.</p>' +
     '<div id="catalogue-evidence" class="catalogue-evidence" hidden></div>' +
+    '<section id="catalogue-discovery" class="catalogue-discovery" aria-label="Library catalogue search"></section>' +
     alternativeHtml +
     '<div class="decision-box"><h3 class="result-subtitle">Record your cataloguing decision</h3><p class="result-reason">Choose the number you decide to use after checking the book and your authorised DDC source.</p><label class="decision-label" for="decision-number">Final number selected</label><select id="decision-number">' + ranked.slice(0, 4).map(item => '<option value="' + escapeHtml(item.number) + '">' + escapeHtml(item.number + ' — ' + item.heading) + '</option>').join("") + '</select><label class="decision-label" for="decision-note">Cataloguer’s note <span>(optional)</span></label><textarea id="decision-note" rows="2" maxlength="500" placeholder="Why did you choose this number? Note local policy or edition details…"></textarea><button class="copy-button decision-save" type="button" id="save-decision">Save decision on this device</button><p class="field-hint">Saved locally in this browser only. No account or cloud storage.</p></div>' +
     '<div class="result-actions"><button class="copy-button" type="button" id="copy-number">Copy DDC number</button><button class="copy-button" type="button" id="copy-summary">Copy result summary</button></div>' +
@@ -197,6 +198,7 @@ function renderResults(book, ranked, sourceNote = "", options = {}) {
   });
   results.hidden = false;
   if (options.includeEvidence !== false && !window.ddcBatchMode) appendCatalogueEvidence(book);
+  if (!window.ddcBatchMode) appendCatalogueSearch(book);
   if (options.scroll !== false && !window.ddcBatchMode) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
@@ -324,6 +326,86 @@ async function copyText(text, button, successMessage) {
     window.setTimeout(() => { button.textContent = original; }, 1600);
   } catch {
     window.prompt("Copy this text:", text);
+  }
+}
+
+const KERALA_CATALOGUES = [
+  {
+    name: "SCERT Kerala Library",
+    platform: "Koha",
+    url: "https://scert.libraryopac.in/",
+    searchUrl: "https://scert.libraryopac.in/cgi-bin/koha/opac-search.pl?q="
+  },
+  {
+    name: "Kerala State Central Library",
+    platform: "Koha",
+    url: "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-main.pl",
+    searchUrl: "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-search.pl?q="
+  },
+  {
+    name: "KALNET — Kerala Academic Library Network",
+    platform: "VuFind",
+    url: "https://kalnet.kshec.kerala.gov.in/vufind/",
+    searchUrl: "https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor="
+  },
+  {
+    name: "KILA Headquarters Library",
+    platform: "Koha",
+    url: "https://opac.kila.ac.in/",
+    searchUrl: "https://opac.kila.ac.in/cgi-bin/koha/opac-search.pl?q="
+  }
+];
+
+function catalogueSearchUrl(source, book) {
+  const query = book.isbn || [book.title, book.author].filter(Boolean).join(" ");
+  if (source.platform === "VuFind") return source.searchUrl + encodeURIComponent(query) + "&type=AllFields";
+  return source.searchUrl + encodeURIComponent(query);
+}
+
+function renderCatalogueRecords(container, records, statuses, message) {
+  const rows = records.map(record => {
+    const number = Array.isArray(record.ddc) ? record.ddc.join(", ") : "";
+    const details = [record.title, record.author].filter(Boolean).join(" — ");
+    return '<li><div><strong>' + escapeHtml(number) + '</strong><span>' + escapeHtml(details || "Catalogue record") + '</span><small>' +
+      escapeHtml(record.library || "Library catalogue") + ' · MARC ' + escapeHtml(record.marcField || "082") +
+      (record.match ? ' · ' + escapeHtml(record.match) : '') + '</small></div><a href="' +
+      escapeHtml(record.searchUrl || record.sourceUrl || "#") + '" target="_blank" rel="noopener noreferrer">Open source</a></li>';
+  }).join("");
+  const statusText = statuses.map(item => item.name + ": " + (item.status === "ok" ? item.records + " matching records" : item.message || "unavailable")).join(" · ");
+  container.innerHTML =
+    '<div class="catalogue-discovery-heading"><div><span class="section-kicker">LIBRARY CATALOGUE EVIDENCE</span><h3 class="result-subtitle">Search Kerala library catalogues</h3></div>' +
+    '<span class="catalogue-status">' + (records.length ? records.length + ' DDC record' + (records.length === 1 ? '' : 's') : 'Catalogue search') + '</span></div>' +
+    (records.length ? '<ul class="catalogue-live-records">' + rows + '</ul>' : '<p class="result-reason">' + escapeHtml(message || "No verified MARC 082 records were returned. You can still search the catalogues directly below.") + '</p>') +
+    (statusText ? '<p class="catalogue-status-detail">' + escapeHtml(statusText) + '</p>' : '') +
+    '<div class="catalogue-link-list">' + KERALA_CATALOGUES.map(source =>
+      '<a href="' + escapeHtml(catalogueSearchUrl(source, window.ddcCurrentBook || {})) + '" target="_blank" rel="noopener noreferrer">' +
+      '<span><strong>' + escapeHtml(source.name) + '</strong><small>' + escapeHtml(source.platform) + '</small></span><span>Search ↗</span></a>'
+    ).join("") + '</div>' +
+    '<p class="field-hint">Only records with a DDC value explicitly supplied in MARC 082 are shown as DDC evidence. A catalogue's generic call number is not assumed to be Dewey.</p>';
+}
+
+async function appendCatalogueSearch(book) {
+  const container = document.querySelector("#catalogue-discovery");
+  if (!container || window.ddcBatchMode) return;
+  window.ddcCurrentBook = book;
+  const api = String(window.DDC_CATALOGUE_API || "").trim();
+  if (!api) {
+    renderCatalogueRecords(container, [], [], "Automated catalogue retrieval is being prepared. Until the connector is deployed, these links let you search the public catalogues directly.");
+    return;
+  }
+  container.innerHTML = '<div class="catalogue-discovery-heading"><div><span class="section-kicker">LIBRARY CATALOGUE EVIDENCE</span><h3 class="result-subtitle">Searching Kerala catalogues…</h3></div></div><p class="result-reason">Checking verified public catalogue connectors. This may take a few seconds.</p>';
+  try {
+    const endpoint = new URL(api);
+    endpoint.searchParams.set("title", book.title || "");
+    if (book.author) endpoint.searchParams.set("author", book.author);
+    if (book.isbn) endpoint.searchParams.set("isbn", book.isbn);
+    const response = await fetch(endpoint.toString(), { headers: { "Accept": "application/json" } });
+    if (!response.ok) throw new Error("Catalogue connector returned HTTP " + response.status);
+    const data = await response.json();
+    renderCatalogueRecords(container, Array.isArray(data.records) ? data.records : [], Array.isArray(data.sources) ? data.sources : [], data.message || data.note);
+  } catch (error) {
+    console.warn("Catalogue search unavailable.", error);
+    renderCatalogueRecords(container, [], [], "Automated catalogue search is temporarily unavailable. Use the direct OPAC links below.");
   }
 }
 
