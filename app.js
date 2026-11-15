@@ -101,27 +101,21 @@ function renderResults(book, ranked) {
     '<p class="result-caveat">Please verify this suggestion using an authorised DDC schedule and the actual content of the book. The tool may miss context, genre, audience and special classification instructions.</p>' +
     '</article>';
 
-  document.querySelector("#copy-number").addEventListener("click", () => copyText(best.number, "DDC number copied"));
-  document.querySelector("#copy-summary").addEventListener("click", () => {
+  document.querySelector("#copy-number").addEventListener("click", event => copyText(best.number, event.currentTarget, "DDC number copied"));
+  document.querySelector("#copy-summary").addEventListener("click", event => {
     const summary = book.title + (book.author ? " — " + book.author : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary keyword-based suggestion; verify before cataloguing.";
-    copyText(summary, "Summary copied");
+    copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
   results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-async function copyText(text, successMessage) {
+async function copyText(text, button, successMessage) {
   try {
     await navigator.clipboard.writeText(text);
-    const live = document.querySelector("#copy-number");
-    const button = event?.currentTarget;
-    if (button) {
-      const original = button.textContent;
-      button.textContent = successMessage;
-      window.setTimeout(() => { button.textContent = original; }, 1600);
-    } else if (live) {
-      live.textContent = successMessage;
-    }
+    const original = button.textContent;
+    button.textContent = successMessage;
+    window.setTimeout(() => { button.textContent = original; }, 1600);
   } catch {
     window.prompt("Copy this text:", text);
   }
