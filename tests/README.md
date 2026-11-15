@@ -25,7 +25,7 @@ Click **Run checks again** after changing subject rules.
 - **No suggestion:** the local guide did not produce a result for that input.
 - Multiple catalogue numbers are retained when libraries classify the same work differently.
 
-The test form deliberately leaves ISBN blank. This isolates the local subject-matching rules from external API responses, making repeated runs comparable. ISBN metadata lookup should be tested separately.
+The test form supplies the edition language where known and deliberately leaves ISBN blank. This isolates the local subject-matching rules from external API responses, making repeated runs comparable. ISBN metadata lookup should be tested separately.
 
 ## Adding a case
 
