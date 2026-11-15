@@ -573,7 +573,7 @@ form.addEventListener("submit", async event => {
     else if (book.workType === "poetry" || /\b(poetry|poem|poems)\b|കവിത/u.test(classificationContext)) languageHints.push("malayalam poetry");
     else if (book.workType === "drama" || /\b(drama|play|plays)\b|നാടകം/u.test(classificationContext)) languageHints.push("malayalam drama");
     else if (book.workType === "essays" || /\b(essay|essays)\b|ലേഖന/u.test(classificationContext)) languageHints.push("malayalam essays");
-    else if (/\bliterature\b|സാഹിത്യം/u.test(subjectText)) languageHints.push("malayalam literature");
+    else if (/\bliterature\b|സാഹിത്യം/u.test(classificationContext)) languageHints.push("malayalam literature");
   }
   if (book.language === "English" && book.workType === "fiction") languageHints.push("english fiction");
   if (book.language === "English" && book.workType === "poetry") languageHints.push("poetry");
