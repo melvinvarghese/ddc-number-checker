@@ -50,14 +50,14 @@ const isbnInput = document.querySelector("#book-isbn");
 
 
 function isValidIsbn(value) {
-  if (/^\\d{9}[\\dX]$/.test(value)) {
+  if (/^\d{9}[\dX]$/.test(value)) {
     const sum = value.split("").reduce((total, char, index) => {
       const digit = char === "X" ? 10 : Number(char);
       return total + digit * (10 - index);
     }, 0);
     return sum % 11 === 0;
   }
-  if (/^\\d{13}$/.test(value)) {
+  if (/^\d{13}$/.test(value)) {
     const sum = value.split("").reduce((total, char, index) =>
       total + Number(char) * (index % 2 === 0 ? 1 : 3), 0);
     return sum % 10 === 0;
@@ -76,7 +76,7 @@ function scoreRule(rule, text) {
     const key = normalise(keyword);
     if (!key) continue;
     const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const expression = new RegExp("(^|\\s)" + escaped + "($|\\s)", "u");
+    const expression = new RegExp("(^|\s)" + escaped + "($|\s)", "u");
     if (expression.test(text)) {
       score += key.includes(" ") ? 3 : 2;
       matched.push(keyword);
@@ -145,9 +145,10 @@ form.addEventListener("submit", event => {
   const book = {
     title: titleInput.value.trim(),
     author: authorInput.value.trim(),
-    subject: subjectInput.value.trim()
+    subject: subjectInput.value.trim(),
+    isbn: isbnInput.value.trim()
   };
-  const cleanIsbn = book.isbn.replace(/[\\s-]/g, "");
+  const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
   if (cleanIsbn && !isValidIsbn(cleanIsbn)) {
     renderEmpty("Please check the ISBN.", "Enter a valid ISBN-10 or ISBN-13. You can also remove the ISBN and search using the title and author.");
     isbnInput.focus();
@@ -160,7 +161,7 @@ form.addEventListener("submit", event => {
     return;
   }
   const wingsMatch = normalise(book.title).includes("wings of fire") &&
-    /\\b(kalam|abdul)\\b/.test(normalise(book.author));
+    /\b(kalam|abdul)\b/.test(normalise(book.author));
   if (wingsMatch || cleanIsbn === "9788173711466" || cleanIsbn === "8173711461") {
     const special = {
       number: "509.2",
