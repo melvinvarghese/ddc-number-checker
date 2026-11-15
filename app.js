@@ -39,6 +39,59 @@ const SUBJECT_RULES = [
   { number: "910", heading: "Geography & travel", keywords: ["geography", "travel", "tourism", "travel guide"], description: "The terms suggest geography, travel or tourism." },
   { number: "920", heading: "Biography & genealogy", keywords: ["biography", "autobiography", "memoir", "life of"], description: "The terms suggest biography, autobiography or memoir." },
   { number: "954", heading: "History of India", keywords: ["indian history", "history of india", "india history"], description: "The terms suggest the history of India." }
+  { number: "023", heading: "Library operations", keywords: ["library operations", "library administration", "library planning", "library finance"], description: "The terms suggest the administration and operation of libraries." },
+  { number: "025.1", heading: "Library administration", keywords: ["library administration", "library management", "library policy", "library planning"], description: "The terms suggest management and administration of library services." },
+  { number: "025.3", heading: "Cataloguing & classification", keywords: ["descriptive cataloguing", "subject cataloguing", "bibliographic description", "authority control", "cataloguing rules", "cataloging rules"], description: "The terms suggest the organisation and description of library materials." },
+  { number: "025.4", heading: "Subject analysis & classification", keywords: ["subject classification", "knowledge organization", "knowledge organisation", "subject indexing", "indexing languages"], description: "The terms suggest subject analysis, indexing or classification systems." },
+  { number: "025.5", heading: "Library reference services", keywords: ["reference services", "reference work", "information services", "reader advisory"], description: "The terms suggest reference and information services in libraries." },
+  { number: "025.6", heading: "Circulation & access services", keywords: ["library circulation", "library lending", "interlibrary loan", "document delivery"], description: "The terms suggest lending, circulation or access services." },
+  { number: "025.8", heading: "Library materials preservation", keywords: ["library preservation", "book preservation", "book conservation", "document preservation", "archival preservation"], description: "The terms suggest preservation and conservation of library materials." },
+  { number: "027", heading: "General libraries", keywords: ["public libraries", "academic libraries", "college libraries", "school libraries", "special libraries", "university libraries"], description: "The terms suggest a type of library or library service setting." },
+  { number: "028", heading: "Reading & use of information", keywords: ["reading habits", "reading promotion", "reading skills", "information literacy", "media literacy"], description: "The terms suggest reading, information use or information literacy." },
+  { number: "005.74", heading: "Databases", keywords: ["database", "databases", "database management", "sql", "relational database"], description: "The terms suggest database design or management." },
+  { number: "005.8", heading: "Computer security", keywords: ["cybersecurity", "cyber security", "computer security", "information security", "network security", "data privacy"], description: "The terms suggest computer, network or information security." },
+  { number: "006.7", heading: "Web design & development", keywords: ["web development", "web design", "html", "css", "website development"], description: "The terms suggest creating and developing websites." },
+  { number: "150.19", heading: "Psychological schools & systems", keywords: ["psychoanalysis", "behaviourism", "behaviorism", "cognitive science"], description: "The terms suggest a school or theoretical system in psychology." },
+  { number: "155.2", heading: "Individual psychology", keywords: ["personality", "personality psychology", "individual differences"], description: "The terms suggest personality and individual psychological differences." },
+  { number: "155.4", heading: "Child psychology", keywords: ["child psychology", "child development", "developmental psychology", "early childhood development"], description: "The terms suggest psychological development during childhood." },
+  { number: "155.5", heading: "Adolescent psychology", keywords: ["adolescent psychology", "teenage psychology", "adolescent development"], description: "The terms suggest psychological development during adolescence." },
+  { number: "158.2", heading: "Interpersonal relations", keywords: ["interpersonal relationships", "communication skills", "conflict resolution", "friendship"], description: "The terms suggest personal relationships and interpersonal skills." },
+  { number: "158.3", heading: "Counselling", keywords: ["counselling", "counseling", "guidance", "psychotherapy"], description: "The terms suggest counselling or guidance. Clinical works may require a more specific class." },
+  { number: "158.7", heading: "Industrial & organisational psychology", keywords: ["industrial psychology", "organizational psychology", "organisational psychology", "workplace psychology"], description: "The terms suggest psychological aspects of work and organisations." },
+  { number: "305", heading: "Social groups", keywords: ["social groups", "gender studies", "men's studies", "women's studies", "identity studies"], description: "The terms suggest the study of social groups and identity." },
+  { number: "306", heading: "Culture & institutions", keywords: ["culture", "cultural studies", "customs", "popular culture", "social institutions"], description: "The terms suggest culture, customs or social institutions." },
+  { number: "324", heading: "Political processes", keywords: ["elections", "voting", "political campaigns", "political parties"], description: "The terms suggest elections and political processes." },
+  { number: "327", heading: "International relations", keywords: ["foreign policy", "diplomacy", "international security", "international politics"], description: "The terms suggest relations between states and international affairs." },
+  { number: "338", heading: "Production & economics", keywords: ["economic development", "industrial economics", "economic growth", "development economics"], description: "The terms suggest economic development or production." },
+  { number: "341", heading: "International law", keywords: ["international law", "humanitarian law", "law of nations"], description: "The terms suggest international law." },
+  { number: "345", heading: "Criminal law", keywords: ["criminal law", "criminal justice", "penal law"], description: "The terms suggest criminal law and justice." },
+  { number: "362", heading: "Social problems & services", keywords: ["social work", "social welfare", "child welfare", "community services"], description: "The terms suggest social welfare, social work or community services." },
+  { number: "363", heading: "Other social problems", keywords: ["environmental policy", "pollution", "public safety", "disaster management"], description: "The terms suggest public social problems, safety or environmental policy." },
+  { number: "371", heading: "Schools & teaching", keywords: ["school education", "classroom teaching", "inclusive education", "special education", "teacher training"], description: "The terms suggest school education, teaching or special education." },
+  { number: "372", heading: "Primary education", keywords: ["primary education", "elementary education", "primary school teaching"], description: "The terms suggest primary or elementary education." },
+  { number: "378", heading: "Higher education", keywords: ["higher education", "university education", "college education", "higher educational institutions"], description: "The terms suggest colleges, universities or higher education." },
+  { number: "410", heading: "Linguistics", keywords: ["linguistics", "historical linguistics", "sociolinguistics", "applied linguistics"], description: "The terms suggest the scientific study of language." },
+  { number: "420", heading: "English language", keywords: ["english grammar", "english language", "english vocabulary", "english linguistics"], description: "The terms suggest the English language. Literature in English belongs to a different area." },
+  { number: "491.4", heading: "Indo-Iranian languages", keywords: ["malayalam language", "malayalam grammar", "hindi language", "sanskrit language"], description: "The terms suggest one of the Indo-Iranian languages; verify the exact language subdivision." },
+  { number: "519.5", heading: "Statistical mathematics", keywords: ["statistics", "statistical analysis", "probability theory", "regression analysis"], description: "The terms suggest statistical methods or probability." },
+  { number: "550", heading: "Earth sciences", keywords: ["geology", "earth science", "geophysics", "mineralogy"], description: "The terms suggest geology or the study of the Earth." },
+  { number: "560", heading: "Paleontology", keywords: ["paleontology", "palaeontology", "fossils", "prehistoric life"], description: "The terms suggest fossils and prehistoric life." },
+  { number: "580", heading: "Plants", keywords: ["botany", "plant science", "plant biology", "plants"], description: "The terms suggest botany or the study of plants." },
+  { number: "612", heading: "Human physiology", keywords: ["human physiology", "anatomy and physiology", "human anatomy"], description: "The terms suggest the structure or functioning of the human body." },
+  { number: "615", heading: "Pharmacology & therapeutics", keywords: ["pharmacology", "pharmacy", "drug therapy", "medicinal drugs"], description: "The terms suggest medicines, pharmacology or therapeutic use of drugs." },
+  { number: "641", heading: "Food & drink", keywords: ["food science", "nutrition", "food and nutrition", "food studies"], description: "The terms suggest food, nutrition or food science." },
+  { number: "658.4", heading: "Executive management", keywords: ["strategic management", "project management", "operations management", "quality management"], description: "The terms suggest organisational strategy, operations or executive management." },
+  { number: "658.4", heading: "Human resources", keywords: ["human resource management", "personnel management", "talent management", "recruitment"], description: "The terms suggest managing people and staffing in organisations." },
+  { number: "741.5", heading: "Comics & graphic novels", keywords: ["comics", "comic books", "graphic novels", "manga"], description: "The terms suggest comics or graphic storytelling; fiction and national-literature treatment may vary." },
+  { number: "746", heading: "Textile arts & crafts", keywords: ["embroidery", "weaving", "knitting", "textile crafts", "sewing"], description: "The terms suggest textile-based arts and crafts." },
+  { number: "791.4", heading: "Motion pictures & television", keywords: ["cinema", "film studies", "movie history", "television studies", "filmmaking"], description: "The terms suggest film, cinema or television." },
+  { number: "808", heading: "Rhetoric & writing", keywords: ["creative writing", "writing skills", "essay writing", "rhetoric"], description: "The terms suggest writing, composition or rhetoric." },
+  { number: "823", heading: "English fiction", keywords: ["english fiction", "british fiction", "english novels"], description: "The terms may suggest English-language fiction; use the appropriate literary period and local practice." },
+  { number: "891.4", heading: "Indic literatures", keywords: ["malayalam literature", "hindi literature", "sanskrit literature"], description: "The terms suggest literature in an Indic language; verify the exact language and literary form." },
+  { number: "940", heading: "History of Europe", keywords: ["european history", "history of europe", "world war one", "world war two", "second world war"], description: "The terms suggest European history or major events in European history." },
+  { number: "950", heading: "History of Asia", keywords: ["asian history", "history of asia", "east asian history"], description: "The terms suggest the history of Asia; use a more specific regional class when possible." },
+  { number: "954", heading: "History of India", keywords: ["indian history", "history of india", "india history", "modern india"], description: "The terms suggest the history of India." },
+  { number: "995.4", heading: "History of Kerala", keywords: ["kerala history", "history of kerala", "travancore history", "cochin history"], description: "The terms suggest the history of Kerala or its historical regions." }
 ];
 
 const form = document.querySelector("#search-form");
@@ -140,7 +193,15 @@ async function copyText(text, button, successMessage) {
   }
 }
 
-async function lookupIsbn(isbn) {\n  const url = "https://openlibrary.org/search.json?isbn=" + encodeURIComponent(isbn) + "&fields=title,author_name,subject,dewey_decimal_class,isbn&limit=1";\n  const response = await fetch(url, { headers: { "Accept": "application/json" } });\n  if (!response.ok) throw new Error("ISBN lookup unavailable");\n  const data = await response.json();\n  return data.docs && data.docs.length ? data.docs[0] : null;\n}\n\nform.addEventListener("submit", async event => {
+async function lookupIsbn(isbn) {
+  const url = "https://openlibrary.org/search.json?isbn=" + encodeURIComponent(isbn) + "&fields=title,author_name,subject,dewey_decimal_class,isbn&limit=1";
+  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!response.ok) throw new Error("ISBN lookup unavailable");
+  const data = await response.json();
+  return data.docs && data.docs.length ? data.docs[0] : null;
+}
+
+form.addEventListener("submit", async event => {
   event.preventDefault();
   const book = {
     title: titleInput.value.trim(),
@@ -239,6 +300,6 @@ async function lookupIsbn(isbn) {\n  const url = "https://openlibrary.org/search
   renderResults(book, ranked);
 });
 
-document.querySelector(".top-link").addEventListener("click", () => {
+document.querySelector('.top-link[href="#about"]').addEventListener("click", () => {
   document.querySelector("#about").scrollIntoView({ behavior: "smooth" });
 });
