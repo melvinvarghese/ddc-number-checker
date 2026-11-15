@@ -50,7 +50,42 @@ async function run() {
     const doc = frame.contentDocument;
     if (!doc || !doc.querySelector("#search-form")) throw new Error("The DDC Finder test frame did not load.");
     const results = [];
+    doc.defaultView.ddcSkipRemoteLookup = true;
     for (const test of dataset.cases) results.push(await runCase(test, doc));
+    doc.defaultView.ddcSkipRemoteLookup = false;
+    const titleField = doc.querySelector("#book-title");
+    const authorField = doc.querySelector("#book-author");
+    const subjectField = doc.querySelector("#book-subject");
+    const languageField = doc.querySelector("#book-language");
+    const isbnField = doc.querySelector("#book-isbn");
+    const nativeFetch = doc.defaultView.fetch;
+    doc.defaultView.fetch = async url => {
+      if (String(url).includes("openlibrary.org/search.json")) {
+        return {
+          ok: true,
+          json: async () => ({
+            docs: [{
+              title: "DDC Finder Metadata Test",
+              author_name: ["Example Author"],
+              subject: ["Library science"],
+              dewey_decimal_class: ["020.1"]
+            }]
+          })
+        };
+      }
+      return nativeFetch(url);
+    };
+    titleField.value = "DDC Finder Metadata Test";
+    authorField.value = "Example Author";
+    subjectField.value = "";
+    languageField.value = "";
+    isbnField.value = "";
+    doc.querySelector("#search-form").requestSubmit();
+    await wait(120);
+    const metadataPassed = doc.querySelector("#results .ddc-number")?.textContent.trim() === "020.1" &&
+      doc.querySelector("#results .result-reason")?.textContent.includes("Open Library");
+    doc.defaultView.fetch = nativeFetch;
+    doc.defaultView.ddcSkipRemoteLookup = true;
     const batchInput = doc.querySelector("#batch-input");
     const batchButton = doc.querySelector("#run-batch");
     if (!batchInput || !batchButton) throw new Error("Batch cataloguing controls were not found.");
@@ -87,8 +122,9 @@ async function run() {
       '<span class="pill">' + results.length + ' test books</span>' +
       '<span class="pill">' + matches + ' suggestions match at least one catalogue</span>' +
       '<span class="pill">' + (results.length - matches) + ' need review</span>' +
-      '<span class="pill">' + (batchPassed ? '3/3' : '0/3') + ' batch context checks passed</span>';
-    status.textContent = "Completed. " + matches + " of " + results.length + " suggestions appear in at least one cited catalogue. Batch context checks: " + (batchPassed ? "passed." : "failed; inspect batch output.");
+      '<span class="pill">' + (batchPassed ? '3/3' : '0/3') + ' batch context checks passed</span>' +
+      '<span class="pill">' + (metadataPassed ? '1/1' : '0/1') + ' title metadata lookup passed</span>';
+    status.textContent = "Completed. " + matches + " of " + results.length + " suggestions appear in at least one cited catalogue. Batch context checks: " + (batchPassed ? "passed." : "failed; inspect batch output.") + " Title metadata lookup: " + (metadataPassed ? "passed." : "failed.");
   } catch (error) {
     tableBody.innerHTML = '<tr><td colspan="4">' + safe(error.message) + '</td></tr>';
     status.textContent = "Could not complete checks.";
