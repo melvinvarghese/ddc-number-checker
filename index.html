@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ef">
+  <meta name="description" content="A free preliminary Dewey Decimal Classification helper. Enter a book title and subject to explore possible DDC numbers.">
+  <title>DDC Finder — Dewey Decimal Classification Helper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="DDC Finder home">
+        <span class="brand-mark" aria-hidden="true">D</span>
+        <span>DDC <strong>Finder</strong></span>
+      </a>
+      <a class="top-link" href="#about">About this tool <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> A librarian's classification companion</div>
+        <h1 id="page-title">Find a possible place<br>for <em>every book.</em></h1>
+        <p class="hero-copy">Explore Dewey Decimal Classification suggestions using a book's title, author and subject. A helpful starting point for your cataloguing work.</p>
+      </section>
+
+      <section class="search-card" aria-label="Book details">
+        <form id="search-form">
+          <div class="field">
+            <label for="book-title">Book title <span class="required">*</span></label>
+            <input id="book-title" name="title" type="text" placeholder="e.g. The psychology of habits" autocomplete="off" required maxlength="180">
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="book-author">Author <span class="optional">Optional</span></label>
+              <input id="book-author" name="author" type="text" placeholder="Author's name" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="book-subject">Subject / description <span class="recommended">Recommended</span></label>
+              <input id="book-subject" name="subject" type="text" placeholder="What is the book about?" maxlength="300">
+            </div>
+          </div>
+          <button class="submit-button" type="submit">
+            <span>Find suggested DDC number</span><span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+          <p class="form-note"><span aria-hidden="true">✳</span> More subject detail usually means a more useful suggestion.</p>
+        </form>
+      </section>
+
+      <section id="results" class="results-section" aria-live="polite" hidden></section>
+
+      <section class="how-section" aria-labelledby="how-title">
+        <div class="section-kicker">HOW IT WORKS</div>
+        <h2 id="how-title">A useful starting point,<br>not a final authority.</h2>
+        <div class="steps">
+          <article class="step">
+            <span class="step-number">01</span>
+            <h3>Describe the book</h3>
+            <p>Enter its title and, when possible, its subject or a short description.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">02</span>
+            <h3>Explore suggestions</h3>
+            <p>Review matching subject areas, possible numbers and the reasoning behind them.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">03</span>
+            <h3>Verify before use</h3>
+            <p>Check the result against the book itself and an authorised DDC source before cataloguing.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="about" class="notice">
+        <div class="notice-icon" aria-hidden="true">i</div>
+        <div>
+          <h2>About these suggestions</h2>
+          <p>DDC Finder is an experimental, rule-based discovery aid. It does not provide official or authoritative Dewey Decimal Classification numbers, and a title alone may not reveal a book's true subject. The suggestions are generated from a limited, curated subject guide. Always verify classification using the appropriate edition of the DDC schedules and your library's cataloguing policy.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="footer-brand" href="./">DDC Finder</a>
+      <span>Made as an independent library utility.</span>
+      <a href="#page-title">Back to top ↑</a>
+    </footer>
+  </div>
+</body>
+</html>
