@@ -95,14 +95,14 @@ function renderEmpty(message, detail) {
   results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function renderResults(book, ranked) {
+function renderResults(book, ranked, sourceNote = "") {
   const best = ranked[0];
   const alternatives = ranked.slice(1, 4);
   const title = escapeHtml(book.title);
   const author = book.author ? '<span class="meta-chip">Author: ' + escapeHtml(book.author) + '</span>' : "";
   const subject = book.subject ? '<span class="meta-chip">Subject details supplied</span>' : '<span class="meta-chip">Title-based match</span>';
   const isbn = book.isbn ? '<span class="meta-chip">ISBN: ' + escapeHtml(book.isbn) + '</span>' : "";
-  const confidenceLabel = best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
+  const confidenceLabel = sourceNote ? "ISBN metadata match" : best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
   const alternativeHtml = alternatives.length
     ? '<div class="result-divider"></div><h3 class="result-subtitle">Other possible subject areas</h3><ul class="alternatives">' +
       alternatives.map(item => '<li><span>' + escapeHtml(item.heading) + '</span><strong>' + escapeHtml(item.number) + '</strong></li>').join("") + '</ul>'
@@ -111,7 +111,7 @@ function renderResults(book, ranked) {
     '<div class="result-top"><span class="result-label">Preliminary DDC suggestion</span><span class="confidence">' + confidenceLabel + '</span></div>' +
     '<div class="ddc-number">' + escapeHtml(best.number) + '</div>' +
     '<h2 class="ddc-heading">' + escapeHtml(best.heading) + '</h2>' +
-    '<p class="result-description">' + escapeHtml(best.description) + '</p>' +
+    '<p class="result-description">' + escapeHtml(best.description) + '</p>' + (sourceNote ? '<p class="result-reason">' + escapeHtml(sourceNote) + '</p>' : "") +
     '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + subject + isbn + '</div>' +
     '<div class="result-divider"></div><h3 class="result-subtitle">Why this was suggested</h3>' +
     '<p class="result-reason">The following term(s) matched the preliminary subject guide: ' + escapeHtml(best.matched.join(", ")) + '. This is a keyword-based match, not a full subject analysis of the book.</p>' +
@@ -122,7 +122,7 @@ function renderResults(book, ranked) {
 
   document.querySelector("#copy-number").addEventListener("click", event => copyText(best.number, event.currentTarget, "DDC number copied"));
   document.querySelector("#copy-summary").addEventListener("click", event => {
-    const summary = book.title + (book.author ? " — " + book.author : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary keyword-based suggestion; verify before cataloguing.";
+    const summary = book.title + (book.author ? " — " + book.author : "") + (book.isbn ? "\nISBN: " + book.isbn : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary suggestion; verify before cataloguing.";
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
@@ -140,7 +140,7 @@ async function copyText(text, button, successMessage) {
   }
 }
 
-form.addEventListener("submit", event => {
+async function lookupIsbn(isbn) {\n  const url = "https://openlibrary.org/search.json?isbn=" + encodeURIComponent(isbn) + "&fields=title,author_name,subject,dewey_decimal_class,isbn&limit=1";\n  const response = await fetch(url, { headers: { "Accept": "application/json" } });\n  if (!response.ok) throw new Error("ISBN lookup unavailable");\n  const data = await response.json();\n  return data.docs && data.docs.length ? data.docs[0] : null;\n}\n\nform.addEventListener("submit", async event => {
   event.preventDefault();
   const book = {
     title: titleInput.value.trim(),
@@ -155,6 +155,39 @@ form.addEventListener("submit", event => {
     return;
   }
   book.isbn = cleanIsbn;
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.innerHTML;
+  if (cleanIsbn) {
+    submitButton.disabled = true;
+    submitButton.innerHTML = "<span>Checking ISBN…</span>";
+    try {
+      const record = await lookupIsbn(cleanIsbn);
+      if (record) {
+        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : [];
+        if (classes.length) {
+          const candidates = classes.slice(0, 4).map((number, index) => ({
+            number: String(number),
+            heading: index === 0 ? "DDC value in ISBN metadata" : "Additional DDC value in metadata",
+            score: 10 - index,
+            matched: ["ISBN metadata"],
+            description: "This number is associated with the ISBN record returned by Open Library. Check the source record and verify the number against your library's classification policy."
+          }));
+          renderResults(book, candidates, "Metadata record: " + (record.title || book.title) + (Array.isArray(record.author_name) && record.author_name.length ? " — " + record.author_name.join(", ") : "") + ". Metadata provider: Open Library.");
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalButtonText;
+          return;
+        }
+        if (Array.isArray(record.subject) && record.subject.length) {
+          book.subject = [book.subject, record.subject.slice(0, 15).join(" ")].filter(Boolean).join(" ");
+        }
+      }
+    } catch (error) {
+      console.warn("ISBN metadata lookup failed; using local subject guide.", error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    }
+  }
   const searchable = normalise([book.title, book.author, book.subject].filter(Boolean).join(" "));
   if (!book.title) {
     titleInput.focus();
