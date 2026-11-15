@@ -335,6 +335,60 @@ async function lookupIsbn(isbn) {
   return data.docs && data.docs.length ? data.docs[0] : null;
 }
 
+async function lookupTitle(book) {
+  const params = new URLSearchParams({
+    title: book.title,
+    fields: "title,author_name,subject,dewey_decimal_class,isbn",
+    limit: "8"
+  });
+  if (book.author) params.set("author", book.author);
+  const response = await fetch("https://openlibrary.org/search.json?" + params.toString(), {
+    headers: { "Accept": "application/json" }
+  });
+  if (!response.ok) throw new Error("Title search unavailable");
+  const data = await response.json();
+  const docs = Array.isArray(data.docs) ? data.docs : [];
+  const wantedTitle = normalise(book.title);
+  const wantedAuthor = normalise(book.author);
+  const exact = docs.filter(doc => normalise(doc.title || "") === wantedTitle);
+  const candidates = exact.length ? exact : docs.filter(doc => {
+    const candidateTitle = normalise(doc.title || "");
+    return candidateTitle && (candidateTitle.includes(wantedTitle) || wantedTitle.includes(candidateTitle));
+  });
+  if (!candidates.length) return null;
+  const authorMatched = candidates.find(doc => {
+    if (!wantedAuthor) return true;
+    const authors = (doc.author_name || []).map(normalise);
+    return authors.some(name => name.includes(wantedAuthor) || wantedAuthor.includes(name));
+  });
+  return authorMatched || (wantedAuthor ? null : candidates[0]);
+}
+
+async function lookupGoogleBooksByTitle(book) {
+  const query = ["intitle:" + book.title, book.author ? "inauthor:" + book.author : ""].filter(Boolean).join(" ");
+  const url = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURIComponent(query) + "&maxResults=5";
+  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!response.ok) throw new Error("Google Books title lookup unavailable");
+  const data = await response.json();
+  const items = Array.isArray(data.items) ? data.items : [];
+  const wantedTitle = normalise(book.title);
+  const wantedAuthor = normalise(book.author);
+  const matches = items.filter(item => normalise(item.volumeInfo?.title || "") === wantedTitle);
+  const match = matches.find(item => {
+    if (!wantedAuthor) return true;
+    return (item.volumeInfo?.authors || []).some(author => {
+      const name = normalise(author);
+      return name.includes(wantedAuthor) || wantedAuthor.includes(name);
+    });
+  }) || (!wantedAuthor ? matches[0] : null);
+  if (!match) return null;
+  return {
+    title: match.volumeInfo.title || "",
+    author_name: Array.isArray(match.volumeInfo.authors) ? match.volumeInfo.authors : [],
+    subject: Array.isArray(match.volumeInfo.categories) ? match.volumeInfo.categories : []
+  };
+}
+
 async function lookupGoogleBooks(isbn) {
   const url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + encodeURIComponent(isbn) + "&maxResults=1";
   const response = await fetch(url, { headers: { "Accept": "application/json" } });
@@ -564,6 +618,45 @@ form.addEventListener("submit", async event => {
       }
     } catch (error) {
       console.warn("ISBN metadata lookup failed; using local subject guide.", error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    }
+  }
+  if (!cleanIsbn) {
+    submitButton.disabled = true;
+    submitButton.innerHTML = "<span>Searching catalogue records…</span>";
+    try {
+      let record = await lookupTitle(book);
+      if (record) {
+        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : [];
+        if (classes.length) {
+          const candidates = classes.slice(0, 4).map((number, index) => ({
+            number: String(number),
+            heading: index === 0 ? "DDC value in Open Library record" : "Additional DDC value in Open Library record",
+            score: 10 - index,
+            matched: ["Open Library title and author record"],
+            description: "This classification is associated with a matching title record in Open Library. Check the linked catalogue context and verify the number for this edition."
+          }));
+          renderResults(book, candidates, "Matching title record: " + (record.title || book.title) + (Array.isArray(record.author_name) && record.author_name.length ? " — " + record.author_name.join(", ") : "") + ". Source: Open Library.");
+          return;
+        }
+        if (Array.isArray(record.subject) && record.subject.length) {
+          book.subject = [book.subject, record.subject.slice(0, 20).join(" ")].filter(Boolean).join(" ");
+        }
+      }
+      if (!record || !(Array.isArray(record.subject) && record.subject.length)) {
+        try {
+          const googleRecord = await lookupGoogleBooksByTitle(book);
+          if (googleRecord) {
+            book.subject = [book.subject, ...(googleRecord.subject || [])].filter(Boolean).join(" ");
+          }
+        } catch (googleError) {
+          console.warn("Google Books title lookup unavailable.", googleError);
+        }
+      }
+    } catch (titleError) {
+      console.warn("Title metadata lookup unavailable; using the local subject guide.", titleError);
     } finally {
       submitButton.disabled = false;
       submitButton.innerHTML = originalButtonText;
