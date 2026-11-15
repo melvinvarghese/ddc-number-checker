@@ -72,4 +72,8 @@ async function run() {
 }
 
 runButton.addEventListener("click", run);
-frame.addEventListener("load", run, { once: true });
+if (frame.contentDocument && frame.contentDocument.readyState === "complete" && frame.contentDocument.querySelector("#search-form")) {
+  run();
+} else {
+  frame.addEventListener("load", run, { once: true });
+}
