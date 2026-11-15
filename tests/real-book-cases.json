@@ -256,6 +256,32 @@
         }
       ],
       "note": "The catalogue uses 894.812 092 for this Malayalam autobiography; punctuation/spacing in the call number is normalised here for comparison."
+    },
+    {
+      "id": "uyarnna-pratheekshakal-malayalam-translation",
+      "title": "Uyarnna Pratheekshakal",
+      "author": "Charles Dickens",
+      "language": "Malayalam translation",
+      "isbn": "8185391270",
+      "input": {
+        "title": "Uyarnna Pratheekshakal",
+        "author": "Charles Dickens",
+        "subject": "Malayalam translation",
+        "isbn": "",
+        "language": "Malayalam"
+      },
+      "observed_app_number": "894.812",
+      "observed_catalogue_numbers": [
+        "894.812"
+      ],
+      "catalogue_records": [
+        {
+          "library": "KILA Headquarters Library",
+          "ddc": "894.812",
+          "url": "https://opac.kila.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=15869"
+        }
+      ],
+      "note": "KILA catalogues this Malayalam translation of Great Expectations under the broad Malayalam literature number. The fixture tests that the app does not assume the author's original language determines the edition's classification."
     }
   ]
 }
