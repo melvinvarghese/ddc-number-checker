@@ -82,3 +82,8 @@ The preliminary guide includes broad language-literature suggestions for Tamil (
 ### Explainable suggestions and catalogue comparisons
 
 For exact titles included in the real-book benchmark, the result page can display the linked library records and their observed DDC numbers. When records differ, the interface makes that disagreement visible instead of presenting one library's choice as universal. The explanation also identifies the matched guide terms and reminds users that DDC classification depends on subject, discipline and, where relevant, approach or form. The catalogue comparison is illustrative evidence only; it does not replace checking the actual edition against an authorised DDC schedule.
+
+
+### Classification context and local decision log
+
+The form offers optional fields for work type, intended audience and main approach. Work type may help the preliminary language/genre hints; audience and approach are displayed as context and do not independently generate a DDC number. After reviewing the candidates, a librarian can select the number actually adopted and add a note. Decisions are stored in the current browser's local storage on that device only and can be exported as CSV. They are not sent to a server. Clearing browser site data may remove this local log, so export it for retention.
