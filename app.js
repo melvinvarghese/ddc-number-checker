@@ -92,6 +92,9 @@ const SUBJECT_RULES = [
   { number: "894.8121", heading: "Malayalam poetry", keywords: ["malayalam poetry", "malayalam poems", "poems in malayalam", "മലയാള കവിത", "മലയാള കവിതകൾ"], description: "The terms suggest Malayalam poetry. Confirm the detailed subdivision against your authorised DDC edition." },
   { number: "894.8122", heading: "Malayalam drama", keywords: ["malayalam drama", "malayalam plays", "plays in malayalam", "മലയാള നാടകം", "മലയാള നാടകങ്ങൾ"], description: "The terms suggest Malayalam drama. Confirm the detailed subdivision against your authorised DDC edition." },
   { number: "894.8124", heading: "Malayalam essays", keywords: ["malayalam essays", "essays in malayalam", "മലയാള ലേഖനങ്ങൾ"], description: "The terms suggest essays in Malayalam. Confirm the detailed subdivision against your authorised DDC edition." },
+  { number: "894.811", heading: "Tamil literature", keywords: ["tamil literature", "literature in tamil", "tamil literary works", "தமிழ் இலக்கியம்"], description: "The terms suggest Tamil literature. Central University of Tamil Nadu catalogue records use 894.811 for Tamil literary works; verify the specific form and local policy." },
+  { number: "891.43", heading: "Hindi literature", keywords: ["hindi literature", "literature in hindi", "hindi literary works", "हिंदी साहित्य"], description: "The terms suggest Hindi literature. Central University of Tamil Nadu catalogue records use 891.43 for Hindi literary works; verify the specific form and local policy." },
+  { number: "891.44", heading: "Bengali literature", keywords: ["bengali literature", "literature in bengali", "bengali literary works", "বাংলা সাহিত্য"], description: "The terms suggest Bengali literature. University library catalogues use 891.44 for Bengali literary works; verify the specific form and local policy." },
   { number: "940", heading: "History of Europe", keywords: ["european history", "history of europe", "world war one", "world war two", "second world war"], description: "The terms suggest European history or major events in European history." },
   { number: "950", heading: "History of Asia", keywords: ["asian history", "history of asia", "east asian history"], description: "The terms suggest the history of Asia; use a more specific regional class when possible." },
   { number: "954.83", heading: "History of Kerala", keywords: ["kerala history", "history of kerala", "travancore history", "cochin history"], description: "The terms suggest the history of Kerala or its historical regions; verify the subdivision used by your library." }
@@ -296,6 +299,9 @@ form.addEventListener("submit", async event => {
     else if (/\\b(essay|essays)\\b|ലേഖന/u.test(subjectText)) languageHints.push("malayalam essays");
     else if (/\\bliterature\\b|സാഹിത്യം/u.test(subjectText)) languageHints.push("malayalam literature");
   }
+  if (book.language === "Tamil" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|தமிழ்/u.test(subjectText)) languageHints.push("tamil literature");
+  if (book.language === "Hindi" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|हिंदी/u.test(subjectText)) languageHints.push("hindi literature");
+  if (book.language === "Bengali" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|বাংলা/u.test(subjectText)) languageHints.push("bengali literature");
   const searchable = normalise([book.title, book.author, book.subject, ...languageHints].filter(Boolean).join(" "));
   if (!book.title) {
     titleInput.focus();
