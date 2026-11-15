@@ -465,10 +465,11 @@ async function processBatch() {
   }
   window.ddcBatchResults = resultsList;
   output.innerHTML = '<div class="batch-summary"><strong>' + resultsList.filter(item => item.number).length + ' of ' + resultsList.length + ' books received preliminary suggestions.</strong><button class="copy-button" type="button" id="export-batch">Export results CSV</button></div>' +
-    '<div class="batch-table-wrap"><table class="batch-table"><thead><tr><th>Book</th><th>Suggested DDC</th><th>Other candidates</th><th>Status</th></tr></thead><tbody>' +
-    resultsList.map(item => '<tr><td><strong>' + escapeHtml(item.title) + '</strong>' + (item.author ? '<span>' + escapeHtml(item.author) + '</span>' : '') + '</td><td>' + (item.number ? '<strong>' + escapeHtml(item.number) + '</strong><span>' + escapeHtml(item.heading) + '</span>' : '—') + '</td><td>' + escapeHtml(item.alternatives.join(", ") || "—") + '</td><td>' + escapeHtml(item.status) + '</td></tr>').join("") +
-    '</tbody></table></div><p class="field-hint">These are preliminary keyword-guide results. No number is marked as approved or final. Review each book individually before adding it to your catalogue.</p>';
+    '<div class="batch-table-wrap"><table class="batch-table"><thead><tr><th>Book</th><th>Suggested DDC</th><th>Other candidates</th><th>Your final number</th><th>Cataloguer note</th><th>Status</th></tr></thead><tbody>' +
+    resultsList.map((item, index) => '<tr><td><strong>' + escapeHtml(item.title) + '</strong>' + (item.author ? '<span>' + escapeHtml(item.author) + '</span>' : '') + '</td><td>' + (item.number ? '<strong>' + escapeHtml(item.number) + '</strong><span>' + escapeHtml(item.heading) + '</span>' : '—') + '</td><td>' + escapeHtml(item.alternatives.join(", ") || "—") + '</td><td><input class="batch-final-number" data-index="' + index + '" type="text" inputmode="decimal" maxlength="24" placeholder="Not decided" aria-label="Final DDC number for ' + escapeHtml(item.title) + '"></td><td><textarea class="batch-cataloguer-note" data-index="' + index + '" rows="2" maxlength="300" placeholder="Optional note" aria-label="Cataloguer note for ' + escapeHtml(item.title) + '"></textarea></td><td>' + escapeHtml(item.status) + '</td></tr>').join("") +
+    '</tbody></table></div><p class="field-hint">Use the final-number field only after checking the book and an authorised DDC source. Leaving it blank means no final decision has been recorded.</p>';
   output.hidden = false;
+  results.hidden = true;
   status.textContent = "Finished processing " + resultsList.length + " books.";
   document.querySelector("#export-batch").addEventListener("click", exportBatchResults);
 }
@@ -476,9 +477,15 @@ async function processBatch() {
 function exportBatchResults() {
   const records = window.ddcBatchResults || [];
   if (!records.length) return;
-  const columns = ["row", "title", "author", "subject", "language", "workType", "number", "heading", "alternatives", "status"];
+  const columns = ["row", "title", "author", "subject", "language", "workType", "suggestedNumber", "suggestedHeading", "alternatives", "finalNumber", "cataloguerNote", "status"];
   const quote = value => '"' + String(value ?? "").replace(/"/g, '""') + '"';
-  const csv = [columns.join(","), ...records.map(record => columns.map(key => quote(key === "alternatives" ? record.alternatives.join("; ") : record[key])).join(","))].join("\r\n");
+  const output = document.querySelector("#batch-results");
+  const csv = [columns.join(","), ...records.map((record, index) => {
+    const finalNumber = output.querySelector('.batch-final-number[data-index="' + index + '"]')?.value.trim() || "";
+    const cataloguerNote = output.querySelector('.batch-cataloguer-note[data-index="' + index + '"]')?.value.trim() || "";
+    const row = { ...record, suggestedNumber: record.number, suggestedHeading: record.heading, finalNumber, cataloguerNote };
+    return columns.map(key => quote(key === "alternatives" ? record.alternatives.join("; ") : row[key])).join(",");
+  })].join("\r\n");
   const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
