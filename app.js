@@ -623,7 +623,7 @@ form.addEventListener("submit", async event => {
       submitButton.innerHTML = originalButtonText;
     }
   }
-  if (!cleanIsbn && !window.ddcBatchMode) {
+  if (!cleanIsbn && !window.ddcBatchMode && !window.ddcSkipRemoteLookup) {
     submitButton.disabled = true;
     submitButton.innerHTML = "<span>Searching catalogue records…</span>";
     try {
