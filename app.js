@@ -290,18 +290,18 @@ form.addEventListener("submit", async event => {
   const subjectText = normalise(book.subject);
   const languageHints = [];
   if (book.language === "Malayalam") {
-    if (/\\b(translat(?:ion|ed)|translated from)\\b|വിവർത്തന/u.test(subjectText)) {
+    if (/\b(translat(?:ion|ed)|translated from)\b|വിവർത്തന/u.test(subjectText)) {
       languageHints.push("malayalam literature");
-    } else if (/\\b(autobiography|biography|memoir)\\b|ആത്മകഥ|ജീവചരിത്രം/u.test(subjectText)) languageHints.push("malayalam autobiography");
-    else if (/\\b(novel|fiction|short stor(y|ies))\\b|നോവൽ|കഥകൾ/u.test(subjectText)) languageHints.push("malayalam fiction");
-    else if (/\\b(poetry|poem|poems)\\b|കവിത/u.test(subjectText)) languageHints.push("malayalam poetry");
-    else if (/\\b(drama|play|plays)\\b|നാടകം/u.test(subjectText)) languageHints.push("malayalam drama");
-    else if (/\\b(essay|essays)\\b|ലേഖന/u.test(subjectText)) languageHints.push("malayalam essays");
-    else if (/\\bliterature\\b|സാഹിത്യം/u.test(subjectText)) languageHints.push("malayalam literature");
+    } else if (/\b(autobiography|biography|memoir)\b|ആത്മകഥ|ജീവചരിത്രം/u.test(subjectText)) languageHints.push("malayalam autobiography");
+    else if (/\b(novel|fiction|short stor(y|ies))\b|നോവൽ|കഥകൾ/u.test(subjectText)) languageHints.push("malayalam fiction");
+    else if (/\b(poetry|poem|poems)\b|കവിത/u.test(subjectText)) languageHints.push("malayalam poetry");
+    else if (/\b(drama|play|plays)\b|നാടകം/u.test(subjectText)) languageHints.push("malayalam drama");
+    else if (/\b(essay|essays)\b|ലേഖന/u.test(subjectText)) languageHints.push("malayalam essays");
+    else if (/\bliterature\b|സാഹിത്യം/u.test(subjectText)) languageHints.push("malayalam literature");
   }
-  if (book.language === "Tamil" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|தமிழ்/u.test(subjectText)) languageHints.push("tamil literature");
-  if (book.language === "Hindi" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|हिंदी/u.test(subjectText)) languageHints.push("hindi literature");
-  if (book.language === "Bengali" && /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|বাংলা/u.test(subjectText)) languageHints.push("bengali literature");
+  if (book.language === "Tamil" && /\b(literature|fiction|poetry|novel|drama|essays?)\b|தமிழ்/u.test(subjectText)) languageHints.push("tamil literature");
+  if (book.language === "Hindi" && /\b(literature|fiction|poetry|novel|drama|essays?)\b|हिंदी/u.test(subjectText)) languageHints.push("hindi literature");
+  if (book.language === "Bengali" && /\b(literature|fiction|poetry|novel|drama|essays?)\b|বাংলা/u.test(subjectText)) languageHints.push("bengali literature");
   const searchable = normalise([book.title, book.author, book.subject, ...languageHints].filter(Boolean).join(" "));
   if (!book.title) {
     titleInput.focus();
