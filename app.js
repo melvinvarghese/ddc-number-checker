@@ -338,7 +338,7 @@ async function lookupIsbn(isbn) {
 async function lookupTitle(book) {
   const params = new URLSearchParams({
     title: book.title,
-    fields: "title,author_name,subject,dewey_decimal_class,isbn",
+    fields: "title,author_name,subject,dewey_decimal_class,ddc,isbn",
     limit: "8"
   });
   if (book.author) params.set("author", book.author);
@@ -598,7 +598,7 @@ form.addEventListener("submit", async event => {
         }
       }
       if (record) {
-        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : [];
+        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : Array.isArray(record.ddc) ? record.ddc : [];
         if (classes.length) {
           const candidates = classes.slice(0, 4).map((number, index) => ({
             number: String(number),
@@ -623,7 +623,7 @@ form.addEventListener("submit", async event => {
       submitButton.innerHTML = originalButtonText;
     }
   }
-  if (!cleanIsbn) {
+  if (!cleanIsbn && !window.ddcBatchMode) {
     submitButton.disabled = true;
     submitButton.innerHTML = "<span>Searching catalogue records…</span>";
     try {
