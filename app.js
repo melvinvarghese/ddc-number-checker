@@ -381,7 +381,7 @@ function renderCatalogueRecords(container, records, statuses, message) {
       '<a href="' + escapeHtml(catalogueSearchUrl(source, window.ddcCurrentBook || {})) + '" target="_blank" rel="noopener noreferrer">' +
       '<span><strong>' + escapeHtml(source.name) + '</strong><small>' + escapeHtml(source.platform) + '</small></span><span>Search ↗</span></a>'
     ).join("") + '</div>' +
-    '<p class="field-hint">Only records with a DDC value explicitly supplied in MARC 082 are shown as DDC evidence. A catalogue's generic call number is not assumed to be Dewey.</p>';
+    '<p class="field-hint">Only records with a DDC value explicitly supplied in MARC 082 are shown as DDC evidence. A catalogue&#39;s generic call number is not assumed to be Dewey.</p>';
 }
 
 async function appendCatalogueSearch(book) {
