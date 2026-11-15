@@ -215,6 +215,12 @@ async function lookupIsbn(isbn) {\n  const url = "https://openlibrary.org/search
       score: 1,
       matched: ["Alternative catalogue practice"],
       description: "A broader biography class used by some catalogues."
+    }, {
+      number: "954.0531092",
+      heading: "Indian history — biography",
+      score: 1,
+      matched: ["Kerala State Central Library catalogue"],
+      description: "A more specific number used by the Kerala State Central Library catalogue for its record of this title."
     }]);
     return;
   }
