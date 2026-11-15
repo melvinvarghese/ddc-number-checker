@@ -105,5 +105,56 @@
       "a generic call number displayed in an OPAC",
       "an unlabelled shelving location or item number"
     ]
-  }
+  },
+  "description": "Public OPAC discovery links. Automated SRU retrieval remains disabled until each institution's endpoint and access conditions are verified.",
+  "sources": [
+    {
+      "id": "scert-kerala",
+      "name": "SCERT Kerala Library",
+      "region": "Kerala, India",
+      "platform": "Koha",
+      "classification": "DDC documented by institution",
+      "opacUrl": "https://scert.libraryopac.in/",
+      "searchUrlTemplate": "https://scert.libraryopac.in/cgi-bin/koha/opac-search.pl?q={query}",
+      "sruEndpoint": null,
+      "automationStatus": "pending-endpoint-verification",
+      "evidenceUrl": "https://scert.kerala.gov.in/library2/"
+    },
+    {
+      "id": "kerala-state-central-library",
+      "name": "Kerala State Central Library",
+      "region": "Kerala, India",
+      "platform": "Koha",
+      "classification": "Not yet verified from MARC 082",
+      "opacUrl": "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-main.pl",
+      "searchUrlTemplate": "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-search.pl?q={query}",
+      "sruEndpoint": null,
+      "automationStatus": "pending-endpoint-verification",
+      "evidenceUrl": "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-main.pl"
+    },
+    {
+      "id": "kalnet",
+      "name": "Kerala Academic Library Network (KALNET)",
+      "region": "Kerala, India",
+      "platform": "VuFind",
+      "classification": "Varies by contributing institution; verify per record",
+      "opacUrl": "https://kalnet.kshec.kerala.gov.in/vufind/",
+      "searchUrlTemplate": "https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor={query}&type=AllFields",
+      "sruEndpoint": null,
+      "automationStatus": "pending-api-verification",
+      "evidenceUrl": "https://kshec.kerala.gov.in/images/report/annual/annualreport2023-24.pdf"
+    },
+    {
+      "id": "kila",
+      "name": "KILA Headquarters Library",
+      "region": "Kerala, India",
+      "platform": "Koha",
+      "classification": "Not yet verified from MARC 082",
+      "opacUrl": "https://opac.kila.ac.in/",
+      "searchUrlTemplate": "https://opac.kila.ac.in/cgi-bin/koha/opac-search.pl?q={query}",
+      "sruEndpoint": null,
+      "automationStatus": "pending-endpoint-verification",
+      "evidenceUrl": "https://opac.kila.ac.in/"
+    }
+  ]
 }
