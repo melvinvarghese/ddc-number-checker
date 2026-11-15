@@ -1,6 +1,6 @@
 # Real-book regression checks
 
-This folder contains a small benchmark built from publicly visible library catalogue records, including original Malayalam works and a translated Malayalam edition.
+This folder contains a small benchmark built from publicly visible library catalogue records, including Malayalam, Tamil, Hindi and Bengali works.
 
 ## Run it
 
@@ -31,4 +31,4 @@ The test form supplies the edition language where known and deliberately leaves 
 
 Add a new object to the `cases` array in `real-book-cases.json`. Include the edition and language, the exact form input to reproduce, every catalogue number you can verify, and direct URLs to the catalogue records. Do not invent a number or treat one library's record as universally authoritative.
 
-Prefer records that show ISBN, language/edition, and the DDC field together. Keep translated editions as separate cases when their language or literary classification differs.
+Prefer records that show ISBN, language/edition, and the DDC field together. Keep translated editions as separate cases when their language or literary classification differs. Broad literary-language rules should be added only after finding catalogue records for that language.
