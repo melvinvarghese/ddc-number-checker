@@ -21,7 +21,8 @@ async function runCase(test, doc) {
   const number = doc.querySelector("#results .ddc-number")?.textContent.trim() || "";
   const noMatch = Boolean(doc.querySelector("#results .empty-state"));
   const catalogue = test.observed_catalogue_numbers || [];
-  const matched = Boolean(number && catalogue.includes(number));
+  const compactNumber = value => String(value).replace(/\\s+/g, "");
+  const matched = Boolean(number && catalogue.some(value => compactNumber(value) === compactNumber(number)));
   let label, css;
   if (matched) { label = "Matches catalogue"; css = "match"; }
   else if (number) { label = "Not in cited records"; css = "mismatch"; }
