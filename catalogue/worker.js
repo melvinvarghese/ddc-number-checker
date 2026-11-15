@@ -73,7 +73,7 @@ function parseMarcRecord(recordXml, source) {
   const ddcFields = dataFields(recordXml, "082");
   const ddc = ddcFields.flatMap(field => subfields(field.xml, "a"))
     .map(value => value.trim())
-    .filter(value => /^\d{3}(?:\.\d+)?$/.test(value));
+    .filter(value => /^\d{3}(?:[./]\d+)*(?:\/\d+)?$/.test(value));
   const titleField = dataFields(recordXml, "245")[0];
   const title = titleField ? [...subfields(titleField.xml, "a"), ...subfields(titleField.xml, "b")].join(" ").trim() : "";
   const authorField = dataFields(recordXml, "100")[0] || dataFields(recordXml, "110")[0] || dataFields(recordXml, "111")[0];
@@ -128,6 +128,7 @@ function matchRecord(record, query) {
   if (query.isbn) {
     const wanted = query.isbn.replace(/[^0-9X]/gi, "").toUpperCase();
     if (record.isbn.some(value => value.toUpperCase() === wanted)) return "exact ISBN";
+    return "";
   }
   const wantedTitle = normalize(query.title);
   const foundTitle = normalize(record.title);
@@ -174,6 +175,8 @@ async function searchSource(source, cql) {
   if (/diagnostic/i.test(xml) && !/<recordData\b/i.test(xml)) throw new Error("SRU server returned a diagnostic instead of records.");
   return extractMarcRecords(xml, source);
 }
+
+export { extractMarcRecords, matchRecord, parseMarcRecord };
 
 export default {
   async fetch(request, env) {
