@@ -27,6 +27,11 @@ Open `index.html` in a modern browser. No build step or package installation is 
 
 Expected URL: `https://melvinvarghese.github.io/ddc-number-checker/`
 
+
+### Malayalam literature coverage
+
+The local guide now distinguishes Malayalam literature (894.812), fiction (894.8123), autobiography/biography examples (894.812092), poetry, drama and essays. It also recognises selected Malayalam-script subject phrases. These are preliminary subject suggestions grounded in visible catalogue examples, not a replacement for the authorised DDC schedules. The benchmark includes Aadujeevitham, Ente Katha and the Malayalam edition of Agnichirakukal to keep edition- and library-specific practice visible.
+
 ## Real-book regression checks
 
 A small benchmark based on linked library catalogue records is available at:
