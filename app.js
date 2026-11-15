@@ -86,7 +86,7 @@ const SUBJECT_RULES = [
   { number: "791.4", heading: "Motion pictures & television", keywords: ["cinema", "film studies", "movie history", "television studies", "filmmaking"], description: "The terms suggest film, cinema or television." },
   { number: "808", heading: "Rhetoric & writing", keywords: ["creative writing", "writing skills", "essay writing", "rhetoric"], description: "The terms suggest writing, composition or rhetoric." },
   { number: "823", heading: "English fiction", keywords: ["english fiction", "british fiction", "english novels"], description: "The terms may suggest English-language fiction; use the appropriate literary period and local practice." },
-  { number: "894.812", heading: "Malayalam literature", keywords: ["malayalam literature", "literature in malayalam", "malayalam literary works", "malayala sahithyam", "മലയാള സാഹിത്യം"], description: "The terms suggest Malayalam literature. Narrow this by literary form where possible; catalogues may apply additional subdivisions." },
+  { number: "894.812", heading: "Malayalam literature", keywords: ["malayalam literature", "literature in malayalam", "malayalam literary works", "malayala sahithyam", "മലയാള സാഹിത്യം"], description: "The terms suggest Malayalam literature. For translated works or when the literary form is unclear, a broader number may be used in local catalogues; verify the edition and local policy." },
   { number: "894.8123", heading: "Malayalam fiction", keywords: ["malayalam fiction", "malayalam novel", "malayalam novels", "malayalam short stories", "malayalam short story", "malayala novel", "മലയാള നോവൽ", "മലയാള നോവലുകൾ", "മലയാള കഥകൾ", "മലയാള ചെറുകഥകൾ"], description: "The terms suggest Malayalam fiction. A Kerala University catalogue uses 894.8123 for Aadujeevitham; verify the edition and local practice." },
   { number: "894.812092", heading: "Malayalam autobiography & biography", keywords: ["malayalam autobiography", "malayalam biography", "autobiography in malayalam", "biography in malayalam", "malayala jeevacharithram", "മലയാള ആത്മകഥ", "മലയാള ജീവചരിത്രം"], description: "The terms suggest biography or autobiography treated with Malayalam literature. A Sree Sankaracharya University catalogue uses 894.812 092 for Ente Katha; local cataloguing practice can differ." },
   { number: "894.8121", heading: "Malayalam poetry", keywords: ["malayalam poetry", "malayalam poems", "poems in malayalam", "മലയാള കവിത", "മലയാള കവിതകൾ"], description: "The terms suggest Malayalam poetry. Confirm the detailed subdivision against your authorised DDC edition." },
@@ -287,7 +287,9 @@ form.addEventListener("submit", async event => {
   const subjectText = normalise(book.subject);
   const languageHints = [];
   if (book.language === "Malayalam") {
-    if (/\\b(autobiography|biography|memoir)\\b|ആത്മകഥ|ജീവചരിത്രം/u.test(subjectText)) languageHints.push("malayalam autobiography");
+    if (/\\b(translat(?:ion|ed)|translated from)\\b|വിവർത്തന/u.test(subjectText)) {
+      languageHints.push("malayalam literature");
+    } else if (/\\b(autobiography|biography|memoir)\\b|ആത്മകഥ|ജീവചരിത്രം/u.test(subjectText)) languageHints.push("malayalam autobiography");
     else if (/\\b(novel|fiction|short stor(y|ies))\\b|നോവൽ|കഥകൾ/u.test(subjectText)) languageHints.push("malayalam fiction");
     else if (/\\b(poetry|poem|poems)\\b|കവിത/u.test(subjectText)) languageHints.push("malayalam poetry");
     else if (/\\b(drama|play|plays)\\b|നാടകം/u.test(subjectText)) languageHints.push("malayalam drama");
