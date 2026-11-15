@@ -153,13 +153,13 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
-function renderEmpty(message, detail) {
+function renderEmpty(message, detail, shouldScroll = true) {
   results.hidden = false;
   results.innerHTML = '<div class="empty-state"><h2>' + escapeHtml(message) + '</h2><p>' + escapeHtml(detail) + '</p></div>';
-  results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (shouldScroll) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function renderResults(book, ranked, sourceNote = "") {
+function renderResults(book, ranked, sourceNote = "", options = {}) {
   const best = ranked[0];
   const alternatives = ranked.slice(1, 4);
   const title = escapeHtml(book.title);
@@ -196,8 +196,8 @@ function renderResults(book, ranked, sourceNote = "") {
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
-  appendCatalogueEvidence(book);
-  results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (options.includeEvidence !== false) appendCatalogueEvidence(book);
+  if (options.scroll !== false) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 let catalogueDatasetPromise;
@@ -348,6 +348,147 @@ async function lookupGoogleBooks(isbn) {
     subject: Array.isArray(info.categories) ? info.categories : []
   };
 }
+
+
+function parseBatchRows(raw) {
+  const delimiter = raw.split(/\r?\n/, 1)[0].includes("\t") ? "\t" : ",";
+  const rows = [];
+  let row = [], cell = "", quoted = false;
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw[i], next = raw[i + 1];
+    if (char === '"' && quoted && next === '"') { cell += '"'; i++; }
+    else if (char === '"') quoted = !quoted;
+    else if (char === delimiter && !quoted) { row.push(cell.trim()); cell = ""; }
+    else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && next === "\n") i++;
+      row.push(cell.trim()); cell = "";
+      if (row.some(value => value !== "")) rows.push(row);
+      row = [];
+    } else cell += char;
+  }
+  row.push(cell.trim());
+  if (row.some(value => value !== "")) rows.push(row);
+  if (rows.length < 2) throw new Error("Add a header row and at least one book record.");
+  const key = value => normalise(value).replace(/[^a-z0-9]/g, "");
+  const headers = rows.shift().map(key);
+  const aliases = {
+    title: ["title", "booktitle", "bookname"],
+    author: ["author", "authors"],
+    subject: ["subject", "description", "about"],
+    language: ["language", "booklanguage"],
+    workType: ["worktype", "genre", "format"]
+  };
+  const indexes = {};
+  for (const [field, names] of Object.entries(aliases)) indexes[field] = headers.findIndex(header => names.includes(header));
+  if (indexes.title < 0) throw new Error("The header row must contain a title column.");
+  const parsed = rows.map((values, index) => {
+    const get = field => indexes[field] >= 0 ? String(values[indexes[field]] || "").trim() : "";
+    return {
+      row: index + 2, title: get("title"), author: get("author"), subject: get("subject"),
+      language: get("language"), workType: get("workType")
+    };
+  }).filter(item => item.title);
+  if (!parsed.length) throw new Error("No rows with a book title were found.");
+  if (parsed.length > 25) throw new Error("Please process no more than 25 books at a time. Split the list into smaller batches.");
+  return parsed;
+}
+
+function batchBookType(value) {
+  const v = normalise(value);
+  const map = {
+    fiction: "fiction", novel: "fiction", poetry: "poetry", poem: "poetry",
+    drama: "drama", plays: "drama", biography: "biography", autobiography: "biography",
+    memoir: "biography", translation: "translation", "translated work": "translation",
+    textbook: "textbook", academic: "textbook", reference: "reference",
+    "reference work": "reference", "practical guide": "practical", "how to": "practical",
+    essays: "essays", essay: "essays"
+  };
+  return map[v] || "";
+}
+
+async function processBatch() {
+  const input = document.querySelector("#batch-input");
+  const status = document.querySelector("#batch-status");
+  const output = document.querySelector("#batch-results");
+  const button = document.querySelector("#run-batch");
+  let books;
+  try { books = parseBatchRows(input.value); }
+  catch (error) {
+    status.textContent = error.message;
+    output.hidden = true;
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "Processing…";
+  const original = {
+    title: titleInput.value, author: authorInput.value, subject: subjectInput.value,
+    language: languageInput.value, workType: workTypeInput.value,
+    audience: audienceInput.value, approach: approachInput.value, isbn: isbnInput.value
+  };
+  const resultsList = [];
+  try {
+    for (let index = 0; index < books.length; index++) {
+      const book = books[index];
+      titleInput.value = book.title;
+      authorInput.value = book.author;
+      subjectInput.value = book.subject;
+      languageInput.value = book.language;
+      workTypeInput.value = batchBookType(book.workType);
+      audienceInput.value = "";
+      approachInput.value = "";
+      isbnInput.value = "";
+      form.requestSubmit();
+      const number = document.querySelector("#results .ddc-number")?.textContent.trim() || "";
+      const heading = document.querySelector("#results .ddc-heading")?.textContent.trim() || "";
+      const alternatives = [...document.querySelectorAll("#results .alternatives li strong")].map(node => node.textContent.trim());
+      const noMatch = Boolean(document.querySelector("#results .empty-state"));
+      resultsList.push({
+        ...book, number, heading, alternatives,
+        status: number ? "Preliminary suggestion — review required" : noMatch ? "No local match" : "Review needed"
+      });
+      status.textContent = "Processed " + (index + 1) + " of " + books.length + " books…";
+      if (index < books.length - 1) await new Promise(resolve => setTimeout(resolve, 0));
+    }
+  } finally {
+    titleInput.value = original.title;
+    authorInput.value = original.author;
+    subjectInput.value = original.subject;
+    languageInput.value = original.language;
+    workTypeInput.value = original.workType;
+    audienceInput.value = original.audience;
+    approachInput.value = original.approach;
+    isbnInput.value = original.isbn;
+    button.disabled = false;
+    button.textContent = "Process book list";
+  }
+  window.ddcBatchResults = resultsList;
+  output.innerHTML = '<div class="batch-summary"><strong>' + resultsList.filter(item => item.number).length + ' of ' + resultsList.length + ' books received preliminary suggestions.</strong><button class="copy-button" type="button" id="export-batch">Export results CSV</button></div>' +
+    '<div class="batch-table-wrap"><table class="batch-table"><thead><tr><th>Book</th><th>Suggested DDC</th><th>Other candidates</th><th>Status</th></tr></thead><tbody>' +
+    resultsList.map(item => '<tr><td><strong>' + escapeHtml(item.title) + '</strong>' + (item.author ? '<span>' + escapeHtml(item.author) + '</span>' : '') + '</td><td>' + (item.number ? '<strong>' + escapeHtml(item.number) + '</strong><span>' + escapeHtml(item.heading) + '</span>' : '—') + '</td><td>' + escapeHtml(item.alternatives.join(", ") || "—") + '</td><td>' + escapeHtml(item.status) + '</td></tr>').join("") +
+    '</tbody></table></div><p class="field-hint">These are preliminary keyword-guide results. No number is marked as approved or final. Review each book individually before adding it to your catalogue.</p>';
+  output.hidden = false;
+  status.textContent = "Finished processing " + resultsList.length + " books.";
+  document.querySelector("#export-batch").addEventListener("click", exportBatchResults);
+}
+
+function exportBatchResults() {
+  const records = window.ddcBatchResults || [];
+  if (!records.length) return;
+  const columns = ["row", "title", "author", "subject", "language", "workType", "number", "heading", "alternatives", "status"];
+  const quote = value => '"' + String(value ?? "").replace(/"/g, '""') + '"';
+  const csv = [columns.join(","), ...records.map(record => columns.map(key => quote(key === "alternatives" ? record.alternatives.join("; ") : record[key])).join(","))].join("\r\n");
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ddc-finder-batch-results.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+document.querySelector("#run-batch").addEventListener("click", processBatch);
 
 form.addEventListener("submit", async event => {
   event.preventDefault();
