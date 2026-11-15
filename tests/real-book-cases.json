@@ -156,9 +156,10 @@
       "input": {
         "title": "The Alchemist",
         "author": "Paulo Coelho",
-        "subject": "English fiction",
+        "subject": "",
         "isbn": "",
-        "language": "English"
+        "language": "English",
+        "workType": "fiction"
       },
       "observed_app_number": "823",
       "observed_catalogue_numbers": [
@@ -208,9 +209,10 @@
       "input": {
         "title": "Aadujeevitham",
         "author": "Benyamin",
-        "subject": "Malayalam fiction novel",
+        "subject": "",
         "isbn": "",
-        "language": "Malayalam"
+        "language": "Malayalam",
+        "workType": "fiction"
       },
       "observed_app_number": "894.8123",
       "observed_catalogue_numbers": [
@@ -240,9 +242,10 @@
       "input": {
         "title": "Ente Katha",
         "author": "Madhavikutty",
-        "subject": "Malayalam autobiography",
+        "subject": "",
         "isbn": "",
-        "language": "Malayalam"
+        "language": "Malayalam",
+        "workType": "biography"
       },
       "observed_app_number": "894.812092",
       "observed_catalogue_numbers": [
@@ -266,9 +269,10 @@
       "input": {
         "title": "Uyarnna Pratheekshakal",
         "author": "Charles Dickens",
-        "subject": "Malayalam translation",
+        "subject": "",
         "isbn": "",
-        "language": "Malayalam"
+        "language": "Malayalam",
+        "workType": "translation"
       },
       "observed_app_number": "894.812",
       "observed_catalogue_numbers": [
