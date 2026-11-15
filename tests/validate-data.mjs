@@ -4,6 +4,7 @@ const file = new URL("./real-book-cases.json", import.meta.url);
 const dataset = JSON.parse(readFileSync(file, "utf8"));
 const errors = [];
 const ids = new Set();
+const compactNumber = value => String(value).replace(/\\s+/g, "");
 
 if (!Array.isArray(dataset.cases) || dataset.cases.length < 1) {
   errors.push("The cases array must contain at least one test case.");
@@ -30,7 +31,7 @@ if (!Array.isArray(dataset.cases) || dataset.cases.length < 1) {
         if (!record.library || !record.ddc || !/^https:\/\//.test(record.url || "")) {
           errors.push(`${label}: each catalogue record needs library, DDC and an HTTPS source URL`);
         }
-        if (!test.observed_catalogue_numbers.includes(record.ddc)) {
+        if (!test.observed_catalogue_numbers.some(value => compactNumber(value) === compactNumber(record.ddc))) {
           errors.push(`${label}: catalogue record DDC ${record.ddc} is missing from observed_catalogue_numbers`);
         }
       }
