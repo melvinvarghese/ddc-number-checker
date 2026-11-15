@@ -66,6 +66,49 @@
               <span class="field-hint" id="isbn-help">Enter the ISBN printed on the book, with or without hyphens.</span>
             </div>
           </div>
+          <details class="context-details">
+            <summary>Refine the classification context <span>Optional · helps with ambiguous books</span></summary>
+            <div class="context-grid">
+              <div class="field">
+                <label for="work-type">What kind of work is it?</label>
+                <select id="work-type" name="workType">
+                  <option value="">Not sure / not specified</option>
+                  <option value="fiction">Fiction / novel / short stories</option>
+                  <option value="poetry">Poetry</option>
+                  <option value="drama">Drama / plays</option>
+                  <option value="biography">Biography / autobiography / memoir</option>
+                  <option value="translation">Translated work</option>
+                  <option value="textbook">Textbook / academic work</option>
+                  <option value="reference">Reference work</option>
+                  <option value="practical">Practical guide / how-to</option>
+                  <option value="essays">Essays</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="book-audience">Intended audience</label>
+                <select id="book-audience" name="audience">
+                  <option value="">Not specified</option>
+                  <option value="general">General readers</option>
+                  <option value="children">Children</option>
+                  <option value="young-adult">Young adults</option>
+                  <option value="academic">Academic / professional</option>
+                </select>
+              </div>
+              <div class="field context-wide">
+                <label for="book-approach">Main approach or perspective</label>
+                <select id="book-approach" name="approach">
+                  <option value="">Not specified</option>
+                  <option value="historical">Historical</option>
+                  <option value="scientific">Scientific / technical</option>
+                  <option value="philosophical">Philosophical / theoretical</option>
+                  <option value="religious">Religious / theological</option>
+                  <option value="critical">Critical / analytical</option>
+                  <option value="practical">Practical / applied</option>
+                </select>
+              </div>
+            </div>
+            <p class="field-hint">These details help frame the suggestion. Audience and approach are shown to the librarian; they do not automatically determine a DDC number.</p>
+          </details>
           <button class="submit-button" type="submit">
             <span>Find suggested DDC number</span><span class="button-arrow" aria-hidden="true">→</span>
           </button>
@@ -74,6 +117,17 @@
       </section>
 
       <section id="results" class="results-section" aria-live="polite" hidden></section>
+      <section id="decision-history" class="decision-history" aria-labelledby="history-title" hidden>
+        <div class="history-heading">
+          <div><div class="section-kicker">YOUR LOCAL WORK LOG</div><h2 id="history-title">Cataloguing decisions</h2></div>
+          <div class="history-actions">
+            <button class="copy-button" type="button" id="export-decisions">Export CSV</button>
+            <button class="copy-button" type="button" id="clear-decisions">Clear history</button>
+          </div>
+        </div>
+        <p class="history-note">Decisions are stored only in this browser on this device. They are not uploaded to a server or shared with the project.</p>
+        <div id="decision-list" class="decision-list"></div>
+      </section>
 
       <section class="how-section" aria-labelledby="how-title">
         <div class="section-kicker">HOW IT WORKS</div>
