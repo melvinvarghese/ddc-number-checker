@@ -314,7 +314,7 @@ form.addEventListener("submit", async event => {
 
   const wingsMatch = normalise(book.title).includes("wings of fire") &&
     /\b(kalam|abdul)\b/.test(normalise(book.author));
-  if (wingsMatch || cleanIsbn === "9788173711466" || cleanIsbn === "8173711461") {
+  if (book.language !== "Malayalam" && (wingsMatch || cleanIsbn === "9788173711466" || cleanIsbn === "8173711461")) {
     const special = {
       number: "509.2",
       heading: "Scientists — biography",
