@@ -86,7 +86,12 @@ const SUBJECT_RULES = [
   { number: "791.4", heading: "Motion pictures & television", keywords: ["cinema", "film studies", "movie history", "television studies", "filmmaking"], description: "The terms suggest film, cinema or television." },
   { number: "808", heading: "Rhetoric & writing", keywords: ["creative writing", "writing skills", "essay writing", "rhetoric"], description: "The terms suggest writing, composition or rhetoric." },
   { number: "823", heading: "English fiction", keywords: ["english fiction", "british fiction", "english novels"], description: "The terms may suggest English-language fiction; use the appropriate literary period and local practice." },
-  { number: "891.4", heading: "Indic literatures", keywords: ["malayalam literature", "hindi literature", "sanskrit literature"], description: "The terms suggest literature in an Indic language; verify the exact language and literary form." },
+  { number: "894.812", heading: "Malayalam literature", keywords: ["malayalam literature", "literature in malayalam", "malayalam literary works"], description: "The terms suggest Malayalam literature. Narrow this by literary form where possible; catalogues may apply additional subdivisions." },
+  { number: "894.8123", heading: "Malayalam fiction", keywords: ["malayalam fiction", "malayalam novel", "malayalam novels", "malayalam short stories", "malayalam short story"], description: "The terms suggest Malayalam fiction. A Kerala University catalogue uses 894.8123 for Aadujeevitham; verify the edition and local practice." },
+  { number: "894.812092", heading: "Malayalam autobiography & biography", keywords: ["malayalam autobiography", "malayalam biography", "autobiography in malayalam", "biography in malayalam"], description: "The terms suggest biography or autobiography treated with Malayalam literature. A Sree Sankaracharya University catalogue uses 894.812 092 for Ente Katha; local cataloguing practice can differ." },
+  { number: "894.8121", heading: "Malayalam poetry", keywords: ["malayalam poetry", "malayalam poems", "poems in malayalam"], description: "The terms suggest Malayalam poetry. Confirm the detailed subdivision against your authorised DDC edition." },
+  { number: "894.8122", heading: "Malayalam drama", keywords: ["malayalam drama", "malayalam plays", "plays in malayalam"], description: "The terms suggest Malayalam drama. Confirm the detailed subdivision against your authorised DDC edition." },
+  { number: "894.8124", heading: "Malayalam essays", keywords: ["malayalam essays", "essays in malayalam"], description: "The terms suggest essays in Malayalam. Confirm the detailed subdivision against your authorised DDC edition." },
   { number: "940", heading: "History of Europe", keywords: ["european history", "history of europe", "world war one", "world war two", "second world war"], description: "The terms suggest European history or major events in European history." },
   { number: "950", heading: "History of Asia", keywords: ["asian history", "history of asia", "east asian history"], description: "The terms suggest the history of Asia; use a more specific regional class when possible." },
   { number: "954.83", heading: "History of Kerala", keywords: ["kerala history", "history of kerala", "travancore history", "cochin history"], description: "The terms suggest the history of Kerala or its historical regions; verify the subdivision used by your library." }
@@ -127,7 +132,7 @@ function scoreRule(rule, text) {
     const key = normalise(keyword);
     if (!key) continue;
     const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const expression = new RegExp("(^|\s)" + escaped + "($|\s)", "u");
+    const expression = new RegExp("(^|\\s)" + escaped + "($|\\s)", "u");
     if (expression.test(text)) {
       score += key.includes(" ") ? 3 : 2;
       matched.push(keyword);
@@ -281,6 +286,19 @@ form.addEventListener("submit", async event => {
     titleInput.focus();
     return;
   }
+  const agnichirakukalMatch = normalise(book.title).includes("agnichirakukal") &&
+    /\b(kalam|abdul)\b/.test(normalise(book.author));
+  if (agnichirakukalMatch) {
+    renderResults(book, [{
+      number: "894.81296",
+      heading: "Malayalam literature — catalogue-specific classification",
+      score: 10,
+      matched: ["Agnichirakukal", "A. P. J. Abdul Kalam"],
+      description: "The KILA Headquarters Library catalogue assigns 894.81296 to its record for this Malayalam edition. Treat this as a documented local catalogue example, not a universal rule for Malayalam biographies or translations."
+    }], "Catalogue evidence: KILA Headquarters Library. Check the exact edition and your library's policy.");
+    return;
+  }
+
   const wingsMatch = normalise(book.title).includes("wings of fire") &&
     /\b(kalam|abdul)\b/.test(normalise(book.author));
   if (wingsMatch || cleanIsbn === "9788173711466" || cleanIsbn === "8173711461") {
