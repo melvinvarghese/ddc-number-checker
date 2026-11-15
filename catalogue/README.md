@@ -62,6 +62,12 @@ SCERT Kerala explicitly states that it uses Koha, MARC cataloguing and DDC, and 
 
 The Kerala State Central Library OPAC is publicly searchable, but its SRU endpoint and use of MARC 082 also need verification. KALNET is a VuFind discovery layer and needs a separate connector after its supported API is confirmed.
 
+## Indian bookstore ISBN discovery
+
+The result panel also provides user-initiated searches for DC Books, Mathrubhumi Books and Atlantic Books. These are ISBN discovery sources, not DDC authorities. DC Books' public books listing visibly displays ISBNs and includes an ISBN search field. Mathrubhumi Books and Atlantic Books expose searchable product catalogues; the ISBN must be confirmed on the individual product page for the exact edition.
+
+At present these links open domain-restricted search results. DDC Finder does **not** scrape these stores, claim their pages are APIs, or automatically import ISBNs. Once a user verifies an ISBN, the existing Open Library and Google Books lookups can use it to retrieve matching bibliographic metadata. A future automated connector should only be added if a documented public API, product feed, or explicit permission is available.
+
 ## Data and safety policy
 
 - Never interpret MARC 090 or an unlabelled call number as DDC.
