@@ -54,12 +54,13 @@ h1 em { color: var(--green); font-style: normal; }
 .required { color: #b66b48; }
 .optional, .recommended { margin-left: 5px; color: #8a938c; font-size: 11px; font-weight: 500; }
 .recommended { color: var(--green); }
-input {
+input, select {
   width: 100%; height: 49px; padding: 0 14px; border: 1px solid #dfe3da; border-radius: 9px;
   background: #fff; color: var(--ink); outline: none; font-size: 14px; transition: border .18s, box-shadow .18s;
 }
+select { padding: 0 12px; border: 1px solid #dfe3da; border-radius: 9px; background-color: #fff; color: var(--ink); font-size: 14px; }
 input::placeholder { color: #a0a8a0; }
-input:focus { border-color: #729482; box-shadow: 0 0 0 3px rgba(40, 91, 73, .1); }
+input:focus, select:focus { border-color: #729482; box-shadow: 0 0 0 3px rgba(40, 91, 73, .1); }
 .submit-button {
   width: 100%; min-height: 52px; margin-top: 23px; padding: 0 18px; border: 0; border-radius: 9px;
   display: flex; justify-content: center; align-items: center; gap: 12px; color: white;
