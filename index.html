@@ -116,6 +116,17 @@
         </form>
       </section>
 
+      <section class="batch-card" aria-labelledby="batch-title">
+        <div class="batch-intro">
+          <div><div class="section-kicker">FOR ACCESSION LISTS</div><h2 id="batch-title">Batch cataloguing</h2><p>Paste a CSV or tab-separated list to generate preliminary suggestions for up to 25 books at once.</p></div>
+          <a href="./sample-batch.csv" download>Download sample CSV</a>
+        </div>
+        <label for="batch-input">Book records <span class="optional">One row per book</span></label>
+        <textarea id="batch-input" rows="7" spellcheck="false" placeholder="title,author,subject,language,workType&#10;The Psychology of Money,Morgan Housel,personal finance,English,&#10;Aadujeevitham,Benyamin,,Malayalam,fiction"></textarea>
+        <p class="field-hint">Columns: title, author, subject, language, workType. Include a header row. ISBN lookups are not run in batch mode, so processing is predictable and avoids repeated external requests.</p>
+        <div class="batch-controls"><button class="submit-button" type="button" id="run-batch">Process book list</button><span id="batch-status" class="field-hint" role="status">No batch processed yet.</span></div>
+        <div id="batch-results" class="batch-results" hidden aria-live="polite"></div>
+      </section>
       <section id="results" class="results-section" aria-live="polite" hidden></section>
       <section id="decision-history" class="decision-history" aria-labelledby="history-title" hidden>
         <div class="history-heading">
