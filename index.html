@@ -26,7 +26,7 @@
       <section class="hero" aria-labelledby="page-title">
         <div class="eyebrow"><span class="eyebrow-dot"></span> A librarian's classification companion</div>
         <h1 id="page-title">Find a possible place<br>for <em>every book.</em></h1>
-        <p class="hero-copy">Explore Dewey Decimal Classification suggestions using a book's title, author and subject. A helpful starting point for your cataloguing work.</p>
+        <p class="hero-copy">Explore Dewey Decimal Classification suggestions using a book's title, author, subject and ISBN. A helpful starting point for your cataloguing work.</p>
       </section>
 
       <section class="search-card" aria-label="Book details">
@@ -43,6 +43,11 @@
             <div class="field">
               <label for="book-subject">Subject / description <span class="recommended">Recommended</span></label>
               <input id="book-subject" name="subject" type="text" placeholder="What is the book about?" maxlength="300">
+            </div>
+            <div class="field">
+              <label for="book-isbn">ISBN <span class="optional">Optional</span></label>
+              <input id="book-isbn" name="isbn" type="text" inputmode="numeric" autocomplete="off" placeholder="ISBN-10 or ISBN-13" maxlength="17" aria-describedby="isbn-help">
+              <span class="field-hint" id="isbn-help">Enter the ISBN printed on the book, with or without hyphens.</span>
             </div>
           </div>
           <button class="submit-button" type="submit">
