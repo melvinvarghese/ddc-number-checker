@@ -19,6 +19,8 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check app.js
+          node --check catalogue/worker.js
+          node --check catalogue-config.js
           node --check tests/runner.js
           node --check tests/validate-data.mjs
       - name: Validate real-book test data
