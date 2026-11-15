@@ -51,6 +51,22 @@ async function run() {
     if (!doc || !doc.querySelector("#search-form")) throw new Error("The DDC Finder test frame did not load.");
     const results = [];
     for (const test of dataset.cases) results.push(await runCase(test, doc));
+    const batchInput = doc.querySelector("#batch-input");
+    const batchButton = doc.querySelector("#run-batch");
+    if (!batchInput || !batchButton) throw new Error("Batch cataloguing controls were not found.");
+    batchInput.value = [
+      "title,author,subject,language,workType",
+      "Aadujeevitham,Benyamin,,Malayalam,fiction",
+      "Ente Katha,Madhavikutty,,Malayalam,biography",
+      "Uyarnna Pratheekshakal,Charles Dickens,,Malayalam,translation"
+    ].join("\n");
+    batchButton.click();
+    await wait(150);
+    const batchRows = [...doc.querySelectorAll("#batch-results tbody tr")];
+    const batchExpected = ["894.8123", "894.812092", "894.812"];
+    const batchPassed = batchRows.length === batchExpected.length && batchRows.every((row, index) =>
+      row.querySelectorAll("td")[1]?.querySelector("strong")?.textContent.trim() === batchExpected[index]
+    );
     let matches = 0;
     for (const result of results) {
       if (result.matched) matches++;
@@ -70,8 +86,9 @@ async function run() {
     summary.innerHTML =
       '<span class="pill">' + results.length + ' test books</span>' +
       '<span class="pill">' + matches + ' suggestions match at least one catalogue</span>' +
-      '<span class="pill">' + (results.length - matches) + ' need review</span>';
-    status.textContent = "Completed. " + matches + " of " + results.length + " suggestions appear in at least one cited catalogue.";
+      '<span class="pill">' + (results.length - matches) + ' need review</span>' +
+      '<span class="pill">' + (batchPassed ? '3/3' : '0/3') + ' batch context checks passed</span>';
+    status.textContent = "Completed. " + matches + " of " + results.length + " suggestions appear in at least one cited catalogue. Batch context checks: " + (batchPassed ? "passed." : "failed; inspect batch output.");
   } catch (error) {
     tableBody.innerHTML = '<tr><td colspan="4">' + safe(error.message) + '</td></tr>';
     status.textContent = "Could not complete checks.";
