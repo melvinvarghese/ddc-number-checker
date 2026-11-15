@@ -107,6 +107,10 @@ const authorInput = document.querySelector("#book-author");
 const subjectInput = document.querySelector("#book-subject");
 const isbnInput = document.querySelector("#book-isbn");
 const languageInput = document.querySelector("#book-language");
+const workTypeInput = document.querySelector("#work-type");
+const audienceInput = document.querySelector("#book-audience");
+const approachInput = document.querySelector("#book-approach");
+const DECISION_STORAGE_KEY = "ddcFinderDecisionsV1";
 
 
 function isValidIsbn(value) {
@@ -163,6 +167,7 @@ function renderResults(book, ranked, sourceNote = "") {
   const subject = book.subject ? '<span class="meta-chip">Subject details supplied</span>' : '<span class="meta-chip">Title-based match</span>';
   const isbn = book.isbn ? '<span class="meta-chip">ISBN: ' + escapeHtml(book.isbn) + '</span>' : "";
   const language = book.language ? '<span class="meta-chip">Language: ' + escapeHtml(book.language) + '</span>' : "";
+  const contextMeta = [book.workTypeLabel, book.audienceLabel, book.approachLabel].filter(Boolean).map(value => '<span class="meta-chip">' + escapeHtml(value) + '</span>').join("");
   const confidenceLabel = sourceNote ? "Third-party metadata" : best.score >= 5 ? "Several keyword matches" : best.score >= 3 ? "Some keyword matches" : "Limited keyword match";
   const alternativeHtml = alternatives.length
     ? '<div class="result-divider"></div><h3 class="result-subtitle">Other possible subject areas</h3><ul class="alternatives">' +
@@ -173,17 +178,19 @@ function renderResults(book, ranked, sourceNote = "") {
     '<div class="ddc-number">' + escapeHtml(best.number) + '</div>' +
     '<h2 class="ddc-heading">' + escapeHtml(best.heading) + '</h2>' +
     '<p class="result-description">' + escapeHtml(best.description) + '</p>' + (sourceNote ? '<p class="result-reason">' + escapeHtml(sourceNote) + '</p>' : "") +
-    '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + language + subject + isbn + '</div>' +
+    '<div class="result-meta"><span class="meta-chip">Book: ' + title + '</span>' + author + language + subject + isbn + contextMeta + '</div>' +
     '<div class="result-divider"></div><h3 class="result-subtitle">Why this was suggested</h3>' +
     '<p class="result-reason">Matched guide terms: <strong>' + escapeHtml(best.matched.join(", ")) + '</strong>. The local guide matched these terms in the title, author or subject details you supplied. This is a keyword match, not a full analysis of the book.</p>' +
     '<p class="result-reason"><strong>Classification context:</strong> DDC classification depends on the work’s subject, disciplinary focus and, where relevant, its approach or form. A title alone is not enough to settle the number.</p>' +
     '<div id="catalogue-evidence" class="catalogue-evidence" hidden></div>' +
     alternativeHtml +
+    '<div class="decision-box"><h3 class="result-subtitle">Record your cataloguing decision</h3><p class="result-reason">Choose the number you decide to use after checking the book and your authorised DDC source.</p><label class="decision-label" for="decision-number">Final number selected</label><select id="decision-number">' + ranked.slice(0, 4).map(item => '<option value="' + escapeHtml(item.number) + '">' + escapeHtml(item.number + ' — ' + item.heading) + '</option>').join("") + '</select><label class="decision-label" for="decision-note">Cataloguer’s note <span>(optional)</span></label><textarea id="decision-note" rows="2" maxlength="500" placeholder="Why did you choose this number? Note local policy or edition details…"></textarea><button class="copy-button decision-save" type="button" id="save-decision">Save decision on this device</button><p class="field-hint">Saved locally in this browser only. No account or cloud storage.</p></div>' +
     '<div class="result-actions"><button class="copy-button" type="button" id="copy-number">Copy DDC number</button><button class="copy-button" type="button" id="copy-summary">Copy result summary</button></div>' +
     '<p class="result-caveat">Please verify this suggestion using an authorised DDC schedule and the actual content of the book. The tool may miss context, genre, audience and special classification instructions.</p>' +
     '</article>';
 
   document.querySelector("#copy-number").addEventListener("click", event => copyText(best.number, event.currentTarget, "DDC number copied"));
+  document.querySelector("#save-decision").addEventListener("click", () => saveDecision(book, ranked));
   document.querySelector("#copy-summary").addEventListener("click", event => {
     const summary = book.title + (book.author ? " — " + book.author : "") + (book.isbn ? "\nISBN: " + book.isbn : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary suggestion; verify before cataloguing.";
     copyText(summary, event.currentTarget, "Summary copied");
@@ -227,6 +234,88 @@ async function appendCatalogueEvidence(book) {
   panel.hidden = false;
 }
 
+function readDecisions() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(DECISION_STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDecision(book, ranked) {
+  const selector = document.querySelector("#decision-number");
+  const selected = ranked.find(item => item.number === selector.value) || ranked[0];
+  const records = readDecisions();
+  records.unshift({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    savedAt: new Date().toISOString(),
+    title: book.title,
+    author: book.author,
+    isbn: book.isbn,
+    language: book.language,
+    subject: book.subject,
+    workType: book.workTypeLabel,
+    audience: book.audienceLabel,
+    approach: book.approachLabel,
+    suggestedNumber: ranked[0].number,
+    selectedNumber: selected.number,
+    selectedHeading: selected.heading,
+    note: document.querySelector("#decision-note").value.trim()
+  });
+  try {
+    localStorage.setItem(DECISION_STORAGE_KEY, JSON.stringify(records.slice(0, 500)));
+    renderDecisionHistory();
+    const button = document.querySelector("#save-decision");
+    button.textContent = "Decision saved";
+    button.disabled = true;
+  } catch {
+    window.alert("The browser could not save this decision. Check available site storage and try again.");
+  }
+}
+
+function renderDecisionHistory() {
+  const section = document.querySelector("#decision-history");
+  const list = document.querySelector("#decision-list");
+  const records = readDecisions();
+  if (!records.length) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  list.innerHTML = records.slice(0, 30).map(record => {
+    const date = new Date(record.savedAt);
+    const dateText = Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+    return '<article class="decision-entry"><div><strong>' + escapeHtml(record.title) + '</strong><span>' + escapeHtml([record.author, record.language, dateText].filter(Boolean).join(" · ")) + '</span></div><div class="decision-number"><strong>' + escapeHtml(record.selectedNumber) + '</strong><span>' + escapeHtml(record.selectedHeading || "") + '</span></div>' +
+      (record.note ? '<p>' + escapeHtml(record.note) + '</p>' : "") + '</article>';
+  }).join("");
+}
+
+function exportDecisions() {
+  const records = readDecisions();
+  if (!records.length) return;
+  const columns = ["savedAt","title","author","isbn","language","subject","workType","audience","approach","suggestedNumber","selectedNumber","selectedHeading","note"];
+  const quote = value => '"' + String(value ?? "").replace(/"/g, '""') + '"';
+  const csv = [columns.join(","), ...records.map(record => columns.map(key => quote(record[key])).join(","))].join("\r\n");
+  const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ddc-finder-decisions.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+document.querySelector("#export-decisions").addEventListener("click", exportDecisions);
+document.querySelector("#clear-decisions").addEventListener("click", () => {
+  if (!readDecisions().length) return;
+  if (!window.confirm("Clear all cataloguing decisions saved in this browser? This cannot be undone.")) return;
+  localStorage.removeItem(DECISION_STORAGE_KEY);
+  renderDecisionHistory();
+});
+
 async function copyText(text, button, successMessage) {
   try {
     await navigator.clipboard.writeText(text);
@@ -267,6 +356,12 @@ form.addEventListener("submit", async event => {
     author: authorInput.value.trim(),
     subject: subjectInput.value.trim(),
     language: languageInput.value,
+    workType: workTypeInput.value,
+    audience: audienceInput.value,
+    approach: approachInput.value,
+    workTypeLabel: workTypeInput.selectedOptions[0]?.textContent || "",
+    audienceLabel: audienceInput.selectedOptions[0]?.textContent || "",
+    approachLabel: approachInput.selectedOptions[0]?.textContent || "",
     isbn: isbnInput.value.trim()
   };
   const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
@@ -326,6 +421,7 @@ form.addEventListener("submit", async event => {
   }
   const subjectText = normalise(book.subject);
   const languageHints = [];
+  const classificationContext = normalise([book.subject, book.workType].filter(Boolean).join(" "));
   if (book.language === "Malayalam") {
     if (/\b(translat(?:ion|ed)|translated from)\b|വിവർത്തന/u.test(subjectText)) {
       languageHints.push("malayalam literature");
@@ -406,3 +502,4 @@ form.addEventListener("submit", async event => {
 document.querySelector('.top-link[href="#about"]').addEventListener("click", () => {
   document.querySelector("#about").scrollIntoView({ behavior: "smooth" });
 });
+renderDecisionHistory();
