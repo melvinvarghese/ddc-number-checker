@@ -113,6 +113,15 @@ const approachInput = document.querySelector("#book-approach");
 const DECISION_STORAGE_KEY = "ddcFinderDecisionsV1";
 
 
+function extractValidDdcValues(value) {
+  const values = Array.isArray(value) ? value : value == null ? [] : [value];
+  return [...new Set(values
+    .map(item => String(item).trim())
+    // Dewey numbers have a three-digit main class, optionally followed by a decimal.
+    // Reject collection labels such as FIC, REF, JUV and other non-numeric codes.
+    .filter(item => /^\\d{3}(?:\\.\\d+)?$/.test(item)))];
+}
+
 function isValidIsbn(value) {
   if (/^\d{9}[\dX]$/.test(value)) {
     const sum = value.split("").reduce((total, char, index) => {
@@ -680,7 +689,7 @@ form.addEventListener("submit", async event => {
         }
       }
       if (record) {
-        const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : Array.isArray(record.ddc) ? record.ddc : [];
+        const classes = [...extractValidDdcValues(record.dewey_decimal_class), ...extractValidDdcValues(record.ddc)].filter((value, index, all) => all.indexOf(value) === index);
         if (classes.length) {
           const candidates = classes.slice(0, 4).map((number, index) => ({
             number: String(number),
