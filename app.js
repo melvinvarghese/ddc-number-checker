@@ -192,7 +192,7 @@ function renderResults(book, ranked, sourceNote = "") {
   document.querySelector("#copy-number").addEventListener("click", event => copyText(best.number, event.currentTarget, "DDC number copied"));
   document.querySelector("#save-decision").addEventListener("click", () => saveDecision(book, ranked));
   document.querySelector("#copy-summary").addEventListener("click", event => {
-    const summary = book.title + (book.author ? " — " + book.author : "") + (book.isbn ? "\nISBN: " + book.isbn : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary suggestion; verify before cataloguing.";
+    const summary = book.title + (book.author ? " — " + book.author : "") + (book.isbn ? "\nISBN: " + book.isbn : "") + (book.language ? "\nLanguage: " + book.language : "") + (book.workTypeLabel ? "\nWork type: " + book.workTypeLabel : "") + (book.audienceLabel ? "\nAudience: " + book.audienceLabel : "") + (book.approachLabel ? "\nApproach: " + book.approachLabel : "") + "\nSuggested DDC: " + best.number + " — " + best.heading + "\nPreliminary suggestion; verify before cataloguing.";
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
@@ -359,9 +359,9 @@ form.addEventListener("submit", async event => {
     workType: workTypeInput.value,
     audience: audienceInput.value,
     approach: approachInput.value,
-    workTypeLabel: workTypeInput.selectedOptions[0]?.textContent || "",
-    audienceLabel: audienceInput.selectedOptions[0]?.textContent || "",
-    approachLabel: approachInput.selectedOptions[0]?.textContent || "",
+    workTypeLabel: workTypeInput.value ? workTypeInput.selectedOptions[0]?.textContent || "" : "",
+    audienceLabel: audienceInput.value ? audienceInput.selectedOptions[0]?.textContent || "" : "",
+    approachLabel: approachInput.value ? approachInput.selectedOptions[0]?.textContent || "" : "",
     isbn: isbnInput.value.trim()
   };
   const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
