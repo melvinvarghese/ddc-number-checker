@@ -87,3 +87,8 @@ For exact titles included in the real-book benchmark, the result page can displa
 ### Classification context and local decision log
 
 The form offers optional fields for work type, intended audience and main approach. Work type may help the preliminary language/genre hints; audience and approach are displayed as context and do not independently generate a DDC number. After reviewing the candidates, a librarian can select the number actually adopted and add a note. Decisions are stored in the current browser's local storage on that device only and can be exported as CSV. They are not sent to a server. Clearing browser site data may remove this local log, so export it for retention.
+
+
+### Batch cataloguing
+
+The Batch cataloguing panel accepts CSV or tab-separated records with a header row. Supported columns are `title` (required), `author`, `subject`, `language`, and `workType`. It processes up to 25 records per batch using the local preliminary subject guide. Batch mode deliberately does not perform ISBN lookups or external metadata requests. Results can be exported as CSV and are always labelled as preliminary suggestions requiring individual librarian review; they are not automatically added to the local decision log or treated as approved classifications.
