@@ -77,3 +77,8 @@ Dewey Decimal Classification is maintained by OCLC and is protected by copyright
 ### Additional Indian-language literature coverage
 
 The preliminary guide includes broad language-literature suggestions for Tamil (894.811), Hindi (891.43) and Bengali (891.44). These are supported by individual public university-library catalogue records and are not universal rules for every genre or work. Sanskrit has deliberately not been added yet: the catalogue evidence reviewed so far showed differing treatment for language and literature collections, so more specific records are needed before adding a rule.
+
+
+### Explainable suggestions and catalogue comparisons
+
+For exact titles included in the real-book benchmark, the result page can display the linked library records and their observed DDC numbers. When records differ, the interface makes that disagreement visible instead of presenting one library's choice as universal. The explanation also identifies the matched guide terms and reminds users that DDC classification depends on subject, discipline and, where relevant, approach or form. The catalogue comparison is illustrative evidence only; it does not replace checking the actual edition against an authorised DDC schedule.
