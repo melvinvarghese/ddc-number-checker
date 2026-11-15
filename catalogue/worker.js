@@ -111,13 +111,8 @@ function escapeCql(value) {
 }
 
 function buildCql(params) {
-  const isbn = (params.get("isbn") || "").replace(/[^0-9X]/gi, "");
   const title = (params.get("title") || "").trim();
-  const author = (params.get("author") || "").trim();
-  if (isbn) return 'dc.title all "' + escapeCql(title) + '"';
-  const parts = ['dc.title all "' + escapeCql(title) + '"'];
-  if (author) parts.push('dc.creator all "' + escapeCql(author) + '"');
-  return parts.join(" and ");
+  return 'dc.title all "' + escapeCql(title) + '"';
 }
 
 function normalize(value) {
@@ -179,7 +174,7 @@ async function searchSource(source, cql) {
 export { extractMarcRecords, matchRecord, parseMarcRecord };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
     const allowedOrigins = (env.ALLOWED_ORIGINS || "https://melvinvarghese.github.io").split(",").map(value => value.trim()).filter(Boolean);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(origin, allowedOrigins) });
@@ -198,12 +193,18 @@ export default {
     try { sources = loadSources(env.CATALOGUE_SOURCES); }
     catch (error) { return json({ error: error.message, records: [] }, 500, origin, allowedOrigins); }
     if (!sources.length) return json({ records: [], message: "No verified SRU catalogue endpoints are configured yet." }, 200, origin, allowedOrigins);
+    const cacheUrl = new URL(request.url);
+    cacheUrl.searchParams.set("__cache_origin", origin);
+    const cacheKey = new Request(cacheUrl.toString(), { method: "GET" });
+    const cache = caches.default;
+    const cached = await cache.match(cacheKey);
+    if (cached) return cached;
     const query = { title, author, isbn };
     const cql = buildCql(url.searchParams);
     const records = [];
     const sourceStatus = [];
     // Sequential requests protect small library servers and respect conservative usage.
-    for (const source of sources) {
+    for (const source of sources.slice(0, 12)) {
       try {
         const found = await searchSource(source, cql);
         let accepted = 0;
@@ -219,11 +220,13 @@ export default {
         sourceStatus.push({ id: source.id, name: source.name, status: "unavailable", message: error.message });
       }
     }
-    return json({
+    const response = json({
       records,
       sources: sourceStatus,
       searchedAt: new Date().toISOString(),
       note: "Only MARC 082 values are returned as DDC. A missing number does not mean the library has no classification."
     }, 200, origin, allowedOrigins, { "Cache-Control": "public, max-age=300" });
+    ctx.waitUntil(cache.put(cacheKey, response.clone()));
+    return response;
   }
 };
