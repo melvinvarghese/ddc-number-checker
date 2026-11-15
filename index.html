@@ -40,6 +40,17 @@
           </div>
           <div class="field-grid">
             <div class="field">
+              <label for="book-language">Book language <span class="optional">Optional</span></label>
+              <select id="book-language" name="language">
+                <option value="">Not specified</option>
+                <option value="Malayalam">Malayalam</option>
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Other">Other / not listed</option>
+              </select>
+              <span class="field-hint">Choose the language of this edition, not the author's first language.</span>
+            </div>
+            <div class="field">
               <label for="book-author">Author <span class="optional">Optional</span></label>
               <input id="book-author" name="author" type="text" placeholder="Author's name" maxlength="120">
             </div>
