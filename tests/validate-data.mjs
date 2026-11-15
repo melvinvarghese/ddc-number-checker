@@ -4,7 +4,7 @@ const file = new URL("./real-book-cases.json", import.meta.url);
 const dataset = JSON.parse(readFileSync(file, "utf8"));
 const errors = [];
 const ids = new Set();
-const compactNumber = value => String(value).replace(/\\s+/g, "");
+const compactNumber = value => String(value).replace(/\s+/g, "");
 
 if (!Array.isArray(dataset.cases) || dataset.cases.length < 1) {
   errors.push("The cases array must contain at least one test case.");
