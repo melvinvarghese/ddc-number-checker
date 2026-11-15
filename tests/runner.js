@@ -17,6 +17,12 @@ async function runCase(test, doc) {
   doc.querySelector("#book-subject").value = input.subject;
   const languageField = doc.querySelector("#book-language");
   if (languageField) languageField.value = input.language || "";
+  const workTypeField = doc.querySelector("#work-type");
+  if (workTypeField) workTypeField.value = input.workType || "";
+  const audienceField = doc.querySelector("#book-audience");
+  if (audienceField) audienceField.value = input.audience || "";
+  const approachField = doc.querySelector("#book-approach");
+  if (approachField) approachField.value = input.approach || "";
   doc.querySelector("#book-isbn").value = "";
   form.requestSubmit();
   await wait(80);
