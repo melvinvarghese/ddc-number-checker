@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "purpose": "A curated registry of public library catalogue discovery sources. Inclusion does not imply that a source exposes an API, permits automated retrieval, or provides a DDC field.",
+  "regions": [
+    {
+      "id": "kerala",
+      "name": "Kerala, India",
+      "priority": 1,
+      "sources": [
+        {
+          "id": "scert-kerala",
+          "name": "SCERT Kerala Library",
+          "url": "https://scert.kerala.gov.in/library2/",
+          "catalogueUrl": null,
+          "platform": "Koha",
+          "classification": "DDC",
+          "classificationEvidence": "The library's official page states that it uses Koha, MARC cataloguing and Dewey Decimal Classification.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "High-priority pilot because both Koha and DDC use are explicitly documented. Locate and verify its public OPAC and any SRU/OAI-PMH/API endpoint before enabling automated requests."
+        },
+        {
+          "id": "kila-kerala",
+          "name": "KILA Headquarters Library",
+          "url": "https://opac.kila.ac.in/",
+          "catalogueUrl": "https://opac.kila.ac.in/",
+          "platform": "Koha",
+          "classification": "unknown",
+          "classificationEvidence": "Official library pages identify Koha and a public OPAC; the classification source still needs to be confirmed from actual bibliographic records.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "Useful Kerala pilot catalogue, especially for public administration, local governance and development subjects. Do not treat its call number as DDC until MARC 082 or Koha classification-source metadata confirms it."
+        },
+        {
+          "id": "kerala-university",
+          "name": "Kerala University Libraries",
+          "url": "https://campuslib.keralauniversity.ac.in/",
+          "catalogueUrl": "https://campuslib.keralauniversity.ac.in/",
+          "platform": "Koha",
+          "classification": "unknown",
+          "classificationEvidence": "The university's official annual report identifies Koha and its online catalogue. Classification source must be verified from records.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "The catalogue covers the university library, campus library and departmental libraries. Check whether the catalogue exposes MARC records, SRU or another documented interface."
+        },
+        {
+          "id": "kerala-state-central-library",
+          "name": "Kerala State Central Library",
+          "url": "https://statelibrary.kerala.gov.in/",
+          "catalogueUrl": "https://statelibrary.kerala.gov.in/cgi-bin/koha/opac-main.pl",
+          "platform": "Koha",
+          "classification": "unknown",
+          "classificationEvidence": "The public OPAC identifies itself as a Koha catalogue. DDC usage and machine-readable classification access remain unverified.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "Public catalogue search is available without login. Verify classification field and permitted automated access before integration."
+        },
+        {
+          "id": "kalnet",
+          "name": "Kerala Academic Library Network (KALNET)",
+          "url": "https://kalnet.kshec.kerala.gov.in/vufind/",
+          "catalogueUrl": "https://kalnet.kshec.kerala.gov.in/vufind/",
+          "platform": "VuFind",
+          "classification": "mixed-or-unknown",
+          "classificationEvidence": "KSHEC describes KALNET as a unified discovery service across Kerala academic libraries. Individual source records may differ in classification practice.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "Strategically important statewide discovery source. Investigate its public search endpoint and whether result records expose MARC 082, local call numbers and institution-level provenance."
+        },
+        {
+          "id": "cmd-kerala",
+          "name": "Centre for Management Development Knowledge Management Centre",
+          "url": "https://cmd.kerala.gov.in/library/",
+          "catalogueUrl": null,
+          "platform": "Koha",
+          "classification": "unknown",
+          "classificationEvidence": "The official library page identifies Koha and says its OPAC is publicly accessible. DDC usage is not yet verified.",
+          "accessMode": "discover-opac-endpoint",
+          "automationStatus": "candidate",
+          "notes": "Find the linked OPAC URL and inspect public record fields before enabling automated retrieval."
+        }
+      ]
+    },
+    {
+      "id": "india",
+      "name": "India",
+      "priority": 2,
+      "sources": []
+    },
+    {
+      "id": "world",
+      "name": "International",
+      "priority": 3,
+      "sources": []
+    }
+  ],
+  "fieldPolicy": {
+    "preferredDdcField": "MARC 082",
+    "requiredEvidence": [
+      "MARC 082 with classification number",
+      "or an explicit Koha classification source code identifying DDC"
+    ],
+    "neverAssumeDdcFrom": [
+      "MARC 090 or other local call-number fields alone",
+      "a generic call number displayed in an OPAC",
+      "an unlabelled shelving location or item number"
+    ]
+  }
+}
