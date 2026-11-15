@@ -4,7 +4,7 @@ A lightweight, browser-based preliminary Dewey Decimal Classification discovery 
 
 ## Current version
 
-The application accepts a book title, author, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through the Open Library Search API. If an ISBN record includes Dewey data, the tool displays it as third-party metadata; otherwise, it uses available subject terms and its local preliminary subject guide. A curated title-and-author rule also recognises *Wings of Fire* by A. P. J. Abdul Kalam.
+The application accepts a book title, author, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through Open Library; Google Books is used as a secondary source for bibliographic categories when Open Library has no useful subject terms. If an Open Library ISBN record includes a Dewey value, the tool displays it as third-party metadata. Otherwise, returned subject terms are combined with the local preliminary subject guide. The guide currently contains around 90 independently written subject rules, including library science, education, computing, psychology, social sciences, health, arts, literature and history. A curated title-and-author rule also recognises *Wings of Fire* by A. P. J. Abdul Kalam.
 
 **This is not an authoritative DDC classifier.** It does not analyse the full text of a book, consult an official DDC schedule, or guarantee a correct class number. Users must verify suggestions against an authorised DDC source and their library's cataloguing policy.
 
@@ -12,7 +12,7 @@ The application accepts a book title, author, subject description and optional I
 
 - `index.html` — accessible application structure and page content
 - `styles.css` — responsive visual design
-- `app.js` — curated preliminary subject rules and matching logic
+- `app.js` — curated preliminary subject rules, ISBN metadata lookups and matching logic
 
 ## Run locally
 
@@ -51,8 +51,8 @@ Dewey Decimal Classification is maintained by OCLC and is protected by copyright
 
 ## Roadmap
 
-- Improve subject coverage with documented, appropriately licensed sources.
-- Add book metadata lookup where API terms and data quality permit.
+- Continue improving subject coverage with documented, appropriately licensed sources.
+- Evaluate additional library catalogue integrations only where stable access and reuse permissions are clear.
 - Ask clarifying questions when a title is ambiguous.
 - Improve alternative suggestions and explain the evidence behind each match.
 - Add tests for subject rules and edge cases.
