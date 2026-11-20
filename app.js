@@ -503,6 +503,76 @@ async function lookupGoogleBooks(isbn) {
   };
 }
 
+// Library of Congress SRU: extract Dewey only from MARC 082 $a.
+// No API key or account is required. Other classification fields are ignored.
+async function lookupLibraryOfCongressDdc(isbn) {
+  const params = new URLSearchParams({
+    version: "1.1",
+    operation: "searchRetrieve",
+    query: 'bath.isbn="' + isbn + '"',
+    maximumRecords: "5",
+    recordSchema: "marcxml"
+  });
+  const response = await fetch("https://lx2.loc.gov/sru/lcdb?" + params.toString(), {
+    headers: { "Accept": "application/xml, text/xml" }
+  });
+  if (!response.ok) throw new Error("Library of Congress SRU returned HTTP " + response.status);
+  const xml = new DOMParser().parseFromString(await response.text(), "application/xml");
+  if (xml.querySelector("parsererror")) throw new Error("Library of Congress returned invalid MARCXML");
+  const records = [];
+  const fields = [...xml.getElementsByTagNameNS("*", "datafield")];
+  const getSubfields = (field, code) => [...field.getElementsByTagNameNS("*", "subfield")]
+    .filter(node => node.getAttribute("code") === code)
+    .map(node => (node.textContent || "").trim());
+  const recordNodes = [...xml.getElementsByTagNameNS("*", "record")];
+  for (const record of recordNodes) {
+    const ddc = [...record.getElementsByTagNameNS("*", "datafield")]
+      .filter(field => field.getAttribute("tag") === "082")
+      .flatMap(field => getSubfields(field, "a"))
+      .flatMap(value => extractValidDdcValues(value));
+    if (!ddc.length) continue;
+    const titleField = [...record.getElementsByTagNameNS("*", "datafield")].find(field => field.getAttribute("tag") === "245");
+    const title = titleField ? [...getSubfields(titleField, "a"), ...getSubfields(titleField, "b")].join(" ").trim() : "";
+    records.push({ source: "Library of Congress", title, ddc: [...new Set(ddc)] });
+  }
+  return records;
+}
+
+// Internet Archive public metadata search. Only explicitly labelled Dewey fields
+// are accepted; generic call numbers and other classification schemes are ignored.
+async function lookupInternetArchiveDdc(isbn) {
+  const searchParams = new URLSearchParams();
+  searchParams.set("q", 'isbn:"' + isbn + '"');
+  searchParams.append("fl[]", "identifier");
+  searchParams.set("rows", "5");
+  searchParams.set("output", "json");
+  const searchResponse = await fetch("https://archive.org/advancedsearch.php?" + searchParams.toString(), {
+    headers: { "Accept": "application/json" }
+  });
+  if (!searchResponse.ok) throw new Error("Internet Archive search returned HTTP " + searchResponse.status);
+  const searchData = await searchResponse.json();
+  const docs = searchData?.response?.docs || [];
+  const records = await Promise.all(docs.slice(0, 5).map(async doc => {
+    const metadataResponse = await fetch("https://archive.org/metadata/" + encodeURIComponent(doc.identifier), {
+      headers: { "Accept": "application/json" }
+    });
+    if (!metadataResponse.ok) return null;
+    const metadata = (await metadataResponse.json())?.metadata || {};
+    const raw = [
+      metadata.ddc, metadata.dewey, metadata.dewey_decimal_class,
+      metadata.dewey_decimal_classification
+    ].flat();
+    const ddc = raw.flatMap(value => extractValidDdcValues(value));
+    return ddc.length ? {
+      source: "Internet Archive",
+      title: metadata.title || "",
+      ddc: [...new Set(ddc)]
+    } : null;
+  }));
+  return records.filter(Boolean);
+}
+
+
 
 function parseBatchRows(raw) {
   const delimiter = raw.split(/\r?\n/, 1)[0].includes("\t") ? "\t" : ",";
@@ -709,24 +779,47 @@ form.addEventListener("submit", async event => {
           console.warn("Google Books metadata lookup unavailable.", googleError);
         }
       }
+      const extraDdcRecords = [];
+      const extraLookups = await Promise.allSettled([
+        lookupLibraryOfCongressDdc(cleanIsbn),
+        lookupInternetArchiveDdc(cleanIsbn)
+      ]);
+      for (const result of extraLookups) {
+        if (result.status === "fulfilled") extraDdcRecords.push(...result.value);
+        else console.warn("An additional DDC source was unavailable.", result.reason);
+      }
       if (record) {
         if (!book.title && record.title) book.title = record.title;
         if (!book.author && Array.isArray(record.author_name) && record.author_name.length) book.author = record.author_name.join(", ");
-        const classes = [...extractValidDdcValues(record.dewey_decimal_class), ...extractValidDdcValues(record.ddc)].filter((value, index, all) => all.indexOf(value) === index);
+      }
+      {
+        const classes = [
+          ...extractValidDdcValues(record?.dewey_decimal_class),
+          ...extractValidDdcValues(record?.ddc),
+          ...extraDdcRecords.flatMap(item => item.ddc)
+        ].filter((value, index, all) => all.indexOf(value) === index);
         if (classes.length) {
-          const candidates = classes.slice(0, 4).map((number, index) => ({
-            number: String(number),
-            heading: index === 0 ? "DDC value in ISBN metadata" : "Additional DDC value in metadata",
-            score: 10 - index,
-            matched: ["ISBN metadata"],
-            description: "This number is associated with the ISBN record returned by Open Library. Check the source record and verify the number against your library's classification policy."
-          }));
-          renderResults(book, candidates, "Metadata record: " + (record.title || book.title) + (Array.isArray(record.author_name) && record.author_name.length ? " — " + record.author_name.join(", ") : "") + ". Metadata provider: Open Library.");
+          const candidates = classes.slice(0, 6).map((number, index) => {
+            const sources = [];
+            if (extractValidDdcValues(record?.dewey_decimal_class).includes(number) || extractValidDdcValues(record?.ddc).includes(number)) sources.push("Open Library");
+            if (extraDdcRecords.some(item => item.ddc.includes(number))) {
+              for (const item of extraDdcRecords.filter(item => item.ddc.includes(number))) sources.push(item.source);
+            }
+            return {
+              number: String(number),
+              heading: index === 0 ? "DDC value found in a source record" : "Additional DDC value",
+              score: 10 - index,
+              matched: [...new Set(sources.length ? sources : ["ISBN metadata"])],
+              description: "This Dewey number was explicitly present in the source record(s) listed. Check the record and verify the number for this edition and your library's policy."
+            };
+          });
+          const sourceNames = [...new Set(candidates.flatMap(item => item.matched))];
+          renderResults(book, candidates, "ISBN lookup: " + (record?.title || book.title || "Book record") + (Array.isArray(record?.author_name) && record.author_name.length ? " — " + record.author_name.join(", ") : "") + ". DDC evidence sources: " + sourceNames.join(", ") + ".");
           submitButton.disabled = false;
           submitButton.innerHTML = originalButtonText;
           return;
         }
-        if (Array.isArray(record.subject) && record.subject.length) {
+        if (Array.isArray(record?.subject) && record.subject.length) {
           book.subject = [book.subject, record.subject.slice(0, 15).join(" ")].filter(Boolean).join(" ");
         }
         if (!book.subject && book.title) {
