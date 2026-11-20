@@ -1653,6 +1653,10 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
   .context-wide {
     grid-column: auto;
   }
+
+  .batch-download-link {
+    white-space: normal;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
