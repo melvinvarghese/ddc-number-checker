@@ -1592,11 +1592,16 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
   }
 
   .topbar {
-    height: 70px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
   }
 
   .top-links {
-    gap: 14px;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px 14px;
   }
 
   .top-link {
@@ -1637,6 +1642,16 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .context-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .context-wide {
+    grid-column: auto;
   }
 }
 
