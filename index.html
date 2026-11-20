@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f4ef">
+  <meta name="theme-color" content="#f4f4f0">
   <meta name="description" content="A free preliminary Dewey Decimal Classification helper. Enter a book title and subject to explore possible DDC numbers.">
   <title>DDC Finder — Dewey Decimal Classification Helper</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="catalogue-config.js" defer></script>
   <script src="ddc-validation.js" defer></script>
@@ -19,164 +19,262 @@
     <header class="topbar">
       <a class="brand" href="./" aria-label="DDC Finder home">
         <span class="brand-mark" aria-hidden="true">D</span>
-        <span>DDC <strong>Finder</strong></span>
+        <span class="brand-text">DDC // <strong>FINDER</strong></span>
+        <span class="brand-tag">v2.0</span>
       </a>
       <nav class="top-links" aria-label="Helpful links">
-        <a class="top-link" href="https://melvinvarghese.in/dewey-decimal-classification-list-ddc-codes/?utm_source=ddc-finder&utm_medium=referral&utm_campaign=complete-ddc-list">Complete DDC number list <span aria-hidden="true">↗</span></a>
-        <a class="top-link" href="#about">About this tool <span aria-hidden="true">↗</span></a>
+        <a class="top-link" href="https://melvinvarghese.in/dewey-decimal-classification-list-ddc-codes/?utm_source=ddc-finder&utm_medium=referral&utm_campaign=complete-ddc-list" target="_blank" rel="noopener">Complete DDC number list <span class="arrow-ext" aria-hidden="true">↗</span></a>
+        <a class="top-link" href="#batch-section">Batch cataloguing</a>
+        <a class="top-link" href="#about">About this tool</a>
       </nav>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="page-title">
-        <div class="eyebrow"><span class="eyebrow-dot"></span> A librarian's classification companion</div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> SWISS TECHNICAL CLASSIFICATION AID</div>
         <h1 id="page-title">Find a possible place<br>for <em>every book.</em></h1>
-        <p class="hero-copy">Explore Dewey Decimal Classification suggestions using a book's title, author, subject and ISBN. A helpful starting point for your cataloguing work.</p>
+        <p class="hero-copy">Explore Dewey Decimal Classification suggestions using a book's title, subject, author, edition language, and ISBN. A high-precision discovery aid for cataloguers and librarians.</p>
       </section>
 
-      <section class="search-card" aria-label="Book details">
-        <form id="search-form">
-          <div class="field">
-            <label for="book-title">Book title <span class="required">*</span></label>
-            <input id="book-title" name="title" type="text" placeholder="e.g. The psychology of habits" autocomplete="off" required maxlength="180">
+      <!-- Workspace container: allows side-by-side view on desktop -->
+      <div class="workspace-grid">
+        <section class="search-card" aria-label="Book details">
+          <div class="card-header">
+            <span class="section-kicker">CATALOGUE ENTRY</span>
+            <h2>Book details</h2>
+            <p class="card-subtitle">Provide title and subject to query the classification tables.</p>
           </div>
-          <div class="field-grid">
-            <div class="field">
-              <label for="book-language">Book language <span class="optional">Optional</span></label>
-              <select id="book-language" name="language">
-                <option value="">Not specified</option>
-                <option value="Malayalam">Malayalam</option>
-                <option value="Tamil">Tamil</option>
-                <option value="Hindi">Hindi</option>
-                <option value="Bengali">Bengali</option>
-                <option value="English">English</option>
-                <option value="Other">Other / not listed</option>
-              </select>
-              <span class="field-hint">Choose the language of this edition, not the author's first language.</span>
-            </div>
-            <div class="field">
-              <label for="book-author">Author <span class="optional">Optional</span></label>
-              <input id="book-author" name="author" type="text" placeholder="Author's name" maxlength="120">
-            </div>
-            <div class="field">
-              <label for="book-subject">Subject / description <span class="recommended">Recommended</span></label>
-              <input id="book-subject" name="subject" type="text" placeholder="What is the book about?" maxlength="300">
-            </div>
-            <div class="field">
-              <label for="book-isbn">ISBN <span class="optional">Optional</span></label>
-              <input id="book-isbn" name="isbn" type="text" inputmode="numeric" autocomplete="off" placeholder="ISBN-10 or ISBN-13" maxlength="17" aria-describedby="isbn-help">
-              <span class="field-hint" id="isbn-help">Enter the ISBN printed on the book, with or without hyphens.</span>
-            </div>
-          </div>
-          <details class="context-details">
-            <summary>Refine the classification context <span>Optional · helps with ambiguous books</span></summary>
-            <div class="context-grid">
-              <div class="field">
-                <label for="work-type">What kind of work is it?</label>
-                <select id="work-type" name="workType">
-                  <option value="">Not sure / not specified</option>
-                  <option value="fiction">Fiction / novel / short stories</option>
-                  <option value="poetry">Poetry</option>
-                  <option value="drama">Drama / plays</option>
-                  <option value="biography">Biography / autobiography / memoir</option>
-                  <option value="translation">Translated work</option>
-                  <option value="textbook">Textbook / academic work</option>
-                  <option value="reference">Reference work</option>
-                  <option value="practical">Practical guide / how-to</option>
-                  <option value="essays">Essays</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="book-audience">Intended audience</label>
-                <select id="book-audience" name="audience">
-                  <option value="">Not specified</option>
-                  <option value="general">General readers</option>
-                  <option value="children">Children</option>
-                  <option value="young-adult">Young adults</option>
-                  <option value="academic">Academic / professional</option>
-                </select>
-              </div>
-              <div class="field context-wide">
-                <label for="book-approach">Main approach or perspective</label>
-                <select id="book-approach" name="approach">
-                  <option value="">Not specified</option>
-                  <option value="historical">Historical</option>
-                  <option value="scientific">Scientific / technical</option>
-                  <option value="philosophical">Philosophical / theoretical</option>
-                  <option value="religious">Religious / theological</option>
-                  <option value="critical">Critical / analytical</option>
-                  <option value="practical">Practical / applied</option>
-                </select>
-              </div>
-            </div>
-            <p class="field-hint">These details help frame the suggestion. Audience and approach are shown to the librarian; they do not automatically determine a DDC number.</p>
-          </details>
-          <button class="submit-button" type="submit">
-            <span>Find suggested DDC number</span><span class="button-arrow" aria-hidden="true">→</span>
-          </button>
-          <p class="form-note"><span aria-hidden="true">✳</span> More subject detail usually means a more useful suggestion.</p>
-        </form>
-      </section>
 
-      <section class="batch-card" aria-labelledby="batch-title">
+          <form id="search-form">
+            <div class="field">
+              <label for="book-title">Book title <span class="required">*</span></label>
+              <input id="book-title" name="title" type="text" placeholder="e.g. The Psychology of Money / Aadujeevitham / Wings of Fire" autocomplete="off" required maxlength="180">
+              <span class="field-hint">Enter the full or main title as printed on the book cover or title page.</span>
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="book-language">Edition language <span class="optional">Optional</span></label>
+                <select id="book-language" name="language">
+                  <option value="">Not specified</option>
+                  <option value="Arabic">Arabic</option>
+                  <option value="Assamese">Assamese</option>
+                  <option value="Bengali">Bengali</option>
+                  <option value="Bodo">Bodo</option>
+                  <option value="Bulgarian">Bulgarian</option>
+                  <option value="Catalan">Catalan</option>
+                  <option value="Chinese">Chinese (Mandarin)</option>
+                  <option value="Croatian">Croatian</option>
+                  <option value="Czech">Czech</option>
+                  <option value="Danish">Danish</option>
+                  <option value="Dutch">Dutch</option>
+                  <option value="English">English</option>
+                  <option value="Esperanto">Esperanto</option>
+                  <option value="Estonian">Estonian</option>
+                  <option value="Finnish">Finnish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Greek">Greek</option>
+                  <option value="Gujarati">Gujarati</option>
+                  <option value="Hebrew">Hebrew</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="Hungarian">Hungarian</option>
+                  <option value="Indonesian">Indonesian</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Kannada">Kannada</option>
+                  <option value="Kashmiri">Kashmiri</option>
+                  <option value="Konkani">Konkani</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Latin">Latin</option>
+                  <option value="Maithili">Maithili</option>
+                  <option value="Malayalam">Malayalam</option>
+                  <option value="Manipuri">Manipuri (Meitei)</option>
+                  <option value="Marathi">Marathi</option>
+                  <option value="Nepali">Nepali</option>
+                  <option value="Norwegian">Norwegian</option>
+                  <option value="Odia">Odia (Oriya)</option>
+                  <option value="Persian">Persian (Farsi)</option>
+                  <option value="Polish">Polish</option>
+                  <option value="Portuguese">Portuguese</option>
+                  <option value="Punjabi">Punjabi</option>
+                  <option value="Russian">Russian</option>
+                  <option value="Sanskrit">Sanskrit</option>
+                  <option value="Santali">Santali</option>
+                  <option value="Sindhi">Sindhi</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="Swedish">Swedish</option>
+                  <option value="Tamil">Tamil</option>
+                  <option value="Telugu">Telugu</option>
+                  <option value="Urdu">Urdu</option>
+                  <option value="Other">Others / Not listed</option>
+                </select>
+                <span class="field-hint">Language of this edition (essential for literature and regional classification).</span>
+              </div>
+
+              <div class="field">
+                <label for="book-author">Author / Creator <span class="optional">Optional</span></label>
+                <input id="book-author" name="author" type="text" placeholder="e.g. Morgan Housel / Benyamin / A.P.J. Abdul Kalam" maxlength="120">
+                <span class="field-hint">Primary author, editor, translator, or corporate creator.</span>
+              </div>
+
+              <div class="field field-span-2">
+                <label for="book-subject">Subject / Topic <span class="required">*</span></label>
+                <input id="book-subject" name="subject" type="text" placeholder="e.g. Personal finance, behavioral psychology, investing mindset" required maxlength="300">
+                <span class="field-hint">What is the book about? Key themes and subject terms help pinpoint the correct DDC schedule.</span>
+              </div>
+
+              <div class="field field-span-2">
+                <label for="book-isbn">ISBN <span class="optional">Optional</span></label>
+                <input id="book-isbn" name="isbn" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 978-0-14-345357-4 or 0143453579" maxlength="17" aria-describedby="isbn-help">
+                <span class="field-hint" id="isbn-help">10 or 13-digit ISBN printed on the book; checksum validated with Open Library / Google Books.</span>
+              </div>
+            </div>
+
+            <details class="context-details">
+              <summary>
+                <span>Refine classification context</span>
+                <span class="summary-sub">Optional · resolves ambiguous topics</span>
+              </summary>
+              <div class="context-grid">
+                <div class="field">
+                  <label for="work-type">What kind of work is it?</label>
+                  <select id="work-type" name="workType">
+                    <option value="">Not sure / not specified</option>
+                    <option value="fiction">Fiction / novel / short stories</option>
+                    <option value="poetry">Poetry</option>
+                    <option value="drama">Drama / plays</option>
+                    <option value="biography">Biography / autobiography / memoir</option>
+                    <option value="translation">Translated work</option>
+                    <option value="textbook">Textbook / academic work</option>
+                    <option value="reference">Reference work</option>
+                    <option value="practical">Practical guide / how-to</option>
+                    <option value="essays">Essays</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="book-audience">Intended audience</label>
+                  <select id="book-audience" name="audience">
+                    <option value="">Not specified</option>
+                    <option value="general">General readers</option>
+                    <option value="children">Children</option>
+                    <option value="young-adult">Young adults</option>
+                    <option value="academic">Academic / professional</option>
+                  </select>
+                </div>
+
+                <div class="field context-wide">
+                  <label for="book-approach">Main approach or perspective</label>
+                  <select id="book-approach" name="approach">
+                    <option value="">Not specified</option>
+                    <option value="historical">Historical</option>
+                    <option value="scientific">Scientific / technical</option>
+                    <option value="philosophical">Philosophical / theoretical</option>
+                    <option value="religious">Religious / theological</option>
+                    <option value="critical">Critical / analytical</option>
+                    <option value="practical">Practical / applied</option>
+                  </select>
+                </div>
+              </div>
+              <p class="field-hint">These details help frame the suggestion. Audience and approach assist the cataloguer; they do not automatically dictate a DDC number.</p>
+            </details>
+
+            <button class="submit-button" type="submit">
+              <span>Find suggested DDC number</span>
+              <span class="button-arrow" aria-hidden="true">→</span>
+            </button>
+            <p class="form-note"><span aria-hidden="true">✳</span> Title and Subject/Topic together yield the most accurate preliminary classification.</p>
+          </form>
+        </section>
+
+        <!-- Live Results Container -->
+        <section id="results" class="results-section" aria-live="polite" hidden></section>
+      </div>
+
+      <!-- Batch Cataloguing Section -->
+      <section id="batch-section" class="batch-card" aria-labelledby="batch-title">
         <div class="batch-intro">
-          <div><div class="section-kicker">FOR ACCESSION LISTS</div><h2 id="batch-title">Batch cataloguing</h2><p>Paste a CSV or tab-separated list to generate preliminary suggestions for up to 25 books at once.</p></div>
-          <a href="./sample-batch.csv" download>Download sample CSV</a>
+          <div>
+            <div class="section-kicker">ACCESSION ENGINE</div>
+            <h2 id="batch-title">Batch cataloguing</h2>
+            <p>Paste a CSV or tab-separated list to generate preliminary suggestions for up to 25 books simultaneously.</p>
+          </div>
+          <a class="batch-download-link" href="./sample-batch.csv" download>
+            <span class="icon-csv" aria-hidden="true">↓</span> Download sample CSV
+          </a>
         </div>
+
         <label for="batch-input">Book records <span class="optional">One row per book</span></label>
-        <textarea id="batch-input" rows="7" spellcheck="false" placeholder="title,author,subject,language,workType&#10;The Psychology of Money,Morgan Housel,personal finance,English,&#10;Aadujeevitham,Benyamin,,Malayalam,fiction"></textarea>
-        <p class="field-hint">Columns: title, author, subject, language, workType. Include a header row. ISBN lookups are not run in batch mode, so processing is predictable and avoids repeated external requests.</p>
-        <div class="batch-controls"><button class="submit-button" type="button" id="run-batch">Process book list</button><span id="batch-status" class="field-hint" role="status">No batch processed yet.</span></div>
+        <textarea id="batch-input" rows="7" spellcheck="false" placeholder="title,author,subject,language,workType&#10;The Psychology of Money,Morgan Housel,personal finance,English,&#10;Aadujeevitham,Benyamin,desert survival migrant worker,Malayalam,fiction&#10;Wings of Fire,A.P.J. Abdul Kalam,aerospace engineering autobiography,English,biography"></textarea>
+        <p class="field-hint">Expected format: <code>title,author,subject,language,workType</code>. Include a header row. External ISBN requests are skipped in batch mode for instantaneous local processing.</p>
+
+        <div class="batch-controls">
+          <button class="submit-button" type="button" id="run-batch">
+            <span>Process book list</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+          <span id="batch-status" class="batch-status-text" role="status">No batch processed yet.</span>
+        </div>
         <div id="batch-results" class="batch-results" hidden aria-live="polite"></div>
       </section>
-      <section id="results" class="results-section" aria-live="polite" hidden></section>
+
+      <!-- Decision History / Local Work Log -->
       <section id="decision-history" class="decision-history" aria-labelledby="history-title" hidden>
         <div class="history-heading">
-          <div><div class="section-kicker">YOUR LOCAL WORK LOG</div><h2 id="history-title">Cataloguing decisions</h2></div>
+          <div>
+            <div class="section-kicker">IN-BROWSER WORK LOG</div>
+            <h2 id="history-title">Cataloguing decisions</h2>
+          </div>
           <div class="history-actions">
             <button class="copy-button" type="button" id="export-decisions">Export CSV</button>
-            <button class="copy-button" type="button" id="clear-decisions">Clear history</button>
+            <button class="copy-button copy-button-secondary" type="button" id="clear-decisions">Clear history</button>
           </div>
         </div>
-        <p class="history-note">Decisions are stored only in this browser on this device. They are not uploaded to a server or shared with the project.</p>
+        <p class="history-note">Decisions are persisted locally in this browser on your device. Zero data is uploaded to a remote server.</p>
         <div id="decision-list" class="decision-list"></div>
       </section>
 
+      <!-- Educational 3-Step Section -->
       <section class="how-section" aria-labelledby="how-title">
-        <div class="section-kicker">HOW IT WORKS</div>
-        <h2 id="how-title">A useful starting point,<br>not a final authority.</h2>
+        <div class="section-kicker">METHODOLOGY</div>
+        <h2 id="how-title">A precise starting point,<br>not a final authority.</h2>
         <div class="steps">
           <article class="step">
-            <span class="step-number">01</span>
+            <span class="step-number">01 // INPUT</span>
             <h3>Describe the book</h3>
-            <p>Enter its title and, when possible, its subject or a short description.</p>
+            <p>Enter the full title, primary subject/topic keywords, and edition language.</p>
           </article>
           <article class="step">
-            <span class="step-number">02</span>
+            <span class="step-number">02 // DISCOVER</span>
             <h3>Explore suggestions</h3>
-            <p>Review matching subject areas, possible numbers and the reasoning behind them.</p>
+            <p>Review matched taxonomic schedules, candidate numbers, and transparent rule reasoning.</p>
           </article>
           <article class="step">
-            <span class="step-number">03</span>
+            <span class="step-number">03 // VERIFY</span>
             <h3>Verify before use</h3>
-            <p>Check the result against the book itself and an authorised DDC source before cataloguing.</p>
+            <p>Cross-examine the recommendation against your library's authorised DDC schedule and the physical book.</p>
           </article>
         </div>
       </section>
 
+      <!-- Notice / Disclaimer -->
       <section id="about" class="notice">
         <div class="notice-icon" aria-hidden="true">i</div>
         <div>
           <h2>About these suggestions</h2>
-          <p>DDC Finder is an experimental, rule-based discovery aid. It does not provide official or authoritative Dewey Decimal Classification numbers, and a title alone may not reveal a book's true subject. The suggestions are generated from a limited, curated subject guide. Always verify classification using the appropriate edition of the DDC schedules and your library's cataloguing policy.</p>
+          <p>DDC Finder is an experimental, rule-based discovery aid. It does not provide official or authoritative Dewey Decimal Classification numbers, and a title alone may not reveal a book's true subject. The suggestions are generated from a curated subject guide and third-party library records. Always verify classification using the appropriate edition of the DDC schedules and your library's cataloguing policy.</p>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <a class="footer-brand" href="./">DDC Finder</a>
-      <span>Made as an independent library utility.</span>
-      <a href="#page-title">Back to top ↑</a>
+      <div class="footer-left">
+        <a class="footer-brand" href="./">DDC // FINDER</a>
+        <span class="footer-sep">·</span>
+        <span>Independent library science utility by Melvin Varghese.</span>
+      </div>
+      <a class="back-to-top" href="#page-title">Back to top ↑</a>
     </footer>
   </div>
 </body>

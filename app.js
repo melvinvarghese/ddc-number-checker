@@ -574,6 +574,7 @@ async function processBatch() {
   button.disabled = true;
   button.textContent = "Processing…";
   window.ddcBatchMode = true;
+  subjectInput.required = false;
   const original = {
     title: titleInput.value, author: authorInput.value, subject: subjectInput.value,
     language: languageInput.value, workType: workTypeInput.value,
@@ -615,6 +616,7 @@ async function processBatch() {
     button.disabled = false;
     button.textContent = "Process book list";
     window.ddcBatchMode = false;
+    subjectInput.required = true;
   }
   window.ddcBatchResults = resultsList;
   output.innerHTML = '<div class="batch-summary"><strong>' + resultsList.filter(item => item.number).length + ' of ' + resultsList.length + ' books received preliminary suggestions.</strong><button class="copy-button" type="button" id="export-batch">Export results CSV</button></div>' +
@@ -668,6 +670,11 @@ form.addEventListener("submit", async event => {
     isbn: isbnInput.value.trim()
   };
   const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
+  if (!window.ddcBatchMode && !book.subject) {
+    renderEmpty("Subject / Topic required", "Please enter a subject or topic for the book. This helps identify the correct Dewey Decimal classification branch.");
+    subjectInput.focus();
+    return;
+  }
   if (cleanIsbn && !isValidIsbn(cleanIsbn)) {
     renderEmpty("Please check the ISBN.", "Enter a valid ISBN-10 or ISBN-13. You can also remove the ISBN and search using the title and author.");
     isbnInput.focus();
