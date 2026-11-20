@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <style>
+      .bg { fill: #004be8; }
+      .letter { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Space Grotesk", sans-serif; font-weight: 800; font-size: 38px; fill: #ffffff; }
+      .decimal-dot { fill: #10b981; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #2563eb; }
+        .decimal-dot { fill: #34d399; }
+      }
+    </style>
+  </defs>
+  <!-- Background with Swiss squircle curve -->
+  <rect class="bg" width="64" height="64" rx="14" />
+  
+  <!-- Architectural 'D' -->
+  <text class="letter" x="23" y="46" text-anchor="middle">D</text>
+  
+  <!-- Dewey Decimal Point -->
+  <circle class="decimal-dot" cx="46" cy="42" r="5.5" />
+</svg>

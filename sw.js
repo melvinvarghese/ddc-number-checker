@@ -10,7 +10,11 @@ const PRECACHE_ASSETS = [
   "./catalogue-config.js",
   "./sample-batch.csv",
   "./manifest.json",
-  "./og-image.svg"
+  "./og-image.svg",
+  "./favicon.svg",
+  "./favicon.ico",
+  "./favicon-32x32.png",
+  "./apple-touch-icon.png"
 ];
 
 // Install: precache the core shell
