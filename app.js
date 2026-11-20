@@ -869,7 +869,177 @@ document.querySelectorAll(".sample-pill").forEach(button => {
   });
 });
 
+// -----------------------------------------------------------------------------
+// Service Worker Registration (PWA Offline Support)
+// -----------------------------------------------------------------------------
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => {
+      console.warn("ServiceWorker registration skipped:", err);
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// Theme Management (Swiss Technical Light / Dark Mode)
+// -----------------------------------------------------------------------------
+const themeToggle = document.querySelector("#theme-toggle");
+const themeIcon = document.querySelector("#theme-icon");
+const themeText = document.querySelector("#theme-text");
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  const isDark = theme === "dark";
+  if (themeIcon) themeIcon.textContent = isDark ? "☀️" : "🌙";
+  if (themeText) themeText.textContent = isDark ? "Light" : "Dark";
+  try {
+    localStorage.setItem("ddcFinderTheme", theme);
+  } catch (_) {}
+}
+
+const savedTheme = (() => {
+  try { return localStorage.getItem("ddcFinderTheme"); } catch (_) { return null; }
+})();
+const initialTheme = savedTheme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+applyTheme(initialTheme);
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 000–900 Class Browser Drawer
+// -----------------------------------------------------------------------------
+const toggleBrowserBtn = document.querySelector("#toggle-browser-btn");
+const browserContent = document.querySelector("#browser-content");
+const browserToggleText = document.querySelector("#browser-toggle-text");
+const browserToggleArrow = document.querySelector("#browser-toggle-arrow");
+
+if (toggleBrowserBtn && browserContent) {
+  toggleBrowserBtn.addEventListener("click", () => {
+    const isHidden = browserContent.hidden;
+    browserContent.hidden = !isHidden;
+    toggleBrowserBtn.setAttribute("aria-expanded", String(isHidden));
+    if (browserToggleText) browserToggleText.textContent = isHidden ? "Collapse 000–900" : "Explore 000–900";
+    if (browserToggleArrow) browserToggleArrow.textContent = isHidden ? "↑" : "↓";
+  });
+}
+
+document.querySelectorAll(".class-item").forEach(item => {
+  const btn = item.querySelector(".use-class-btn");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const topic = item.getAttribute("data-apply") || "";
+    if (topic && subjectInput) {
+      subjectInput.value = topic;
+      subjectInput.focus();
+      document.querySelector(".search-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+});
+
+// -----------------------------------------------------------------------------
+// Live ISBN Barcode Scanner (Webcam / Mobile Camera)
+// -----------------------------------------------------------------------------
+const scanIsbnBtn = document.querySelector("#scan-isbn-btn");
+const scannerModal = document.querySelector("#scanner-modal");
+const closeScannerBtn = document.querySelector("#close-scanner-btn");
+const scannerVideo = document.querySelector("#scanner-video");
+const scannerStatus = document.querySelector("#scanner-status");
+let activeScannerStream = null;
+let scannerLoopId = null;
+
+function playScanBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1046.5, ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+  } catch (_) {}
+}
+
+function stopScanner() {
+  if (scannerLoopId) {
+    cancelAnimationFrame(scannerLoopId);
+    scannerLoopId = null;
+  }
+  if (activeScannerStream) {
+    activeScannerStream.getTracks().forEach(track => track.stop());
+    activeScannerStream = null;
+  }
+  if (scannerVideo) scannerVideo.srcObject = null;
+  if (scannerModal) scannerModal.hidden = true;
+}
+
+async function startScanner() {
+  if (!scannerModal || !scannerVideo) return;
+  scannerModal.hidden = false;
+  if (scannerStatus) scannerStatus.textContent = "Accessing camera…";
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (scannerStatus) scannerStatus.textContent = "Camera access is not supported by your browser.";
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } }
+    });
+    activeScannerStream = stream;
+    scannerVideo.srcObject = stream;
+    await scannerVideo.play();
+    if (scannerStatus) scannerStatus.textContent = "Align ISBN barcode within the frame…";
+
+    if ("BarcodeDetector" in window) {
+      const detector = new window.BarcodeDetector({ formats: ["ean_13", "ean_8", "code_128"] });
+      async function detectFrame() {
+        if (!activeScannerStream) return;
+        try {
+          const barcodes = await detector.detect(scannerVideo);
+          if (barcodes && barcodes.length > 0) {
+            const rawVal = barcodes[0].rawValue.replace(/[\s-]/g, "");
+            if (rawVal) {
+              playScanBeep();
+              isbnInput.value = rawVal;
+              stopScanner();
+              if (subjectInput && !subjectInput.value.trim()) {
+                subjectInput.value = "General topic";
+              }
+              form.requestSubmit();
+              return;
+            }
+          }
+        } catch (_) {}
+        scannerLoopId = requestAnimationFrame(detectFrame);
+      }
+      scannerLoopId = requestAnimationFrame(detectFrame);
+    } else {
+      if (scannerStatus) scannerStatus.textContent = "Camera active. Native BarcodeDetector not available in this browser.";
+    }
+  } catch (err) {
+    console.warn("Camera access denied or unavailable:", err);
+    if (scannerStatus) scannerStatus.textContent = "Camera permission denied or camera not found.";
+  }
+}
+
+if (scanIsbnBtn) scanIsbnBtn.addEventListener("click", startScanner);
+if (closeScannerBtn) closeScannerBtn.addEventListener("click", stopScanner);
+
 window.addEventListener("keydown", event => {
+  if (event.key === "Escape" && scannerModal && !scannerModal.hidden) {
+    stopScanner();
+    return;
+  }
   if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) {
     event.preventDefault();
     titleInput.focus();

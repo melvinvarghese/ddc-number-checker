@@ -1,0 +1,20 @@
+{
+  "name": "DDC Finder — Dewey Decimal Classification Helper",
+  "short_name": "DDC Finder",
+  "description": "Fast preliminary Dewey Decimal Classification discovery tool with 50+ languages, Indian regional literature rules, and batch CSV cataloguing.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f4f0",
+  "theme_color": "#004be8",
+  "categories": ["utilities", "education", "books"],
+  "icons": [
+    {
+      "src": "./og-image.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

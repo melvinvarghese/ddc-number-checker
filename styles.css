@@ -46,6 +46,38 @@
   --shadow-card: 0 4px 16px -2px rgba(15, 20, 28, 0.06), 0 1px 2px rgba(15, 20, 28, 0.04);
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-canvas: #090d16;
+  --surface: #101623;
+  --surface-subtle: #161e30;
+  --surface-muted: #1e283d;
+  
+  --ink: #f0f4fc;
+  --ink-muted: #9aa8be;
+  --ink-faint: #677790;
+
+  --line: #222d42;
+  --line-strong: #374869;
+
+  --cobalt: #3b82f6;
+  --cobalt-dark: #2563eb;
+  --cobalt-soft: rgba(59, 130, 246, 0.15);
+  --cobalt-border: rgba(59, 130, 246, 0.35);
+
+  --emerald: #10b981;
+  --emerald-dark: #059669;
+  --emerald-soft: rgba(16, 185, 129, 0.15);
+  --emerald-border: rgba(16, 185, 129, 0.35);
+
+  --amber: #f59e0b;
+  --amber-soft: rgba(245, 158, 11, 0.15);
+  --amber-border: rgba(245, 158, 11, 0.35);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -1265,6 +1297,286 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
 /* --------------------------------------------------------------------------
    Accessibility & Mobile Breakpoints
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Theme Toggle Button
+   -------------------------------------------------------------------------- */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface-subtle);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--cobalt);
+  background: var(--cobalt-soft);
+  color: var(--cobalt);
+}
+
+.theme-icon {
+  font-size: 0.8125rem;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   ISBN Scanner Button & Modal
+   -------------------------------------------------------------------------- */
+.isbn-scan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface-subtle);
+  color: var(--cobalt);
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.isbn-scan-btn:hover {
+  background: var(--cobalt-soft);
+  border-color: var(--cobalt-border);
+}
+
+.scan-icon {
+  font-size: 0.75rem;
+}
+
+.scanner-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(9, 13, 22, 0.85);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.scanner-card {
+  width: min(100%, 460px);
+  background: var(--surface);
+  border: var(--line-hairline) solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.scanner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.scanner-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.scanner-close-btn {
+  background: transparent;
+  border: 0;
+  color: var(--ink-muted);
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.scanner-close-btn:hover {
+  color: var(--rose);
+  background: var(--surface-muted);
+}
+
+.scanner-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid var(--cobalt);
+}
+
+.scanner-viewport video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-reticle {
+  position: absolute;
+  inset: 20%;
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.scanner-laser {
+  position: absolute;
+  top: 20%;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: #ff0055;
+  box-shadow: 0 0 8px #ff0055;
+  animation: scan-sweep 2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes scan-sweep {
+  0% { top: 20%; }
+  100% { top: 80%; }
+}
+
+.scanner-hint {
+  margin: 14px 0 6px;
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.scanner-status {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cobalt);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   DDC 000–900 Class Browser Section
+   -------------------------------------------------------------------------- */
+.class-browser-card {
+  margin: 36px auto 20px;
+  max-width: 1100px;
+  padding: 28px 32px;
+  border: var(--line-hairline) solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.browser-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.browser-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 4px 0 2px;
+  color: var(--ink);
+}
+
+.browser-header p {
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.browser-content {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.class-item {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.class-item:hover {
+  border-color: var(--cobalt);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.class-code {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cobalt);
+  background: var(--cobalt-soft);
+  border: 1px solid var(--cobalt-border);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.class-item h3 {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.class-item p {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+  margin: 0 0 14px;
+  flex-grow: 1;
+}
+
+.use-class-btn {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--cobalt);
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.use-class-btn:hover {
+  background: var(--cobalt);
+  color: #ffffff;
+  border-color: var(--cobalt);
+}
+
 [hidden] {
   display: none !important;
 }

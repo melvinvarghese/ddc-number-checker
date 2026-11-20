@@ -7,9 +7,10 @@
   <meta name="description" content="A free preliminary Dewey Decimal Classification helper for librarians and cataloguers. Enter a book title, edition language, and subject to discover likely DDC numbers with support for Indian regional literature and batch accession lists.">
   <title>DDC Finder — Dewey Decimal Classification Helper</title>
 
-  <!-- Canonical & Alternate Links -->
+  <!-- Canonical & PWA Manifest -->
   <link rel="canonical" href="https://melvinvarghese.github.io/ddc-number-checker/">
   <link rel="author" href="https://melvinvarghese.in/">
+  <link rel="manifest" href="manifest.json">
 
   <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
   <meta property="og:type" content="website">
@@ -100,8 +101,13 @@
       </a>
       <nav class="top-links" aria-label="Helpful links">
         <a class="top-link" href="https://melvinvarghese.in/dewey-decimal-classification-list-ddc-codes/?utm_source=ddc-finder&utm_medium=referral&utm_campaign=complete-ddc-list" target="_blank" rel="noopener noreferrer">Complete DDC number list <span class="arrow-ext" aria-hidden="true">↗</span></a>
+        <a class="top-link" href="#class-browser">000–900 Browser</a>
         <a class="top-link" href="#batch-section">Batch cataloguing</a>
-        <a class="top-link" href="#about">About this tool</a>
+        <a class="top-link" href="#about">About</a>
+        <button type="button" id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light theme">
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-text" class="theme-label">Dark</span>
+        </button>
       </nav>
     </header>
 
@@ -212,7 +218,12 @@
               </div>
 
               <div class="field field-span-2">
-                <label for="book-isbn">ISBN <span class="optional">Optional</span></label>
+                <div class="field-label-row">
+                  <label for="book-isbn">ISBN <span class="optional">Optional</span></label>
+                  <button type="button" id="scan-isbn-btn" class="isbn-scan-btn" aria-label="Scan barcode with camera">
+                    <span class="scan-icon" aria-hidden="true">📷</span> <span>Scan barcode</span>
+                  </button>
+                </div>
                 <input id="book-isbn" name="isbn" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 978-0-14-345357-4 or 0143453579" maxlength="17" aria-describedby="isbn-help">
                 <span class="field-hint" id="isbn-help">10 or 13-digit ISBN printed on the book; checksum validated with Open Library / Google Books.</span>
               </div>
@@ -278,6 +289,85 @@
         <!-- Live Results Container -->
         <section id="results" class="results-section" aria-live="polite" hidden></section>
       </div>
+
+      <!-- Interactive 000–900 Class Browser Section -->
+      <section id="class-browser" class="class-browser-card" aria-labelledby="browser-title">
+        <div class="browser-header">
+          <div>
+            <div class="section-kicker">TAXONOMIC REFERENCE</div>
+            <h2 id="browser-title">DDC 000–900 Class Browser</h2>
+            <p>Explore the 10 main Dewey classes. Select any division to instantly load it as your search Subject / Topic.</p>
+          </div>
+          <button type="button" id="toggle-browser-btn" class="copy-button" aria-expanded="false">
+            <span id="browser-toggle-text">Explore 000–900</span> <span id="browser-toggle-arrow" aria-hidden="true">↓</span>
+          </button>
+        </div>
+
+        <div id="browser-content" class="browser-content" hidden>
+          <div class="classes-grid">
+            <article class="class-item" data-code="000" data-apply="Computer science, information science, bibliographies, libraries">
+              <span class="class-code">000</span>
+              <h3>Computer Science &amp; Info</h3>
+              <p>Generalities, computing, information systems, AI &amp; library science.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="100" data-apply="Philosophy, psychology, ethics, cognitive science, logic">
+              <span class="class-code">100</span>
+              <h3>Philosophy &amp; Psychology</h3>
+              <p>Human thought, ethics, perception, personal growth &amp; logic.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="200" data-apply="Religion, theology, comparative religion, sacred texts">
+              <span class="class-code">200</span>
+              <h3>Religion &amp; Theology</h3>
+              <p>Belief systems, scriptures, world faiths &amp; comparative religion.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="300" data-apply="Social sciences, economics, law, education, politics, society">
+              <span class="class-code">300</span>
+              <h3>Social Sciences</h3>
+              <p>Societies, economics, legal systems, education, public policy &amp; customs.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="400" data-apply="Language study, linguistics, grammar, multilingual dictionaries">
+              <span class="class-code">400</span>
+              <h3>Language &amp; Linguistics</h3>
+              <p>Linguistics, grammar, semantics, multilingual study &amp; etymology.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="500" data-apply="Natural science, pure mathematics, physics, chemistry, biology, astronomy">
+              <span class="class-code">500</span>
+              <h3>Sciences &amp; Mathematics</h3>
+              <p>Pure mathematics, astrophysics, chemistry, ecology &amp; life sciences.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="600" data-apply="Applied sciences, technology, medicine, engineering, cooking, agriculture">
+              <span class="class-code">600</span>
+              <h3>Technology &amp; Applied</h3>
+              <p>Medicine, aerospace, engineering, agriculture, management &amp; cookery.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="700" data-apply="Visual arts, architecture, painting, photography, music, cinema, sports">
+              <span class="class-code">700</span>
+              <h3>The Arts &amp; Recreation</h3>
+              <p>Fine arts, architecture, music, cinema, photography, sports &amp; games.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="800" data-apply="Literature, poetry, drama, fiction, literary criticism, rhetoric">
+              <span class="class-code">800</span>
+              <h3>Literature &amp; Rhetoric</h3>
+              <p>Poetry, prose, fiction, dramatic works, criticism &amp; rhetoric.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+            <article class="class-item" data-code="900" data-apply="World history, regional histories, travel, geography, biography">
+              <span class="class-code">900</span>
+              <h3>History &amp; Geography</h3>
+              <p>World history, regional events, travel, cartography &amp; biography.</p>
+              <button type="button" class="use-class-btn">Use as topic</button>
+            </article>
+          </div>
+        </div>
+      </section>
 
       <!-- Batch Cataloguing Section -->
       <section id="batch-section" class="batch-card" aria-labelledby="batch-title">
@@ -354,6 +444,23 @@
         </div>
       </section>
     </main>
+
+    <!-- Barcode Scanner Modal -->
+    <div id="scanner-modal" class="scanner-modal" hidden role="dialog" aria-modal="true" aria-labelledby="scanner-modal-title">
+      <div class="scanner-card">
+        <div class="scanner-header">
+          <h3 id="scanner-modal-title">Scan ISBN Barcode</h3>
+          <button type="button" id="close-scanner-btn" class="scanner-close-btn" aria-label="Close scanner">✕</button>
+        </div>
+        <div class="scanner-viewport">
+          <video id="scanner-video" playsinline autoplay muted></video>
+          <div class="scanner-reticle" aria-hidden="true"></div>
+          <div class="scanner-laser" aria-hidden="true"></div>
+        </div>
+        <p class="scanner-hint">Point your camera at the ISBN barcode on the book cover.</p>
+        <p id="scanner-status" class="scanner-status" role="status">Initialising camera…</p>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="footer-left">
