@@ -150,6 +150,7 @@ function scoreRule(rule, text) {
 }
 
 function escapeHtml(value) {
+  if (value === null || value === undefined) return "";
   return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
@@ -854,4 +855,30 @@ form.addEventListener("submit", async event => {
 document.querySelector('.top-link[href="#about"]').addEventListener("click", () => {
   document.querySelector("#about").scrollIntoView({ behavior: "smooth" });
 });
+
+document.querySelectorAll(".sample-pill").forEach(button => {
+  button.addEventListener("click", () => {
+    titleInput.value = button.dataset.title || "";
+    authorInput.value = button.dataset.author || "";
+    languageInput.value = button.dataset.language || "";
+    subjectInput.value = button.dataset.subject || "";
+    if (button.dataset.worktype) {
+      workTypeInput.value = button.dataset.worktype;
+    }
+    form.requestSubmit();
+  });
+});
+
+window.addEventListener("keydown", event => {
+  if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) {
+    event.preventDefault();
+    titleInput.focus();
+    titleInput.select();
+  } else if (event.key === "Escape") {
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) {
+      document.activeElement.blur();
+    }
+  }
+});
+
 renderDecisionHistory();

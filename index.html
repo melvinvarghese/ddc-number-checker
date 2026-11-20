@@ -4,12 +4,88 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f4f0">
-  <meta name="description" content="A free preliminary Dewey Decimal Classification helper. Enter a book title and subject to explore possible DDC numbers.">
+  <meta name="description" content="A free preliminary Dewey Decimal Classification helper for librarians and cataloguers. Enter a book title, edition language, and subject to discover likely DDC numbers with support for Indian regional literature and batch accession lists.">
   <title>DDC Finder — Dewey Decimal Classification Helper</title>
+
+  <!-- Canonical & Alternate Links -->
+  <link rel="canonical" href="https://melvinvarghese.github.io/ddc-number-checker/">
+  <link rel="author" href="https://melvinvarghese.in/">
+
+  <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DDC Finder">
+  <meta property="og:title" content="DDC Finder — Dewey Decimal Classification Helper">
+  <meta property="og:description" content="Fast, preliminary Dewey Decimal Classification discovery tool with 50+ languages, specialized Malayalam/Tamil/Hindi/Bengali rules, and batch CSV cataloguing.">
+  <meta property="og:url" content="https://melvinvarghese.github.io/ddc-number-checker/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://melvinvarghese.github.io/ddc-number-checker/og-image.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DDC Finder — Swiss Technical Classification Aid">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DDC Finder — Dewey Decimal Classification Helper">
+  <meta name="twitter:description" content="Fast, preliminary Dewey Decimal Classification discovery tool with 50+ languages, specialized Malayalam/Tamil/Hindi/Bengali rules, and batch CSV cataloguing.">
+  <meta name="twitter:image" content="https://melvinvarghese.github.io/ddc-number-checker/og-image.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://melvinvarghese.github.io/ddc-number-checker/#webapp",
+        "name": "DDC Finder",
+        "url": "https://melvinvarghese.github.io/ddc-number-checker/",
+        "description": "A free preliminary Dewey Decimal Classification helper for librarians, cataloguers, and students. Discover probable DDC numbers from title, subject/topic, author, and ISBN with Indian regional language support and batch CSV cataloguing.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Melvin Varghese",
+          "url": "https://melvinvarghese.in/"
+        },
+        "keywords": [
+          "Dewey Decimal Classification",
+          "DDC",
+          "DDC number checker",
+          "library cataloguing",
+          "library classification",
+          "Malayalam DDC",
+          "Indian literature DDC",
+          "batch cataloguing",
+          "DDC finder"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://melvinvarghese.github.io/ddc-number-checker/#website",
+        "url": "https://melvinvarghese.github.io/ddc-number-checker/",
+        "name": "DDC Finder",
+        "publisher": {
+          "@type": "Person",
+          "name": "Melvin Varghese",
+          "url": "https://melvinvarghese.in/"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
   <script src="catalogue-config.js" defer></script>
   <script src="ddc-validation.js" defer></script>
   <script src="app.js" defer></script>
@@ -23,7 +99,7 @@
         <span class="brand-tag">v2.0</span>
       </a>
       <nav class="top-links" aria-label="Helpful links">
-        <a class="top-link" href="https://melvinvarghese.in/dewey-decimal-classification-list-ddc-codes/?utm_source=ddc-finder&utm_medium=referral&utm_campaign=complete-ddc-list" target="_blank" rel="noopener">Complete DDC number list <span class="arrow-ext" aria-hidden="true">↗</span></a>
+        <a class="top-link" href="https://melvinvarghese.in/dewey-decimal-classification-list-ddc-codes/?utm_source=ddc-finder&utm_medium=referral&utm_campaign=complete-ddc-list" target="_blank" rel="noopener noreferrer">Complete DDC number list <span class="arrow-ext" aria-hidden="true">↗</span></a>
         <a class="top-link" href="#batch-section">Batch cataloguing</a>
         <a class="top-link" href="#about">About this tool</a>
       </nav>
@@ -45,9 +121,20 @@
             <p class="card-subtitle">Provide title and subject to query the classification tables.</p>
           </div>
 
+          <!-- Quick Try Sample Pills -->
+          <div class="sample-pills-bar" aria-label="Sample book queries">
+            <span class="sample-pills-label">Quick try:</span>
+            <button type="button" class="sample-pill" data-title="Aadujeevitham" data-author="Benyamin" data-language="Malayalam" data-subject="Desert survival of an immigrant worker, Malayalam novel" data-worktype="fiction">Aadujeevitham (Malayalam)</button>
+            <button type="button" class="sample-pill" data-title="The Psychology of Money" data-author="Morgan Housel" data-language="English" data-subject="Personal finance, behavioral psychology, investing mindset" data-worktype="practical">Psychology of Money</button>
+            <button type="button" class="sample-pill" data-title="Agnichirakukal" data-author="A.P.J. Abdul Kalam" data-language="Malayalam" data-subject="Autobiography of APJ Abdul Kalam, translated edition" data-worktype="biography">Agnichirakukal (Kalam)</button>
+          </div>
+
           <form id="search-form">
             <div class="field">
-              <label for="book-title">Book title <span class="required">*</span></label>
+              <div class="field-label-row">
+                <label for="book-title">Book title <span class="required">*</span></label>
+                <span class="kbd-hint" aria-hidden="true">Press <kbd>/</kbd> to focus</span>
+              </div>
               <input id="book-title" name="title" type="text" placeholder="e.g. The Psychology of Money / Aadujeevitham / Wings of Fire" autocomplete="off" required maxlength="180">
               <span class="field-hint">Enter the full or main title as printed on the book cover or title page.</span>
             </div>

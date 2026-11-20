@@ -1,0 +1,49 @@
+# DDC Finder — Dewey Decimal Classification Helper
+> Free, browser-based preliminary Dewey Decimal Classification discovery aid with Indian regional literature intelligence, ISBN validation, and batch accession cataloguing.
+
+- **Website:** https://melvinvarghese.github.io/ddc-number-checker/
+- **Repository:** https://github.com/melvinvarghese/ddc-number-checker
+- **Author:** Melvin Varghese (https://melvinvarghese.in)
+- **License:** Open Source / Independent Library Science Utility
+
+---
+
+## What is DDC Finder?
+
+DDC Finder is an open web application designed for librarians, cataloguers, archivists, and library science students. It helps discover likely Dewey Decimal Classification (DDC) numbers by combining book metadata (Title, Edition Language, Author, Subject / Topic, and ISBN) with local classification heuristics and live third-party bibliographic catalog queries.
+
+### Key Capabilities
+
+1. **Single Book Classification Discovery:**
+   - Evaluates book titles and mandatory Subject/Topic descriptions against ~90 curated DDC subject rules spanning classes 000 through 999.
+   - Provides taxonomic hierarchy drill-downs (Class > Division > Section > Specific).
+   - Shows transparent reasoning for why a number was suggested.
+
+2. **Multilingual & Indian Regional Literature Intelligence:**
+   - Recognises and classifies literature and translations across 50+ languages.
+   - Tailored classification rules for Indian languages:
+     - **Malayalam (894.812):** Differentiates Malayalam fiction (894.8123), poetry (894.8121), drama (894.8122), and autobiographies (894.812092).
+     - Curated rule recognises *Agnichirakukal* (the Malayalam translation of *Wings of Fire*) separately from English editions.
+     - **Tamil (894.811):** Tamil fiction (894.8113), Tamil poetry (894.8111), Tamil history and Sangam literature.
+     - **Hindi (891.43):** Hindi fiction (891.433) and Hindi poetry (891.431).
+     - **Bengali (891.44):** Bengali fiction (891.443) and Bengali poetry (891.441).
+
+3. **Checksum Validation & Third-Party Metadata:**
+   - Validates ISBN-10 and ISBN-13 using modulo checksum algorithms.
+   - Queries Open Library and Google Books API for authoritative catalogue subject headings and existing DDC numbers.
+
+4. **Accession List Batch Processing (CSV/TSV):**
+   - Processes up to 25 books in a single batch directly in the browser.
+   - Expected columns: `title,author,subject,language,workType`.
+   - Generates an interactive tabular review with 1-click CSV export.
+
+5. **In-Browser Local Decision Log:**
+   - Allows librarians to record their final cataloguing choices and cataloguer notes.
+   - Saved exclusively to browser `localStorage` on the user's device for complete patron and collection privacy.
+   - Exportable to CSV at any time.
+
+---
+
+## Important Usage Disclaimer
+
+DDC Finder is a preliminary discovery aid, not an authoritative replacement for the official OCLC Dewey Decimal Classification schedules or WebDewey. A book's title alone does not determine its true subject. Cataloguers must verify every suggestion against the physical book, authorized DDC tables, and their library's local classification policy.

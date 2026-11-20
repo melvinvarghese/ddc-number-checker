@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <style>
+      .bg { fill: #f4f4f0; }
+      .grid { stroke: #d6d9d0; stroke-width: 1.5; stroke-dasharray: 4 8; }
+      .brand-box { fill: #004be8; }
+      .tag-bg { fill: #ffffff; stroke: #d6d9d0; stroke-width: 1.5; }
+      .title { font-family: 'Space Grotesk', -apple-system, sans-serif; font-weight: 700; fill: #0f141c; }
+      .blue-text { fill: #004be8; }
+      .subtitle { font-family: 'Inter', -apple-system, sans-serif; fill: #4e5764; font-size: 26px; }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+      .card { fill: #ffffff; stroke: #d6d9d0; stroke-width: 1.5; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.06)); }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="1200" height="630" />
+  
+  <!-- Subtle Swiss Grid Lines -->
+  <line class="grid" x1="80" y1="0" x2="80" y2="630" />
+  <line class="grid" x1="1120" y1="0" x2="1120" y2="630" />
+  <line class="grid" x1="0" y1="100" x2="1200" y2="100" />
+  <line class="grid" x1="0" y1="530" x2="1200" y2="530" />
+
+  <!-- Top Branding -->
+  <rect class="brand-box" x="80" y="45" width="40" height="40" rx="6" />
+  <text class="mono" x="100" y="71" fill="#ffffff" font-size="22" font-weight="700" text-anchor="middle">D</text>
+  <text class="title" x="135" y="72" font-size="24" letter-spacing="-0.5">DDC // <tspan class="blue-text">FINDER</tspan></text>
+  
+  <!-- Pill Tag -->
+  <rect class="tag-bg" x="930" y="48" width="190" height="34" rx="4" />
+  <text class="mono" x="1025" y="70" fill="#004be8" font-size="13" font-weight="700" text-anchor="middle">SWISS TECHNICAL AID</text>
+
+  <!-- Main Headline -->
+  <text class="title" x="80" y="210" font-size="64" letter-spacing="-2">Find a possible place</text>
+  <text class="title" x="80" y="280" font-size="64" letter-spacing="-2">for <tspan class="blue-text">every book.</tspan></text>
+  
+  <!-- Subtitle -->
+  <text class="subtitle" x="80" y="340">Preliminary Dewey Decimal Classification tool with 50+ languages,</text>
+  <text class="subtitle" x="80" y="380">curated Indian regional literature rules, and batch CSV processing.</text>
+
+  <!-- Floating Metric / Feature Badges -->
+  <g transform="translate(80, 440)">
+    <!-- Badge 1 -->
+    <rect class="card" x="0" y="0" width="310" height="64" rx="6" />
+    <text class="mono" x="20" y="28" fill="#004be8" font-size="14" font-weight="700">000 — 999 CLASSES</text>
+    <text class="mono" x="20" y="48" fill="#4e5764" font-size="13">Taxonomic Hierarchy</text>
+
+    <!-- Badge 2 -->
+    <rect class="card" x="330" y="0" width="340" height="64" rx="6" />
+    <text class="mono" x="350" y="28" fill="#028050" font-size="14" font-weight="700">50+ LANGUAGES</text>
+    <text class="mono" x="350" y="48" fill="#4e5764" font-size="13">Malayalam · Tamil · Hindi · Bengali</text>
+
+    <!-- Badge 3 -->
+    <rect class="card" x="690" y="0" width="350" height="64" rx="6" />
+    <text class="mono" x="710" y="28" fill="#004be8" font-size="14" font-weight="700">BATCH ACCESSION</text>
+    <text class="mono" x="710" y="48" fill="#4e5764" font-size="13">Up to 25 books via CSV paste</text>
+  </g>
+
+  <!-- Footer Credit -->
+  <text class="mono" x="80" y="580" fill="#7a8492" font-size="14">https://melvinvarghese.github.io/ddc-number-checker/ · by Melvin Varghese</text>
+</svg>
