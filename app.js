@@ -671,8 +671,13 @@ form.addEventListener("submit", async event => {
     isbn: isbnInput.value.trim()
   };
   const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
-  if (!window.ddcBatchMode && !book.subject) {
-    renderEmpty("Subject / Topic required", "Please enter a subject or topic for the book. This helps identify the correct Dewey Decimal classification branch.");
+  if (!window.ddcBatchMode && !cleanIsbn && !book.title) {
+    renderEmpty("Book title required", "Enter a book title or provide an ISBN so the book's bibliographic record can be found.");
+    titleInput.focus();
+    return;
+  }
+  if (!window.ddcBatchMode && !cleanIsbn && !book.subject) {
+    renderEmpty("Subject / Topic required", "For a title-only search, enter a subject or topic. If you have an ISBN, you can search with the ISBN alone.");
     subjectInput.focus();
     return;
   }
@@ -705,6 +710,8 @@ form.addEventListener("submit", async event => {
         }
       }
       if (record) {
+        if (!book.title && record.title) book.title = record.title;
+        if (!book.author && Array.isArray(record.author_name) && record.author_name.length) book.author = record.author_name.join(", ");
         const classes = [...extractValidDdcValues(record.dewey_decimal_class), ...extractValidDdcValues(record.ddc)].filter((value, index, all) => all.indexOf(value) === index);
         if (classes.length) {
           const candidates = classes.slice(0, 4).map((number, index) => ({
@@ -721,6 +728,31 @@ form.addEventListener("submit", async event => {
         }
         if (Array.isArray(record.subject) && record.subject.length) {
           book.subject = [book.subject, record.subject.slice(0, 15).join(" ")].filter(Boolean).join(" ");
+        }
+        if (!book.subject && book.title) {
+          try {
+            const titleRecord = await lookupTitle(book);
+            if (titleRecord) {
+              if (!book.author && Array.isArray(titleRecord.author_name)) book.author = titleRecord.author_name.join(", ");
+              const titleClasses = [...extractValidDdcValues(titleRecord.dewey_decimal_class), ...extractValidDdcValues(titleRecord.ddc)];
+              if (titleClasses.length) {
+                const candidates = [...new Set(titleClasses)].slice(0, 4).map((number, index) => ({
+                  number: String(number),
+                  heading: index === 0 ? "DDC value in matching title record" : "Additional DDC value in matching title record",
+                  score: 10 - index,
+                  matched: ["ISBN-linked title metadata"],
+                  description: "This number is associated with a matching title record. Verify it for the exact edition and your library's policy."
+                }));
+                renderResults(book, candidates, "ISBN matched: " + book.title + (book.author ? " — " + book.author : "") + ". Classification evidence: Open Library title record.");
+                return;
+              }
+              if (Array.isArray(titleRecord.subject) && titleRecord.subject.length) {
+                book.subject = titleRecord.subject.slice(0, 20).join(" ");
+              }
+            }
+          } catch (titleError) {
+            console.warn("ISBN-linked title search unavailable.", titleError);
+          }
         }
       }
     } catch (error) {
