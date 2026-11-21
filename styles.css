@@ -1465,7 +1465,7 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
 }
 
 /* --------------------------------------------------------------------------
-   DDC 000–900 Class Browser Section
+   Three-level DDC Number Browser
    -------------------------------------------------------------------------- */
 .class-browser-card {
   margin: 36px auto 20px;
@@ -1496,94 +1496,205 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
   color: var(--ink-muted);
   font-size: 0.8125rem;
   margin: 0;
+  max-width: 660px;
+  line-height: 1.6;
 }
 
 .browser-content {
   margin-top: 24px;
   border-top: 1px solid var(--line);
-  padding-top: 20px;
+  padding-top: 18px;
 }
 
-.classes-grid {
+.browser-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-bottom: 16px;
+  color: var(--ink-faint);
+  font-size: 0.6875rem;
+}
+
+.browser-legend strong {
+  color: var(--ink-muted);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.ddc-tree {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
+  gap: 8px;
 }
 
-.class-item {
-  padding: 16px;
+.ddc-level {
+  min-width: 0;
+}
+
+.ddc-main-level {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--surface-subtle);
+  overflow: hidden;
+}
+
+.ddc-level-summary {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.15s ease;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
 }
 
-.class-item:hover {
-  border-color: var(--cobalt);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+.ddc-level-summary::-webkit-details-marker {
+  display: none;
 }
 
-.class-code {
-  display: inline-block;
-  align-self: flex-start;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--cobalt);
-  background: var(--cobalt-soft);
+.ddc-level-summary::marker {
+  content: "";
+}
+
+.ddc-level-summary:hover {
+  background: var(--surface-muted);
+}
+
+.ddc-main-summary {
+  min-height: 64px;
+}
+
+.ddc-code {
+  flex: 0 0 auto;
+  min-width: 48px;
+  padding: 5px 7px;
   border: 1px solid var(--cobalt-border);
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-bottom: 8px;
-}
-
-.class-item h3 {
-  font-family: var(--font-display);
-  font-size: 0.875rem;
+  border-radius: 4px;
+  background: var(--cobalt-soft);
+  color: var(--cobalt);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   font-weight: 700;
-  margin: 0 0 6px;
+  text-align: center;
+}
+
+.ddc-main-code {
+  min-width: 58px;
+  font-size: 0.9375rem;
+}
+
+.ddc-level-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ddc-level-text strong {
   color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
 }
 
-.class-item p {
-  font-size: 0.75rem;
-  color: var(--ink-muted);
-  line-height: 1.45;
-  margin: 0 0 14px;
-  flex-grow: 1;
+.ddc-level-text small {
+  color: var(--ink-faint);
+  font-size: 0.6875rem;
+  line-height: 1.4;
 }
 
-.use-class-btn {
-  width: 100%;
-  padding: 6px 10px;
+.ddc-chevron {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.ddc-division-list {
+  display: grid;
+  gap: 6px;
+  padding: 0 12px 12px 22px;
+}
+
+.ddc-division-level {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.ddc-division-summary {
+  padding: 10px 12px;
+}
+
+.ddc-section-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0 12px 12px;
+}
+
+.ddc-section-number {
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: var(--surface);
+  background: var(--surface-subtle);
   color: var(--cobalt);
-  font-family: var(--font-display);
-  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.use-class-btn:hover {
+.ddc-section-number:hover {
+  border-color: var(--cobalt);
   background: var(--cobalt);
   color: #ffffff;
-  border-color: var(--cobalt);
 }
 
-[hidden] {
-  display: none !important;
+.ddc-browser-status {
+  min-height: 1.2em;
+  margin: 12px 0 0;
+  color: var(--ink-faint);
+  font-size: 0.6875rem;
 }
 
-:focus-visible {
-  outline: 2px solid var(--cobalt);
-  outline-offset: 2px;
+.footer-attribution {
+  margin-left: auto;
+  max-width: 360px;
+  color: var(--ink-faint);
+  font-size: 0.6875rem;
+}
+
+.footer-attribution summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.footer-attribution-content {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface-subtle);
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.footer-attribution-content p {
+  margin: 0 0 8px;
+}
+
+.footer-attribution-content p:last-child {
+  margin-bottom: 0;
+}
+
+.footer-attribution-content a {
+  color: var(--cobalt);
 }
 
 @media (max-width: 860px) {
