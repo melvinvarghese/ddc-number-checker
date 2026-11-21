@@ -1034,37 +1034,141 @@ if (themeToggle) {
 }
 
 // -----------------------------------------------------------------------------
-// 000–900 Class Browser Drawer
+// -----------------------------------------------------------------------------
+// Three-level DDC Number Browser
 // -----------------------------------------------------------------------------
 const toggleBrowserBtn = document.querySelector("#toggle-browser-btn");
 const browserContent = document.querySelector("#browser-content");
 const browserToggleText = document.querySelector("#browser-toggle-text");
 const browserToggleArrow = document.querySelector("#browser-toggle-arrow");
+const ddcTree = document.querySelector("#ddc-tree");
+const ddcBrowserStatus = document.querySelector("#ddc-browser-status");
+
+const DDC_MAIN_CLASSES = [
+  { code: "000", title: "Computer Science & Information", description: "Computing, information, knowledge, and library science." },
+  { code: "100", title: "Philosophy & Psychology", description: "Philosophy, psychology, logic, and ethics." },
+  { code: "200", title: "Religion", description: "Religion, theology, and related belief systems." },
+  { code: "300", title: "Social Sciences", description: "Society, economics, law, education, and politics." },
+  { code: "400", title: "Language", description: "Language, linguistics, grammar, and communication." },
+  { code: "500", title: "Natural Sciences & Mathematics", description: "Mathematics and the natural sciences." },
+  { code: "600", title: "Technology", description: "Applied sciences, medicine, engineering, and technology." },
+  { code: "700", title: "Arts & Recreation", description: "Arts, architecture, music, sports, and recreation." },
+  { code: "800", title: "Literature", description: "Literature, poetry, drama, and literary criticism." },
+  { code: "900", title: "History & Geography", description: "History, geography, biography, and travel." }
+];
+
+function createDdcNumberButton(code) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "ddc-section-number";
+  button.textContent = code;
+  button.setAttribute("aria-label", `Copy DDC number ${code}`);
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = `Copied DDC number ${code}.`;
+    } catch (_) {
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = `DDC number: ${code}. Clipboard access is unavailable in this browser.`;
+    }
+  });
+  return button;
+}
+
+function buildDdcBrowser() {
+  if (!ddcTree) return;
+  const fragment = document.createDocumentFragment();
+
+  DDC_MAIN_CLASSES.forEach(mainClass => {
+    const mainDetails = document.createElement("details");
+    mainDetails.className = "ddc-level ddc-main-level";
+
+    const mainSummary = document.createElement("summary");
+    mainSummary.className = "ddc-level-summary ddc-main-summary";
+
+    const mainCode = document.createElement("span");
+    mainCode.className = "ddc-code ddc-main-code";
+    mainCode.textContent = mainClass.code;
+
+    const mainText = document.createElement("span");
+    mainText.className = "ddc-level-text";
+    const mainTitle = document.createElement("strong");
+    mainTitle.textContent = mainClass.title;
+    const mainDescription = document.createElement("small");
+    mainDescription.textContent = mainClass.description;
+    mainText.append(mainTitle, mainDescription);
+
+    const mainChevron = document.createElement("span");
+    mainChevron.className = "ddc-chevron";
+    mainChevron.setAttribute("aria-hidden", "true");
+    mainChevron.textContent = "＋";
+    mainSummary.append(mainCode, mainText, mainChevron);
+    mainDetails.append(mainSummary);
+
+    const divisions = document.createElement("div");
+    divisions.className = "ddc-division-list";
+
+    for (let divisionOffset = 0; divisionOffset < 100; divisionOffset += 10) {
+      const divisionCode = String(Number(mainClass.code) + divisionOffset).padStart(3, "0");
+      const divisionDetails = document.createElement("details");
+      divisionDetails.className = "ddc-level ddc-division-level";
+
+      const divisionSummary = document.createElement("summary");
+      divisionSummary.className = "ddc-level-summary ddc-division-summary";
+
+      const divisionNumber = document.createElement("span");
+      divisionNumber.className = "ddc-code";
+      divisionNumber.textContent = divisionCode;
+
+      const divisionLabel = document.createElement("span");
+      divisionLabel.className = "ddc-level-text";
+      const divisionTitle = document.createElement("strong");
+      divisionTitle.textContent = `Division ${divisionCode}`;
+      const divisionNote = document.createElement("small");
+      divisionNote.textContent = "Open to view its ten section numbers";
+      divisionLabel.append(divisionTitle, divisionNote);
+
+      const divisionChevron = document.createElement("span");
+      divisionChevron.className = "ddc-chevron";
+      divisionChevron.setAttribute("aria-hidden", "true");
+      divisionChevron.textContent = "＋";
+      divisionSummary.append(divisionNumber, divisionLabel, divisionChevron);
+      divisionDetails.append(divisionSummary);
+
+      const sections = document.createElement("div");
+      sections.className = "ddc-section-grid";
+      for (let sectionOffset = 0; sectionOffset < 10; sectionOffset++) {
+        sections.appendChild(createDdcNumberButton(String(Number(divisionCode) + sectionOffset).padStart(3, "0")));
+      }
+      divisionDetails.appendChild(sections);
+      divisions.appendChild(divisionDetails);
+    }
+
+    mainDetails.appendChild(divisions);
+    fragment.appendChild(mainDetails);
+  });
+
+  ddcTree.replaceChildren(fragment);
+}
 
 if (toggleBrowserBtn && browserContent) {
   toggleBrowserBtn.addEventListener("click", () => {
-    const isHidden = browserContent.hidden;
-    browserContent.hidden = !isHidden;
-    toggleBrowserBtn.setAttribute("aria-expanded", String(isHidden));
-    if (browserToggleText) browserToggleText.textContent = isHidden ? "Collapse 000–900" : "Explore 000–900";
-    if (browserToggleArrow) browserToggleArrow.textContent = isHidden ? "↑" : "↓";
+    const isOpening = browserContent.hidden;
+    browserContent.hidden = !isOpening;
+    toggleBrowserBtn.setAttribute("aria-expanded", String(isOpening));
+    if (browserToggleText) browserToggleText.textContent = isOpening ? "Collapse browser" : "Explore 000–999";
+    if (browserToggleArrow) browserToggleArrow.textContent = isOpening ? "↑" : "↓";
   });
 }
 
-document.querySelectorAll(".class-item").forEach(item => {
-  const btn = item.querySelector(".use-class-btn");
-  if (!btn) return;
-  btn.addEventListener("click", () => {
-    const topic = item.getAttribute("data-apply") || "";
-    if (topic && subjectInput) {
-      subjectInput.value = topic;
-      subjectInput.focus();
-      document.querySelector(".search-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  });
-});
+if (ddcTree) {
+  buildDdcBrowser();
+  ddcTree.addEventListener("toggle", event => {
+    if (!(event.target instanceof HTMLDetailsElement)) return;
+    const chevron = event.target.querySelector(":scope > summary .ddc-chevron");
+    if (chevron) chevron.textContent = event.target.open ? "−" : "＋";
+  }, true);
+}
 
-// -----------------------------------------------------------------------------
 // Live ISBN Barcode Scanner (Webcam / Mobile Camera)
 // -----------------------------------------------------------------------------
 const scanIsbnBtn = document.querySelector("#scan-isbn-btn");
