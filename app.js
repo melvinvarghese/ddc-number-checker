@@ -1205,12 +1205,16 @@ function stopScanner() {
     activeScannerStream = null;
   }
   if (scannerVideo) scannerVideo.srcObject = null;
-  if (scannerModal) scannerModal.hidden = true;
+  if (scannerModal) {
+    scannerModal.hidden = true;
+    scannerModal.style.display = "none";
+  }
 }
 
 async function startScanner() {
   if (!scannerModal || !scannerVideo) return;
   scannerModal.hidden = false;
+  scannerModal.style.display = "grid";
   if (scannerStatus) scannerStatus.textContent = "Accessing camera…";
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
