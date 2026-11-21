@@ -1035,7 +1035,7 @@ if (themeToggle) {
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-// Three-level DDC Number Browser
+// Three-level DDC Subject Browser
 // -----------------------------------------------------------------------------
 const toggleBrowserBtn = document.querySelector("#toggle-browser-btn");
 const browserContent = document.querySelector("#browser-content");
@@ -1044,31 +1044,38 @@ const browserToggleArrow = document.querySelector("#browser-toggle-arrow");
 const ddcTree = document.querySelector("#ddc-tree");
 const ddcBrowserStatus = document.querySelector("#ddc-browser-status");
 
+// Independently worded subject labels for navigation. These are brief guides,
+// not official DDC captions or a substitute for an authorised DDC schedule.
 const DDC_MAIN_CLASSES = [
-  { code: "000", title: "Computer Science & Information", description: "Computing, information, knowledge, and library science." },
-  { code: "100", title: "Philosophy & Psychology", description: "Philosophy, psychology, logic, and ethics." },
-  { code: "200", title: "Religion", description: "Religion, theology, and related belief systems." },
-  { code: "300", title: "Social Sciences", description: "Society, economics, law, education, and politics." },
-  { code: "400", title: "Language", description: "Language, linguistics, grammar, and communication." },
-  { code: "500", title: "Natural Sciences & Mathematics", description: "Mathematics and the natural sciences." },
-  { code: "600", title: "Technology", description: "Applied sciences, medicine, engineering, and technology." },
-  { code: "700", title: "Arts & Recreation", description: "Arts, architecture, music, sports, and recreation." },
-  { code: "800", title: "Literature", description: "Literature, poetry, drama, and literary criticism." },
-  { code: "900", title: "History & Geography", description: "History, geography, biography, and travel." }
+  { code: "000", title: "Computing, information & general works", description: "Knowledge systems, computing, information resources and library science.", divisions: ["General knowledge & computer systems","Bibliography","Library & information work","Unassigned in this summary","Serial publications","Organisations & museums","Journalism & publishing","General collections & quotations","Manuscripts & rare books"] },
+  { code: "100", title: "Philosophy & psychology", description: "Philosophical inquiry, reasoning, ethics and the study of mind and behaviour.", divisions: ["General philosophy","Metaphysical questions","Knowledge, causation & human nature","Parapsychology & occult subjects","Philosophical traditions","Psychology","Logic & reasoning","Ethics","Historical & non-Western philosophy","Modern Western philosophy"] },
+  { code: "200", title: "Religion", description: "Religious traditions, beliefs, practices and institutions.", divisions: ["General religious studies","Religious thought & philosophy","Biblical studies","Christian theology","Christian life & practice","Church ministry & religious orders","Church organisation & social role","Christian history","Christian traditions","Other religions"] },
+  { code: "300", title: "Social sciences", description: "Society, public life, economics, law, education and culture.", divisions: ["Statistics & population data","Politics & government","Economics","Legal systems","Public administration & armed forces","Social welfare & social issues","Education","Trade, communication & transport","Customs, etiquette & folklore","Social groups & culture"] },
+  { code: "400", title: "Language", description: "Language structure, linguistics and individual language families.", divisions: ["Linguistics","English language","Germanic languages","French language","Italian & related languages","Spanish & Portuguese","Latin & related languages","Greek languages","Other languages","Language variation & communication"] },
+  { code: "500", title: "Science", description: "Mathematics, physical sciences, earth sciences and life sciences.", divisions: ["General science","Mathematics","Astronomy","Physics","Chemistry","Earth sciences","Fossils & prehistoric life","Biology","Botany & plant life","Zoology & animal life"] },
+  { code: "600", title: "Technology", description: "Applied science, health, engineering, agriculture, business and construction.", divisions: ["General applied science","Medicine & health","Engineering","Agriculture","Home & family life","Business management","Chemical technology","Manufacturing","Specialised manufacturing","Building & construction"] },
+  { code: "700", title: "Arts & recreation", description: "Planning, architecture, visual arts, music, sport and leisure.", divisions: ["Landscape & area planning","Architecture","Sculpture & three-dimensional arts","Drawing & decorative arts","Painting","Printmaking & graphic arts","Photography & digital imaging","Music","Sport, games & entertainment","Recreation & performing arts"] },
+  { code: "800", title: "Literature", description: "Literary writing, criticism and works in different language traditions.", divisions: ["American literature in English","English & Old English literature","German-language literature","French-language literature","Italian & related literature","Spanish & Portuguese literature","Latin & Italic literature","Greek literature","Other literatures","Literary theory & criticism"] },
+  { code: "900", title: "History & geography", description: "Places, travel, biography and the history of world regions.", divisions: ["Geography & travel","Biography & family history","Ancient world history","European history","Asian history","African history","North American history","South American history","History of other regions","General history"] }
 ];
 
-function createDdcNumberButton(code) {
+function createDdcNumberButton(code, divisionTitle) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "ddc-section-number";
-  button.textContent = code;
-  button.setAttribute("aria-label", `Copy DDC number ${code}`);
+  const number = document.createElement("strong");
+  number.textContent = code;
+  const context = document.createElement("small");
+  context.textContent = "Topic within " + divisionTitle;
+  button.append(number, context);
+  button.title = "A section-level number within " + divisionTitle + ". Check an authorised DDC schedule for its exact caption.";
+  button.setAttribute("aria-label", "DDC section " + code + ", a topic within " + divisionTitle + ". Copy number.");
   button.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(code);
-      if (ddcBrowserStatus) ddcBrowserStatus.textContent = `Copied DDC number ${code}.`;
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = "Copied DDC number " + code + ".";
     } catch (_) {
-      if (ddcBrowserStatus) ddcBrowserStatus.textContent = `DDC number: ${code}. Clipboard access is unavailable in this browser.`;
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = "DDC number: " + code + ". Clipboard access is unavailable in this browser.";
     }
   });
   return button;
@@ -1109,6 +1116,7 @@ function buildDdcBrowser() {
 
     for (let divisionOffset = 0; divisionOffset < 100; divisionOffset += 10) {
       const divisionCode = String(Number(mainClass.code) + divisionOffset).padStart(3, "0");
+      const divisionTitle = mainClass.divisions[divisionOffset / 10] || "Subject area";
       const divisionDetails = document.createElement("details");
       divisionDetails.className = "ddc-level ddc-division-level";
 
@@ -1121,11 +1129,11 @@ function buildDdcBrowser() {
 
       const divisionLabel = document.createElement("span");
       divisionLabel.className = "ddc-level-text";
-      const divisionTitle = document.createElement("strong");
-      divisionTitle.textContent = `Division ${divisionCode}`;
+      const divisionTitleElement = document.createElement("strong");
+      divisionTitleElement.textContent = divisionTitle;
       const divisionNote = document.createElement("small");
-      divisionNote.textContent = "Open to view its ten section numbers";
-      divisionLabel.append(divisionTitle, divisionNote);
+      divisionNote.textContent = "Ten section-level numbers in this subject area";
+      divisionLabel.append(divisionTitleElement, divisionNote);
 
       const divisionChevron = document.createElement("span");
       divisionChevron.className = "ddc-chevron";
@@ -1137,7 +1145,8 @@ function buildDdcBrowser() {
       const sections = document.createElement("div");
       sections.className = "ddc-section-grid";
       for (let sectionOffset = 0; sectionOffset < 10; sectionOffset++) {
-        sections.appendChild(createDdcNumberButton(String(Number(divisionCode) + sectionOffset).padStart(3, "0")));
+        const sectionCode = String(Number(divisionCode) + sectionOffset).padStart(3, "0");
+        sections.appendChild(createDdcNumberButton(sectionCode, divisionTitle));
       }
       divisionDetails.appendChild(sections);
       divisions.appendChild(divisionDetails);
