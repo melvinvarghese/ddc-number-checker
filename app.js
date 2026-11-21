@@ -183,8 +183,6 @@ function renderResults(book, ranked, sourceNote = "", options = {}) {
     '<div class="result-divider"></div><h3 class="result-subtitle">Why this was suggested</h3>' +
     '<p class="result-reason">Matched guide terms: <strong>' + escapeHtml(best.matched.join(", ")) + '</strong>. The local guide matched these terms in the title, author or subject details you supplied. This is a keyword match, not a full analysis of the book.</p>' +
     '<p class="result-reason"><strong>Classification context:</strong> DDC classification depends on the work’s subject, disciplinary focus and, where relevant, its approach or form. A title alone is not enough to settle the number.</p>' +
-    '<div id="catalogue-evidence" class="catalogue-evidence" hidden></div>' +
-    '<section id="catalogue-discovery" class="catalogue-discovery" aria-label="Library catalogue search"></section>' +
     alternativeHtml +
     '<div class="decision-box"><h3 class="result-subtitle">Record your cataloguing decision</h3><p class="result-reason">Choose the number you decide to use after checking the book and your authorised DDC source.</p><label class="decision-label" for="decision-number">Final number selected</label><select id="decision-number">' + ranked.slice(0, 4).map(item => '<option value="' + escapeHtml(item.number) + '">' + escapeHtml(item.number + ' — ' + item.heading) + '</option>').join("") + '</select><label class="decision-label" for="decision-note">Cataloguer’s note <span>(optional)</span></label><textarea id="decision-note" rows="2" maxlength="500" placeholder="Why did you choose this number? Note local policy or edition details…"></textarea><button class="copy-button decision-save" type="button" id="save-decision">Save decision on this device</button><p class="field-hint">Saved locally in this browser only. No account or cloud storage.</p></div>' +
     '<div class="result-actions"><button class="copy-button" type="button" id="copy-number">Copy DDC number</button><button class="copy-button" type="button" id="copy-summary">Copy result summary</button></div>' +
@@ -198,8 +196,6 @@ function renderResults(book, ranked, sourceNote = "", options = {}) {
     copyText(summary, event.currentTarget, "Summary copied");
   });
   results.hidden = false;
-  if (options.includeEvidence !== false && !window.ddcBatchMode) appendCatalogueEvidence(book);
-  if (!window.ddcBatchMode) appendCatalogueSearch(book);
   if (options.scroll !== false && !window.ddcBatchMode) results.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
