@@ -751,10 +751,12 @@ form.addEventListener("submit", async event => {
     subjectInput.focus();
     return;
   }
+  // ISBN is optional supporting metadata. An invalid or unrecognised ISBN
+  // must never prevent the primary title + subject classification workflow.
   if (cleanIsbn && !isValidIsbn(cleanIsbn)) {
-    renderEmpty("Please check the ISBN.", "Enter a valid ISBN-10 or ISBN-13. You can also remove the ISBN and search using the title and author.");
-    isbnInput.focus();
-    return;
+    console.warn("Ignoring invalid ISBN; continuing with title and subject search.");
+    cleanIsbn = "";
+    isbnInput.setCustomValidity("");
   }
   book.isbn = cleanIsbn;
   const submitButton = form.querySelector('button[type="submit"]');
@@ -855,7 +857,7 @@ form.addEventListener("submit", async event => {
       submitButton.innerHTML = originalButtonText;
     }
   }
-  if (!cleanIsbn && !window.ddcBatchMode && !window.ddcSkipRemoteLookup) {
+  if (book.title && !window.ddcBatchMode && !window.ddcSkipRemoteLookup) {
     submitButton.disabled = true;
     submitButton.innerHTML = "<span>Searching catalogue records…</span>";
     try {
