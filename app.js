@@ -1035,8 +1035,7 @@ if (themeToggle) {
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-// Three-level DDC Subject Browser
-// -----------------------------------------------------------------------------
+// Three-level decimal subject browser — sourced from the public-domain FDC dataset.
 const toggleBrowserBtn = document.querySelector("#toggle-browser-btn");
 const browserContent = document.querySelector("#browser-content");
 const browserToggleText = document.querySelector("#browser-toggle-text");
@@ -1044,66 +1043,68 @@ const browserToggleArrow = document.querySelector("#browser-toggle-arrow");
 const ddcTree = document.querySelector("#ddc-tree");
 const ddcBrowserStatus = document.querySelector("#ddc-browser-status");
 
-// Independently worded subject labels for navigation. These are brief guides,
-// not official DDC captions or a substitute for an authorised DDC schedule.
-const DDC_MAIN_CLASSES = [
-  { code: "000", title: "Computing, information & general works", description: "Knowledge systems, computing, information resources and library science.", divisions: ["General knowledge & computer systems","Bibliography","Library & information work","Encyclopedias & reference works","Unassigned in this summary","Serial publications","Organisations & museums","Journalism & publishing","General collections & quotations","Manuscripts & rare books"] },
-  { code: "100", title: "Philosophy & psychology", description: "Philosophical inquiry, reasoning, ethics and the study of mind and behaviour.", divisions: ["General philosophy","Metaphysical questions","Knowledge, causation & human nature","Parapsychology & occult subjects","Philosophical traditions","Psychology","Logic & reasoning","Ethics","Historical & non-Western philosophy","Modern Western philosophy"] },
-  { code: "200", title: "Religion", description: "Religious traditions, beliefs, practices and institutions.", divisions: ["General religious studies","Religious thought & philosophy","Biblical studies","Christian theology","Christian life & practice","Church ministry & religious orders","Church organisation & social role","Christian history","Christian traditions","Other religions"] },
-  { code: "300", title: "Social sciences", description: "Society, public life, economics, law, education and culture.", divisions: ["Statistics & population data","Politics & government","Economics","Legal systems","Public administration & armed forces","Social welfare & social issues","Education","Trade, communication & transport","Customs, etiquette & folklore","Social groups & culture"] },
-  { code: "400", title: "Language", description: "Language structure, linguistics and individual language families.", divisions: ["Linguistics","English language","Germanic languages","French language","Italian & related languages","Spanish & Portuguese","Latin & related languages","Greek languages","Other languages","Language variation & communication"] },
-  { code: "500", title: "Science", description: "Mathematics, physical sciences, earth sciences and life sciences.", divisions: ["General science","Mathematics","Astronomy","Physics","Chemistry","Earth sciences","Fossils & prehistoric life","Biology","Botany & plant life","Zoology & animal life"] },
-  { code: "600", title: "Technology", description: "Applied science, health, engineering, agriculture, business and construction.", divisions: ["General applied science","Medicine & health","Engineering","Agriculture","Home & family life","Business management","Chemical technology","Manufacturing","Specialised manufacturing","Building & construction"] },
-  { code: "700", title: "Arts & recreation", description: "Planning, architecture, visual arts, music, sport and leisure.", divisions: ["Landscape & area planning","Architecture","Sculpture & three-dimensional arts","Drawing & decorative arts","Painting","Printmaking & graphic arts","Photography & digital imaging","Music","Sport, games & entertainment","Recreation & performing arts"] },
-  { code: "800", title: "Literature", description: "Literary writing, criticism and works in different language traditions.", divisions: ["American literature in English","English & Old English literature","German-language literature","French-language literature","Italian & related literature","Spanish & Portuguese literature","Latin & Italic literature","Greek literature","Other literatures","Literary theory & criticism"] },
-  { code: "900", title: "History & geography", description: "Places, travel, biography and the history of world regions.", divisions: ["Geography & travel","Biography & family history","Ancient world history","European history","Asian history","African history","North American history","South American history","History of other regions","General history"] }
-];
+function parseFdcHierarchy(source) {
+  const roots = [];
+  const stack = [];
+  source.split(/\r?\n/).forEach(line => {
+    const match = line.match(/^( *)(\d{3})\s+(.+?)\s*$/);
+    if (!match) return;
+    const depth = match[1].length;
+    if (depth > 2) return;
+    const node = { code: match[2], title: match[3], children: [] };
+    if (depth === 0) {
+      roots.push(node);
+      stack[0] = node;
+    } else if (depth === 1 && stack[0]) {
+      stack[0].children.push(node);
+      stack[1] = node;
+    } else if (depth === 2 && stack[1]) {
+      stack[1].children.push(node);
+    }
+  });
+  return roots;
+}
 
-function createDdcNumberButton(code, divisionTitle) {
+function createFdcNumberButton(node) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "ddc-section-number";
   const number = document.createElement("strong");
-  number.textContent = code;
-  const context = document.createElement("small");
-  context.textContent = "Topic within " + divisionTitle;
-  button.append(number, context);
-  button.title = "A section-level number within " + divisionTitle + ". Check an authorised DDC schedule for its exact caption.";
-  button.setAttribute("aria-label", "DDC section " + code + ", a topic within " + divisionTitle + ". Copy number.");
+  number.textContent = node.code;
+  const label = document.createElement("small");
+  label.textContent = node.title;
+  button.append(number, label);
+  button.title = node.code + " — " + node.title + ". Click to copy.";
+  button.setAttribute("aria-label", node.code + " — " + node.title + ". Copy number.");
   button.addEventListener("click", async () => {
     try {
-      await navigator.clipboard.writeText(code);
-      if (ddcBrowserStatus) ddcBrowserStatus.textContent = "Copied DDC number " + code + ".";
+      await navigator.clipboard.writeText(node.code);
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = "Copied " + node.code + " — " + node.title;
     } catch (_) {
-      if (ddcBrowserStatus) ddcBrowserStatus.textContent = "DDC number: " + code + ". Clipboard access is unavailable in this browser.";
+      if (ddcBrowserStatus) ddcBrowserStatus.textContent = node.code + " — " + node.title + ". Clipboard unavailable.";
     }
   });
   return button;
 }
 
-function buildDdcBrowser() {
+function renderFdcBrowser(classes) {
   if (!ddcTree) return;
   const fragment = document.createDocumentFragment();
-
-  DDC_MAIN_CLASSES.forEach(mainClass => {
+  classes.forEach(mainClass => {
     const mainDetails = document.createElement("details");
     mainDetails.className = "ddc-level ddc-main-level";
-
     const mainSummary = document.createElement("summary");
     mainSummary.className = "ddc-level-summary ddc-main-summary";
-
     const mainCode = document.createElement("span");
     mainCode.className = "ddc-code ddc-main-code";
     mainCode.textContent = mainClass.code;
-
     const mainText = document.createElement("span");
     mainText.className = "ddc-level-text";
     const mainTitle = document.createElement("strong");
     mainTitle.textContent = mainClass.title;
     const mainDescription = document.createElement("small");
-    mainDescription.textContent = mainClass.description;
+    mainDescription.textContent = mainClass.children.length + " listed divisions";
     mainText.append(mainTitle, mainDescription);
-
     const mainChevron = document.createElement("span");
     mainChevron.className = "ddc-chevron";
     mainChevron.setAttribute("aria-hidden", "true");
@@ -1113,50 +1114,58 @@ function buildDdcBrowser() {
 
     const divisions = document.createElement("div");
     divisions.className = "ddc-division-list";
-
-    for (let divisionOffset = 0; divisionOffset < 100; divisionOffset += 10) {
-      const divisionCode = String(Number(mainClass.code) + divisionOffset).padStart(3, "0");
-      const divisionTitle = mainClass.divisions[divisionOffset / 10] || "Subject area";
+    mainClass.children.forEach(division => {
       const divisionDetails = document.createElement("details");
       divisionDetails.className = "ddc-level ddc-division-level";
-
       const divisionSummary = document.createElement("summary");
       divisionSummary.className = "ddc-level-summary ddc-division-summary";
-
-      const divisionNumber = document.createElement("span");
-      divisionNumber.className = "ddc-code";
-      divisionNumber.textContent = divisionCode;
-
-      const divisionLabel = document.createElement("span");
-      divisionLabel.className = "ddc-level-text";
-      const divisionTitleElement = document.createElement("strong");
-      divisionTitleElement.textContent = divisionTitle;
+      const divisionCode = document.createElement("span");
+      divisionCode.className = "ddc-code";
+      divisionCode.textContent = division.code;
+      const divisionText = document.createElement("span");
+      divisionText.className = "ddc-level-text";
+      const divisionTitle = document.createElement("strong");
+      divisionTitle.textContent = division.title;
       const divisionNote = document.createElement("small");
-      divisionNote.textContent = "Ten section-level numbers in this subject area";
-      divisionLabel.append(divisionTitleElement, divisionNote);
-
-      const divisionChevron = document.createElement("span");
-      divisionChevron.className = "ddc-chevron";
-      divisionChevron.setAttribute("aria-hidden", "true");
-      divisionChevron.textContent = "＋";
-      divisionSummary.append(divisionNumber, divisionLabel, divisionChevron);
+      divisionNote.textContent = division.children.length
+        ? division.children.length + " listed sections"
+        : "No further sections listed in this dataset";
+      divisionText.append(divisionTitle, divisionNote);
+      const chevron = document.createElement("span");
+      chevron.className = "ddc-chevron";
+      chevron.setAttribute("aria-hidden", "true");
+      chevron.textContent = "＋";
+      divisionSummary.append(divisionCode, divisionText, chevron);
       divisionDetails.append(divisionSummary);
 
-      const sections = document.createElement("div");
-      sections.className = "ddc-section-grid";
-      for (let sectionOffset = 0; sectionOffset < 10; sectionOffset++) {
-        const sectionCode = String(Number(divisionCode) + sectionOffset).padStart(3, "0");
-        sections.appendChild(createDdcNumberButton(sectionCode, divisionTitle));
+      if (division.children.length) {
+        const sections = document.createElement("div");
+        sections.className = "ddc-section-grid";
+        division.children.forEach(section => sections.appendChild(createFdcNumberButton(section)));
+        divisionDetails.appendChild(sections);
       }
-      divisionDetails.appendChild(sections);
       divisions.appendChild(divisionDetails);
-    }
-
+    });
     mainDetails.appendChild(divisions);
     fragment.appendChild(mainDetails);
   });
-
   ddcTree.replaceChildren(fragment);
+}
+
+async function buildDdcBrowser() {
+  if (!ddcTree) return;
+  try {
+    const response = await fetch("./fdc.txt");
+    if (!response.ok) throw new Error("Could not load subject data");
+    const source = await response.text();
+    const classes = parseFdcHierarchy(source);
+    if (!classes.length) throw new Error("No subject records found");
+    renderFdcBrowser(classes);
+    if (ddcBrowserStatus) ddcBrowserStatus.textContent =
+      "Loaded " + classes.length + " main classes from the public-domain Free Decimal Correspondence (FDC). This is DDC-compatible reference data, not an official DDC schedule.";
+  } catch (error) {
+    if (ddcBrowserStatus) ddcBrowserStatus.textContent = "Subject data could not be loaded. Please refresh while online.";
+  }
 }
 
 if (toggleBrowserBtn && browserContent) {
@@ -1164,7 +1173,7 @@ if (toggleBrowserBtn && browserContent) {
     const isOpening = browserContent.hidden;
     browserContent.hidden = !isOpening;
     toggleBrowserBtn.setAttribute("aria-expanded", String(isOpening));
-    if (browserToggleText) browserToggleText.textContent = isOpening ? "Collapse browser" : "Explore 000–999";
+    if (browserToggleText) browserToggleText.textContent = isOpening ? "Collapse browser" : "Explore subjects";
     if (browserToggleArrow) browserToggleArrow.textContent = isOpening ? "↑" : "↓";
   });
 }
