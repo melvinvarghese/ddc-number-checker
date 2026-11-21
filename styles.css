@@ -1638,16 +1638,38 @@ input:invalid:not(:placeholder-shown), select:invalid:not(:placeholder-shown) {
 }
 
 .ddc-section-number {
-  min-height: 38px;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 7px 9px;
   border: 1px solid var(--line);
   border-radius: 4px;
   background: var(--surface-subtle);
   color: var(--cobalt);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ddc-section-number strong {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ddc-section-number small {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.ddc-section-number:hover small {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .ddc-section-number:hover {
