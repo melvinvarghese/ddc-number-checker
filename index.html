@@ -297,82 +297,27 @@
         <section id="results" class="results-section" aria-live="polite" hidden></section>
       </div>
 
-      <!-- Interactive 000–900 Class Browser Section -->
+      <!-- Expandable three-level DDC number browser -->
       <section id="class-browser" class="class-browser-card" aria-labelledby="browser-title">
         <div class="browser-header">
           <div>
             <div class="section-kicker">TAXONOMIC REFERENCE</div>
-            <h2 id="browser-title">DDC 000–900 Class Browser</h2>
-            <p>Explore the 10 main Dewey classes. Select any division to instantly load it as your search Subject / Topic.</p>
+            <h2 id="browser-title">DDC Number Browser</h2>
+            <p>Explore the three-level number structure: main classes, divisions, and sections. Detailed captions are not included in this number-only view.</p>
           </div>
-          <button type="button" id="toggle-browser-btn" class="copy-button" aria-expanded="false">
-            <span id="browser-toggle-text">Explore 000–900</span> <span id="browser-toggle-arrow" aria-hidden="true">↓</span>
+          <button type="button" id="toggle-browser-btn" class="copy-button" aria-expanded="false" aria-controls="browser-content">
+            <span id="browser-toggle-text">Explore 000–999</span> <span id="browser-toggle-arrow" aria-hidden="true">↓</span>
           </button>
         </div>
 
         <div id="browser-content" class="browser-content" hidden>
-          <div class="classes-grid">
-            <article class="class-item" data-code="000" data-apply="Computer science, information science, bibliographies, libraries">
-              <span class="class-code">000</span>
-              <h3>Computer Science &amp; Info</h3>
-              <p>Generalities, computing, information systems, AI &amp; library science.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="100" data-apply="Philosophy, psychology, ethics, cognitive science, logic">
-              <span class="class-code">100</span>
-              <h3>Philosophy &amp; Psychology</h3>
-              <p>Human thought, ethics, perception, personal growth &amp; logic.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="200" data-apply="Religion, theology, comparative religion, sacred texts">
-              <span class="class-code">200</span>
-              <h3>Religion &amp; Theology</h3>
-              <p>Belief systems, scriptures, world faiths &amp; comparative religion.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="300" data-apply="Social sciences, economics, law, education, politics, society">
-              <span class="class-code">300</span>
-              <h3>Social Sciences</h3>
-              <p>Societies, economics, legal systems, education, public policy &amp; customs.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="400" data-apply="Language study, linguistics, grammar, multilingual dictionaries">
-              <span class="class-code">400</span>
-              <h3>Language &amp; Linguistics</h3>
-              <p>Linguistics, grammar, semantics, multilingual study &amp; etymology.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="500" data-apply="Natural science, pure mathematics, physics, chemistry, biology, astronomy">
-              <span class="class-code">500</span>
-              <h3>Sciences &amp; Mathematics</h3>
-              <p>Pure mathematics, astrophysics, chemistry, ecology &amp; life sciences.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="600" data-apply="Applied sciences, technology, medicine, engineering, cooking, agriculture">
-              <span class="class-code">600</span>
-              <h3>Technology &amp; Applied</h3>
-              <p>Medicine, aerospace, engineering, agriculture, management &amp; cookery.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="700" data-apply="Visual arts, architecture, painting, photography, music, cinema, sports">
-              <span class="class-code">700</span>
-              <h3>The Arts &amp; Recreation</h3>
-              <p>Fine arts, architecture, music, cinema, photography, sports &amp; games.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="800" data-apply="Literature, poetry, drama, fiction, literary criticism, rhetoric">
-              <span class="class-code">800</span>
-              <h3>Literature &amp; Rhetoric</h3>
-              <p>Poetry, prose, fiction, dramatic works, criticism &amp; rhetoric.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
-            <article class="class-item" data-code="900" data-apply="World history, regional histories, travel, geography, biography">
-              <span class="class-code">900</span>
-              <h3>History &amp; Geography</h3>
-              <p>World history, regional events, travel, cartography &amp; biography.</p>
-              <button type="button" class="use-class-btn">Use as topic</button>
-            </article>
+          <div class="browser-legend">
+            <span><strong>Level 1</strong> Main classes</span>
+            <span><strong>Level 2</strong> Divisions</span>
+            <span><strong>Level 3</strong> Sections</span>
           </div>
+          <div id="ddc-tree" class="ddc-tree" aria-label="Dewey Decimal Classification number hierarchy"></div>
+          <p id="ddc-browser-status" class="ddc-browser-status" role="status" aria-live="polite">Select a number to copy it.</p>
         </div>
       </section>
 
@@ -477,6 +422,13 @@
 <a href="https://melvinvarghese.in/?utm_source=ddc-checker-github&utm_medium=referral&utm_campaign=ddc-checker" target="_blank" rel="noopener noreferrer">Melvin Varghese</a>.
 </span>
       </div>
+      <details class="footer-attribution">
+        <summary>Data source &amp; attribution</summary>
+        <div class="footer-attribution-content">
+          <p>Dewey Decimal Classification (DDC) is a classification system maintained by <a href="https://www.oclc.org/en/dewey.html" target="_blank" rel="noopener noreferrer">OCLC</a>. DDC Finder is an independent reference tool and is not affiliated with or endorsed by OCLC.</p>
+          <p>This browser presents number ranges for navigation only. It does not reproduce the full DDC schedules or detailed section captions. For authoritative captions and classification decisions, consult an authorised edition of the DDC schedules.</p>
+        </div>
+      </details>
       <a class="back-to-top" href="#page-title">Back to top ↑</a>
     </footer>
   </div>
