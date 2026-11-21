@@ -1,5 +1,5 @@
 // DDC Finder Service Worker — Offline Support Cache
-const CACHE_NAME = "ddc-finder-v7";
+const CACHE_NAME = "ddc-finder-v8";
 
 const PRECACHE_ASSETS = [
   "./",
