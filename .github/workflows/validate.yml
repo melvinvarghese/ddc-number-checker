@@ -23,6 +23,7 @@ jobs:
           node --check catalogue-config.js
           node --check ddc-validation.js
           node --test tests/ddc-validation.test.cjs tests/catalogue-worker.test.mjs
+          node --test tests/classification-engine.test.cjs
           node --test tests/catalogue-worker.test.mjs
           node --check tests/runner.js
           node --check tests/validate-data.mjs
