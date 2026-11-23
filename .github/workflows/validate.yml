@@ -19,6 +19,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check app.js
+          node --check classification-engine.js
           node --check catalogue/worker.js
           node --check catalogue-config.js
           node --check ddc-validation.js
