@@ -134,72 +134,6 @@ function normalise(value) {
   return value.toLocaleLowerCase().replace(/[’']/g, "'").replace(/[^\p{L}\p{N}\s.-]/gu, " ").replace(/\s+/g, " ").trim();
 }
 
-function scoreRule(rule, text) {
-  // Canonicalise common grammatical variants so concepts can combine even
-  // when the user enters a different form or word order.
-  const stopWords = new Set(["a", "an", "and", "of", "the", "in", "for", "on", "to", "with"]);
-  const equivalents = {
-    indian: "india",
-    historical: "history",
-    historically: "history",
-    psychological: "psychology",
-    psychologically: "psychology",
-    children: "child",
-    childrens: "child",
-    essays: "essay",
-    novels: "novel",
-    poems: "poem",
-    libraries: "library",
-    librarians: "librarian",
-    computers: "computer",
-    computing: "computer",
-    animals: "animal",
-    plants: "plant",
-    stories: "story",
-    biographies: "biography",
-    autobiographies: "autobiography",
-    languages: "language",
-    sciences: "science",
-    books: "book",
-    movies: "movie",
-    films: "film",
-    educational: "education",
-    linguistic: "linguistics",
-    literary: "literature",
-    religious: "religion",
-    medical: "medicine",
-    political: "politics",
-    economic: "economics"
-  };
-  const canonicalToken = token => equivalents[token] || token;
-  const tokens = value => normalise(value)
-    .split(/\s+/u)
-    .filter(token => token && !stopWords.has(token))
-    .map(canonicalToken);
-  const queryTokens = new Set(tokens(text));
-  const conceptMatches = new Map();
-
-  for (const keyword of rule.keywords) {
-    const key = normalise(keyword);
-    if (!key) continue;
-    const keywordTokens = [...new Set(tokens(key))];
-    if (!keywordTokens.length) continue;
-    const signature = keywordTokens.slice().sort().join(" ");
-    if (!keywordTokens.every(token => queryTokens.has(token))) continue;
-
-    // Prefer an exact phrase when several aliases describe the same concept.
-    const exactPhrase = normalise(text).includes(key);
-    const candidateScore = keywordTokens.length > 1 ? (exactPhrase ? 4 : 3) : 2;
-    const previous = conceptMatches.get(signature);
-    if (!previous || candidateScore > previous.score) {
-      conceptMatches.set(signature, { score: candidateScore, keyword });
-    }
-  }
-
-  const matched = [...conceptMatches.values()].map(item => item.keyword);
-  const score = [...conceptMatches.values()].reduce((total, item) => total + item.score, 0);
-  return { ...rule, score, matched };
-}
 
 function escapeHtml(value) {
   if (value === null || value === undefined) return "";
@@ -788,7 +722,7 @@ form.addEventListener("submit", async event => {
     approachLabel: approachInput.value ? approachInput.selectedOptions[0]?.textContent || "" : "",
     isbn: isbnInput.value.trim()
   };
-  const cleanIsbn = book.isbn.replace(/[\s-]/g, "");
+  let cleanIsbn = book.isbn.replace(/[\s-]/g, "");
   if (!window.ddcBatchMode && !cleanIsbn && !book.title) {
     renderEmpty("Book title required", "Enter a book title or provide an ISBN so the book's bibliographic record can be found.");
     titleInput.focus();
@@ -848,7 +782,7 @@ form.addEventListener("submit", async event => {
           ...extractValidDdcValues(record?.ddc),
           ...extraDdcRecords.flatMap(item => item.ddc)
         ].filter((value, index, all) => all.indexOf(value) === index);
-        if (classes.length) {
+        if (classes.length && !book.subject) {
           const candidates = classes.slice(0, 6).map((number, index) => {
             const sources = [];
             if (extractValidDdcValues(record?.dewey_decimal_class).includes(number) || extractValidDdcValues(record?.ddc).includes(number)) sources.push("Open Library");
@@ -869,8 +803,8 @@ form.addEventListener("submit", async event => {
           submitButton.innerHTML = originalButtonText;
           return;
         }
-        if (Array.isArray(record?.subject) && record.subject.length) {
-          book.subject = [book.subject, record.subject.slice(0, 15).join(" ")].filter(Boolean).join(" ");
+        if (!book.subject && Array.isArray(record?.subject) && record.subject.length) {
+          book.subject = record.subject.slice(0, 15).join(" ");
         }
         if (!book.subject && book.title) {
           try {
@@ -925,15 +859,15 @@ form.addEventListener("submit", async event => {
           renderResults(book, candidates, "Matching title record: " + (record.title || book.title) + (Array.isArray(record.author_name) && record.author_name.length ? " — " + record.author_name.join(", ") : "") + ". Source: Open Library.");
           return;
         }
-        if (Array.isArray(record.subject) && record.subject.length) {
-          book.subject = [book.subject, record.subject.slice(0, 20).join(" ")].filter(Boolean).join(" ");
+        if (!book.subject && Array.isArray(record.subject) && record.subject.length) {
+          book.subject = record.subject.slice(0, 20).join(" ");
         }
       }
       if (!record || !(Array.isArray(record.subject) && record.subject.length)) {
         try {
           const googleRecord = await lookupGoogleBooksByTitle(book);
           if (googleRecord) {
-            book.subject = [book.subject, ...(googleRecord.subject || [])].filter(Boolean).join(" ");
+            if (!book.subject) book.subject = (googleRecord.subject || []).join(" ");
           }
         } catch (googleError) {
           console.warn("Google Books title lookup unavailable.", googleError);
@@ -966,7 +900,13 @@ form.addEventListener("submit", async event => {
   if (book.language === "Hindi" && (book.workType === "essays" || /\b(essay|essays)\b/u.test(classificationContext))) languageHints.push("hindi essays");
   else if (book.language === "Hindi" && (book.workType || /\b(literature|fiction|poetry|novel|drama)\b|हिंदी/u.test(classificationContext))) languageHints.push("hindi literature");
   if (book.language === "Bengali" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|বাংলা/u.test(classificationContext))) languageHints.push("bengali literature");
-  const searchable = normalise([book.title, book.author, book.subject, ...languageHints].filter(Boolean).join(" "));
+  // Keep bibliographic identity separate from subject evidence. When the
+  // librarian supplies a subject, title and author must not influence ranking.
+  const classificationInput = {
+    subject: book.subject,
+    fallbackText: book.subject ? "" : book.title,
+    hints: languageHints
+  };
   if (!book.title) {
     titleInput.focus();
     return;
@@ -1016,9 +956,7 @@ form.addEventListener("submit", async event => {
     return;
   }
 
-  const ranked = SUBJECT_RULES.map(rule => scoreRule(rule, searchable))
-    .filter(rule => rule.score > 0)
-    .sort((a, b) => b.score - a.score);
+  const ranked = DDCClassification.rankRules(SUBJECT_RULES, classificationInput);
 
   if (!ranked.length) {
     renderEmpty(
