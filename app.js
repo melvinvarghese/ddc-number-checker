@@ -134,24 +134,63 @@ function normalise(value) {
 }
 
 function scoreRule(rule, text) {
-  // Match concepts compositionally: important words may appear in a different
-  // order, and connecting words such as "of" or "the" should not block a match.
+  // Canonicalise common grammatical variants so concepts can combine even
+  // when the user enters a different form or word order.
   const stopWords = new Set(["a", "an", "and", "of", "the", "in", "for", "on", "to", "with"]);
+  const equivalents = {
+    indian: "india",
+    historical: "history",
+    historically: "history",
+    psychological: "psychology",
+    psychologically: "psychology",
+    children: "child",
+    childrens: "child",
+    essays: "essay",
+    novels: "novel",
+    poems: "poem",
+    libraries: "library",
+    librarians: "librarian",
+    computers: "computer",
+    computing: "computer",
+    animals: "animal",
+    plants: "plant",
+    stories: "story",
+    biographies: "biography",
+    autobiographies: "autobiography",
+    languages: "language",
+    sciences: "science",
+    books: "book",
+    movies: "movie",
+    films: "film",
+    educational: "education",
+    psychological: "psychology",
+    linguistic: "linguistics",
+    literary: "literature",
+    religious: "religion",
+    medical: "medicine",
+    political: "politics",
+    economic: "economics"
+  };
+  const canonicalToken = token => equivalents[token] || token;
   const tokens = value => normalise(value)
-    .split(/\\s+/u)
-    .filter(token => token && !stopWords.has(token));
+    .split(/\s+/u)
+    .filter(token => token && !stopWords.has(token))
+    .map(canonicalToken);
   const queryTokens = new Set(tokens(text));
   let score = 0;
   const matched = [];
+  const seenConceptSets = new Set();
 
   for (const keyword of rule.keywords) {
     const key = normalise(keyword);
     if (!key) continue;
     const keywordTokens = [...new Set(tokens(key))];
     if (!keywordTokens.length) continue;
+    const signature = keywordTokens.slice().sort().join(" ");
+    if (seenConceptSets.has(signature)) continue;
+    seenConceptSets.add(signature);
 
-    // A multi-word subject can match even when its concepts are entered
-    // separately or in a different order (e.g. "history India").
+    // All concepts must be present, but they may appear in any order.
     const allConceptsPresent = keywordTokens.every(token => queryTokens.has(token));
     if (allConceptsPresent) {
       const exactPhrase = text.includes(key);
