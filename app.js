@@ -163,7 +163,6 @@ function scoreRule(rule, text) {
     movies: "movie",
     films: "film",
     educational: "education",
-    psychological: "psychology",
     linguistic: "linguistics",
     literary: "literature",
     religious: "religion",
@@ -177,9 +176,7 @@ function scoreRule(rule, text) {
     .filter(token => token && !stopWords.has(token))
     .map(canonicalToken);
   const queryTokens = new Set(tokens(text));
-  let score = 0;
-  const matched = [];
-  const seenConceptSets = new Set();
+  const conceptMatches = new Map();
 
   for (const keyword of rule.keywords) {
     const key = normalise(keyword);
@@ -187,17 +184,19 @@ function scoreRule(rule, text) {
     const keywordTokens = [...new Set(tokens(key))];
     if (!keywordTokens.length) continue;
     const signature = keywordTokens.slice().sort().join(" ");
-    if (seenConceptSets.has(signature)) continue;
-    seenConceptSets.add(signature);
+    if (!keywordTokens.every(token => queryTokens.has(token))) continue;
 
-    // All concepts must be present, but they may appear in any order.
-    const allConceptsPresent = keywordTokens.every(token => queryTokens.has(token));
-    if (allConceptsPresent) {
-      const exactPhrase = text.includes(key);
-      score += keywordTokens.length > 1 ? (exactPhrase ? 4 : 3) : 2;
-      matched.push(keyword);
+    // Prefer an exact phrase when several aliases describe the same concept.
+    const exactPhrase = normalise(text).includes(key);
+    const candidateScore = keywordTokens.length > 1 ? (exactPhrase ? 4 : 3) : 2;
+    const previous = conceptMatches.get(signature);
+    if (!previous || candidateScore > previous.score) {
+      conceptMatches.set(signature, { score: candidateScore, keyword });
     }
   }
+
+  const matched = [...conceptMatches.values()].map(item => item.keyword);
+  const score = [...conceptMatches.values()].reduce((total, item) => total + item.score, 0);
   return { ...rule, score, matched };
 }
 
