@@ -94,6 +94,7 @@ const SUBJECT_RULES = [
   { number: "894.8124", heading: "Malayalam essays", keywords: ["malayalam essays", "malayalam essay", "essay in malayalam", "essays in malayalam", "മലയാളം essay", "മലയാളം essays", "മലയാള essay", "മലയാള essays", "മലയാളം എസ്സേ", "മലയാളം എസ്സേകൾ", "മലയാളം ലേഖനം", "മലയാളം ലേഖനങ്ങൾ", "മലയാള ലേഖനം", "മലയാള ലേഖനങ്ങൾ"], description: "The terms suggest essays in Malayalam. Confirm the detailed subdivision against your authorised DDC edition." },
   { number: "894.811", heading: "Tamil literature", keywords: ["tamil literature", "literature in tamil", "tamil literary works", "தமிழ் இலக்கியம்"], description: "The terms suggest Tamil literature. Central University of Tamil Nadu catalogue records use 894.811 for Tamil literary works; verify the specific form and local policy." },
   { number: "891.43", heading: "Hindi literature", keywords: ["hindi literature", "literature in hindi", "hindi literary works", "हिंदी साहित्य"], description: "The terms suggest Hindi literature. Central University of Tamil Nadu catalogue records use 891.43 for Hindi literary works; verify the specific form and local policy." },
+  { number: "891.434", heading: "Hindi essays", keywords: ["hindi essays", "hindi essay", "essays in hindi", "essay in hindi"], description: "The terms suggest essays in Hindi. LibraryThing MDS and library catalogue references list 891.434 for Hindi essays; verify against your authorised DDC edition and local policy." },
   { number: "891.44", heading: "Bengali literature", keywords: ["bengali literature", "literature in bengali", "bengali literary works", "বাংলা সাহিত্য"], description: "The terms suggest Bengali literature. University library catalogues use 891.44 for Bengali literary works; verify the specific form and local policy." },
   { number: "940", heading: "History of Europe", keywords: ["european history", "history of europe", "world war one", "world war two", "second world war"], description: "The terms suggest European history or major events in European history." },
   { number: "950", heading: "History of Asia", keywords: ["asian history", "history of asia", "east asian history"], description: "The terms suggest the history of Asia; use a more specific regional class when possible." },
@@ -911,7 +912,9 @@ form.addEventListener("submit", async event => {
       let record = await lookupTitle(book);
       if (record) {
         const classes = Array.isArray(record.dewey_decimal_class) ? record.dewey_decimal_class : Array.isArray(record.ddc) ? record.ddc : [];
-        if (classes.length) {
+        // A title-only catalogue match must not override an explicitly supplied
+        // subject. When a subject is supplied, let the subject matcher classify it.
+        if (classes.length && !book.subject.trim()) {
           const candidates = classes.slice(0, 4).map((number, index) => ({
             number: String(number),
             heading: index === 0 ? "DDC value in Open Library record" : "Additional DDC value in Open Library record",
@@ -960,7 +963,8 @@ form.addEventListener("submit", async event => {
   if (book.language === "English" && book.workType === "poetry") languageHints.push("poetry");
   if (book.language === "English" && book.workType === "biography") languageHints.push("biography");
   if (book.language === "Tamil" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|தமிழ்/u.test(classificationContext))) languageHints.push("tamil literature");
-  if (book.language === "Hindi" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|हिंदी/u.test(classificationContext))) languageHints.push("hindi literature");
+  if (book.language === "Hindi" && (book.workType === "essays" || /\b(essay|essays)\b/u.test(classificationContext))) languageHints.push("hindi essays");
+  else if (book.language === "Hindi" && (book.workType || /\b(literature|fiction|poetry|novel|drama)\b|हिंदी/u.test(classificationContext))) languageHints.push("hindi literature");
   if (book.language === "Bengali" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|বাংলা/u.test(classificationContext))) languageHints.push("bengali literature");
   const searchable = normalise([book.title, book.author, book.subject, ...languageHints].filter(Boolean).join(" "));
   if (!book.title) {
