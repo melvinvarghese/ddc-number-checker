@@ -880,26 +880,29 @@ form.addEventListener("submit", async event => {
       submitButton.innerHTML = originalButtonText;
     }
   }
-  const subjectText = normalise(book.subject);
   const languageHints = [];
-  const classificationContext = normalise([book.subject, book.workType].filter(Boolean).join(" "));
-  if (book.language === "Malayalam") {
-    if (book.workType === "translation" || /\b(translat(?:ion|ed)|translated from)\b|വിവർത്തന/u.test(classificationContext)) {
-      languageHints.push("malayalam literature");
-    } else if (book.workType === "biography" || /\b(autobiography|biography|memoir)\b|ആത്മകഥ|ജീവചരിത്രം/u.test(classificationContext)) languageHints.push("malayalam autobiography");
-    else if (book.workType === "fiction" || /\b(novel|fiction|short stor(y|ies))\b|നോവൽ|കഥകൾ/u.test(classificationContext)) languageHints.push("malayalam fiction");
-    else if (book.workType === "poetry" || /\b(poetry|poem|poems)\b|കവിത/u.test(classificationContext)) languageHints.push("malayalam poetry");
-    else if (book.workType === "drama" || /\b(drama|play|plays)\b|നാടകം/u.test(classificationContext)) languageHints.push("malayalam drama");
-    else if (book.workType === "essays" || /\b(essay|essays)\b|ലേഖന/u.test(classificationContext)) languageHints.push("malayalam essays");
-    else if (/\bliterature\b|സാഹിത്യം/u.test(classificationContext)) languageHints.push("malayalam literature");
+  // Language/work-type hints are fallback evidence only. They must never
+  // override or contaminate a subject explicitly supplied by the librarian.
+  if (!book.subject) {
+    const classificationContext = normalise([book.title, book.workType].filter(Boolean).join(" "));
+    if (book.language === "Malayalam") {
+      if (book.workType === "translation" || /\\b(translat(?:ion|ed)|translated from)\\b|വിവർത്തന/u.test(classificationContext)) {
+        languageHints.push("malayalam literature");
+      } else if (book.workType === "biography" || /\\b(autobiography|biography|memoir)\\b|ആത്മകഥ|ജീവചരിത്രം/u.test(classificationContext)) languageHints.push("malayalam autobiography");
+      else if (book.workType === "fiction" || /\\b(novel|fiction|short stor(y|ies))\\b|നോവൽ|കഥകൾ/u.test(classificationContext)) languageHints.push("malayalam fiction");
+      else if (book.workType === "poetry" || /\\b(poetry|poem|poems)\\b|കവിത/u.test(classificationContext)) languageHints.push("malayalam poetry");
+      else if (book.workType === "drama" || /\\b(drama|play|plays)\\b|നാടകം/u.test(classificationContext)) languageHints.push("malayalam drama");
+      else if (book.workType === "essays" || /\\b(essay|essays)\\b|ലേഖന/u.test(classificationContext)) languageHints.push("malayalam essays");
+      else if (/\\bliterature\\b|സാഹിത്യം/u.test(classificationContext)) languageHints.push("malayalam literature");
+    }
+    if (book.language === "English" && book.workType === "fiction") languageHints.push("english fiction");
+    if (book.language === "English" && book.workType === "poetry") languageHints.push("poetry");
+    if (book.language === "English" && book.workType === "biography") languageHints.push("biography");
+    if (book.language === "Tamil" && (book.workType || /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|தமிழ்/u.test(classificationContext))) languageHints.push("tamil literature");
+    if (book.language === "Hindi" && (book.workType === "essays" || /\\b(essay|essays)\\b/u.test(classificationContext))) languageHints.push("hindi essays");
+    else if (book.language === "Hindi" && (book.workType || /\\b(literature|fiction|poetry|novel|drama)\\b|हिंदी/u.test(classificationContext))) languageHints.push("hindi literature");
+    if (book.language === "Bengali" && (book.workType || /\\b(literature|fiction|poetry|novel|drama|essays?)\\b|বাংলা/u.test(classificationContext))) languageHints.push("bengali literature");
   }
-  if (book.language === "English" && book.workType === "fiction") languageHints.push("english fiction");
-  if (book.language === "English" && book.workType === "poetry") languageHints.push("poetry");
-  if (book.language === "English" && book.workType === "biography") languageHints.push("biography");
-  if (book.language === "Tamil" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|தமிழ்/u.test(classificationContext))) languageHints.push("tamil literature");
-  if (book.language === "Hindi" && (book.workType === "essays" || /\b(essay|essays)\b/u.test(classificationContext))) languageHints.push("hindi essays");
-  else if (book.language === "Hindi" && (book.workType || /\b(literature|fiction|poetry|novel|drama)\b|हिंदी/u.test(classificationContext))) languageHints.push("hindi literature");
-  if (book.language === "Bengali" && (book.workType || /\b(literature|fiction|poetry|novel|drama|essays?)\b|বাংলা/u.test(classificationContext))) languageHints.push("bengali literature");
   // Keep bibliographic identity separate from subject evidence. When the
   // librarian supplies a subject, title and author must not influence ranking.
   const classificationInput = {
