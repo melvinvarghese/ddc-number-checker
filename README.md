@@ -4,7 +4,7 @@ A lightweight, browser-based preliminary Dewey Decimal Classification discovery 
 
 ## Current version
 
-The application accepts a book title, author, edition language, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through Open Library and Google Books. For additional DDC evidence, it also attempts a no-key Library of Congress SRU lookup and an Internet Archive metadata lookup. The Library of Congress integration accepts only MARC 082 $a; Internet Archive metadata is accepted only when it explicitly labels a value as DDC / Dewey. Other classification systems and generic call numbers are ignored. These public services may return no matching record, may have browser cross-origin restrictions, and are not guaranteed to contain a Dewey number. Otherwise, returned subject terms are combined with the local preliminary subject guide. The guide currently contains around 90 independently written subject rules, including library science, education, computing, psychology, social sciences, health, arts, literature and history. Edition language is used when interpreting Malayalam, Tamil, Hindi and Bengali literary subjects, and a curated rule recognises the Malayalam edition *Agnichirakukal* separately from the English *Wings of Fire* edition.
+The application accepts a book title, author, edition language, subject description and optional ISBN-10 or ISBN-13. ISBNs are checksum-validated and looked up through Open Library and Google Books. For additional DDC evidence, it also attempts a no-key Library of Congress SRU lookup and an Internet Archive metadata lookup. The Library of Congress integration accepts only MARC 082 $a; Internet Archive metadata is accepted only when it explicitly labels a value as DDC / Dewey. Other classification systems and generic call numbers are ignored. These public services may return no matching record, may have browser cross-origin restrictions, and are not guaranteed to contain a Dewey number. Otherwise, returned subject terms are combined with the local preliminary subject guide. The guide currently contains 100 independently written subject rules, including library science, education, computing, psychology, social sciences, health, arts, literature and history. Edition language is used when interpreting Malayalam, Tamil, Hindi and Bengali literary subjects, and a curated rule recognises the Malayalam edition *Agnichirakukal* separately from the English *Wings of Fire* edition.
 
 **This is not an authoritative DDC classifier.** It does not analyse the full text of a book, consult an official DDC schedule, or guarantee a correct class number. Users must verify suggestions against an authorised DDC source and their library's cataloguing policy.
 
@@ -12,7 +12,8 @@ The application accepts a book title, author, edition language, subject descript
 
 - `index.html` — accessible application structure and page content
 - `styles.css` — responsive visual design
-- `app.js` — curated preliminary subject rules, ISBN metadata lookups and matching logic
+- `app.js` — application flow, curated preliminary subject rules and metadata lookups
+- `classification-engine.js` — isolated subject-token matching and ranking logic, tested independently
 
 ## Run locally
 
@@ -31,6 +32,10 @@ Expected URL: `https://melvinvarghese.github.io/ddc-number-checker/`
 ### Malayalam literature coverage
 
 The local guide now distinguishes Malayalam literature (894.812), fiction (894.8123), autobiography/biography examples (894.812092), poetry, drama and essays. It also recognises selected Malayalam-script subject phrases. When a Malayalam edition is explicitly described as a translation, the guide stays with a broader Malayalam-literature suggestion rather than assuming a narrower literary-form subdivision. These are preliminary subject suggestions grounded in visible catalogue examples, not a replacement for the authorised DDC schedules. The benchmark includes Aadujeevitham, Ente Katha and the Malayalam edition of Agnichirakukal to keep edition- and library-specific practice visible.
+
+## Subject matching safeguards
+
+The local matcher is maintained separately in `classification-engine.js` so its token normalisation and ranking behaviour can be tested without the browser UI. When a librarian supplies a subject, the matcher uses that subject as its primary evidence; title and author are not mixed into the subject text. Language and work-type hints are fallback evidence only when no explicit subject is supplied. ISBN-derived DDC values are not allowed to bypass an explicitly supplied subject. These safeguards reduce some avoidable false matches, but the guide remains limited and does not perform full DDC number building.
 
 ## Real-book regression checks
 
