@@ -134,15 +134,28 @@ function normalise(value) {
 }
 
 function scoreRule(rule, text) {
+  // Match concepts compositionally: important words may appear in a different
+  // order, and connecting words such as "of" or "the" should not block a match.
+  const stopWords = new Set(["a", "an", "and", "of", "the", "in", "for", "on", "to", "with"]);
+  const tokens = value => normalise(value)
+    .split(/\\s+/u)
+    .filter(token => token && !stopWords.has(token));
+  const queryTokens = new Set(tokens(text));
   let score = 0;
   const matched = [];
+
   for (const keyword of rule.keywords) {
     const key = normalise(keyword);
     if (!key) continue;
-    const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const expression = new RegExp("(^|\\s)" + escaped + "($|\\s)", "u");
-    if (expression.test(text)) {
-      score += key.includes(" ") ? 3 : 2;
+    const keywordTokens = [...new Set(tokens(key))];
+    if (!keywordTokens.length) continue;
+
+    // A multi-word subject can match even when its concepts are entered
+    // separately or in a different order (e.g. "history India").
+    const allConceptsPresent = keywordTokens.every(token => queryTokens.has(token));
+    if (allConceptsPresent) {
+      const exactPhrase = text.includes(key);
+      score += keywordTokens.length > 1 ? (exactPhrase ? 4 : 3) : 2;
       matched.push(keyword);
     }
   }
