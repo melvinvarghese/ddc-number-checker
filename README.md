@@ -14,6 +14,7 @@ The application accepts a book title, author, edition language, subject descript
 - `styles.css` — responsive visual design
 - `app.js` — application flow, curated preliminary subject rules and metadata lookups
 - `classification-engine.js` — isolated subject-token matching and ranking logic, tested independently
+- `fdc.txt` — Free Decimal Correspondence v0.06 (2010), a public-domain, DDC-inspired reference; not an official or current DDC schedule
 
 ## Run locally
 
@@ -64,6 +65,8 @@ After GitHub Pages is live, add a Custom HTML block to the relevant post or page
 ```
 
 Adjust the height after testing on desktop and mobile. Keep explanatory text, instructions and FAQs as real WordPress content outside the iframe so they remain accessible to search engines. Place AdSense units in the WordPress page layout with clear separation from the tool controls; do not place ads inside the application or near controls in a way that could cause accidental clicks.
+
+The browser hierarchy uses the **Free Decimal Correspondence (FDC) v0.06**, released in 2010. FDC is dedicated to the public domain and was designed to be reasonably compatible with library decimal classifications, but its author explicitly says it is briefer than DDC, does not guarantee compatibility with present-day DDC, and is based substantially on the 1922 11th edition with later editorial adaptations. It must therefore be labelled as FDC, not represented as an official DDC schedule or used as proof that a suggested number is current DDC. See the [FDC description and limitations](https://everybodyslibraries.com/about-the-free-decimal-correspondence/).
 
 ## Data and licensing
 
